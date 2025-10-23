@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RETASTE - Khám phá hương vị yêu thích</title>
+    <style>
+      :root {
+        --primary: #ff6b35;
+        --primary-dark: #e85a2a;
+        --secondary: #2a9d8f;
+        --text: #333333;
+        --text-light: #666666;
+        --background: #f9f9f9;
+        --white: #ffffff;
+        --light-gray: #eeeeee;
+        --gray: #dddddd;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      /* Header */
+      header {
+        background-color: var(--white);
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo span {
+        color: var(--secondary);
+      }
+
+      .search-bar {
+        flex: 1;
+        max-width: 500px;
+        margin: 0 20px;
+        position: relative;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 25px;
+        border: 1px solid var(--gray);
+        outline: none;
+        font-size: 1rem;
+      }
+
+      .search-bar button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+      }
+
+      .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .cart-icon,
+      .user-icon {
+        font-size: 1.5rem;
+        color: var(--text);
+        text-decoration: none;
+        position: relative;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--primary);
+        color: var(--white);
+        font-size: 0.7rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-menu {
+        background-color: var(--secondary);
+        padding: 10px 0;
+      }
+
+      .nav-list {
+        display: flex;
+        list-style: none;
+        justify-content: center;
+        gap: 30px;
+      }
+
+      .nav-list a {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .nav-list a:hover {
+        color: var(--light-gray);
+      }
+
+      /* Hero Section */
+      .hero {
+        background-image: linear-gradient(
+            rgba(0, 0, 0, 0.5),
+            rgba(0, 0, 0, 0.5)
+          ),
+          url("https://images.unsplash.com/photo-1555939594-58d7cb561ad1");
+        background-size: cover;
+        background-position: center;
+        color: var(--white);
+        padding: 100px 0;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 30px;
+      }
+
+      .cta-button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .cta-button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      /* Features */
+      .features {
+        padding: 50px 0;
+        background-color: var(--white);
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 40px;
+        color: var(--text);
+      }
+
+      .features-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      .feature-card {
+        background-color: var(--white);
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        padding: 30px;
+        text-align: center;
+        transition: transform 0.3s;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 20px;
+      }
+
+      .feature-card h3 {
+        margin-bottom: 15px;
+        color: var(--text);
+      }
+
+      .feature-card p {
+        color: var(--text-light);
+      }
+
+      /* Popular Categories */
+      .categories {
+        padding: 50px 0;
+      }
+
+      .categories-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .category-card {
+        background-color: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s;
+      }
+
+      .category-card:hover {
+        transform: scale(1.05);
+      }
+
+      .category-img {
+        height: 150px;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .category-info {
+        padding: 15px;
+        text-align: center;
+      }
+
+      .category-info h3 {
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+      }
+
+      /* Recommended Items */
+      .recommended {
+        padding: 50px 0;
+        background-color: var(--white);
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .view-all {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .products-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 25px;
+      }
+
+      .product-card {
+        background-color: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .product-img {
+        height: 180px;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .product-info {
+        padding: 15px;
+      }
+
+      .product-title {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: var(--text);
+      }
+
+      .product-category {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+      }
+
+      .product-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .product-price {
+        font-weight: bold;
+        color: var(--secondary);
+        font-size: 1.1rem;
+      }
+
+      .product-rating {
+        display: flex;
+        align-items: center;
+        color: #ffba08;
+      }
+
+      .product-actions {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .add-to-cart {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        flex: 1;
+        margin-right: 10px;
+      }
+
+      .add-to-cart:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .favorite-btn {
+        background-color: var(--white);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: 5px;
+        padding: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .favorite-btn:hover {
+        background-color: var(--primary);
+        color: var(--white);
+      }
+
+      /* How It Works */
+      .how-it-works {
+        padding: 50px 0;
+        background-color: var(--light-gray);
+      }
+
+      .steps-container {
+        display: flex;
+        justify-content: space-between;
+        max-width: 1000px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .step {
+        text-align: center;
+        max-width: 250px;
+        z-index: 1;
+      }
+
+      .step-number {
+        background-color: var(--primary);
+        color: var(--white);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0 auto 20px;
+      }
+
+      .step-icon {
+        font-size: 2rem;
+        color: var(--secondary);
+        margin-bottom: 15px;
+      }
+
+      .step h3 {
+        margin-bottom: 10px;
+      }
+
+      .steps-line {
+        position: absolute;
+        top: 25px;
+        left: 15%;
+        right: 15%;
+        height: 2px;
+        background-color: var(--primary);
+      }
+
+      /* Testimonials */
+      .testimonials {
+        padding: 50px 0;
+        background-color: var(--white);
+      }
+
+      .testimonials-container {
+        display: flex;
+        gap: 30px;
+        overflow-x: auto;
+        padding: 20px 0;
+        scroll-snap-type: x mandatory;
+      }
+
+      .testimonial-card {
+        min-width: 300px;
+        max-width: 350px;
+        background-color: var(--light-gray);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        scroll-snap-align: start;
+      }
+
+      .testimonial-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .testimonial-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 15px;
+      }
+
+      .testimonial-author h4 {
+        margin-bottom: 5px;
+      }
+
+      .testimonial-date {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .testimonial-rating {
+        color: #ffba08;
+        margin-bottom: 10px;
+      }
+
+      .testimonial-content {
+        color: var(--text);
+        font-style: italic;
+      }
+
+      /* App Download Section */
+      .app-download {
+        padding: 70px 0;
+        background-image: linear-gradient(to right, var(--secondary), #264653);
+        color: var(--white);
+        text-align: center;
+      }
+
+      .app-content {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .app-title {
+        font-size: 2rem;
+        margin-bottom: 20px;
+      }
+
+      .app-description {
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+      }
+
+      .app-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .app-button {
+        background-color: var(--white);
+        color: var(--text);
+        border: none;
+        border-radius: 10px;
+        padding: 12px 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: transform 0.3s;
+      }
+
+      .app-button:hover {
+        transform: scale(1.05);
+      }
+
+      .app-button i {
+        font-size: 1.5rem;
+      }
+
+      /* Footer */
+      footer {
+        background-color: #264653;
+        color: var(--white);
+        padding: 50px 0 20px;
+      }
+
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .footer-logo {
+        color: var(--white);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .footer-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .footer-section h3::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 50px;
+        height: 2px;
+        background-color: var(--primary);
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+
+      .footer-links a {
+        color: var(--light-gray);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary);
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .social-icon {
+        color: var(--white);
+        font-size: 1.5rem;
+        transition: color 0.3s;
+      }
+
+      .social-icon:hover {
+        color: var(--primary);
+      }
+
+      .subscribe-form {
+        display: flex;
+        margin-top: 15px;
+      }
+
+      .subscribe-form input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+      }
+
+      .subscribe-form button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .subscribe-form button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--gray);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header-top {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .search-bar {
+          max-width: 100%;
+          margin: 15px 0;
+        }
+
+        .nav-list {
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          gap: 15px;
+          padding: 0 15px;
+        }
+
+        .hero {
+          padding: 60px 0;
+        }
+
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .steps-container {
+          flex-direction: column;
+          align-items: center;
+          gap: 40px;
+        }
+
+        .steps-line {
+          display: none;
+        }
+
+        .app-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .testimonials-container {
+          padding-bottom: 30px;
+        }
+
+        .testimonial-card {
+          min-width: 270px;
+        }
+      }
+
+      /* Mobile menu */
+      .mobile-menu-button {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      @media (max-width: 992px) {
+        .mobile-menu-button {
+          display: block;
+        }
+
+        .nav-menu {
+          display: none;
+          position: absolute;
+          width: 100%;
+          left: 0;
+          top: 100%;
+          background-color: var(--secondary);
+        }
+
+        .nav-menu.active {
+          display: block;
+        }
+
+        .nav-list {
+          flex-direction: column;
+          padding: 20px;
+          gap: 15px;
+        }
+
+        .user-actions {
+          margin-left: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <a href="#" class="logo">RE<span>TASTE</span></a>
+
+          <button class="mobile-menu-button">☰</button>
+
+          <div class="search-bar">
+            <input type="text" placeholder="Tìm kiếm món ăn, thức uống..." />
+            <button>🔍</button>
+          </div>
+
+          <div class="user-actions">
+            <a href="#" class="cart-icon"
+              >🛒 <span class="cart-count">3</span></a
+            >
+            <a href="#" class="user-icon">👤</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <div class="container">
+          <ul class="nav-list">
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Thực đơn</a></li>
+            <li><a href="#">Món được gợi ý</a></li>
+            <li><a href="#">Combo</a></li>
+            <li><a href="#">Khuyến mãi</a></li>
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <h1>Khám phá hương vị mới mỗi ngày</h1>
+        <p>
+          RETASTE gợi ý những món ăn phù hợp với sở thích của bạn. Đặt hàng
+          nhanh chóng, giao hàng tận nơi.
+        </p>
+        <button class="cta-button">Đặt hàng ngay</button>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+      <div class="container">
+        <h2 class="section-title">Tại sao chọn RETASTE?</h2>
+        <div class="features-container">
+          <div class="feature-card">
+            <div class="feature-icon">🍽️</div>
+            <h3>Gợi ý thông minh</h3>
+            <p>
+              Hệ thống gợi ý thông minh dựa trên sở thích và lịch sử đặt hàng
+              của bạn.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⏱️</div>
+            <h3>Giao hàng nhanh chóng</h3>
+            <p>
+              Cam kết giao hàng trong vòng 30 phút với thực phẩm vẫn giữ nguyên
+              hương vị.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">👨‍🍳</div>
+            <h3>Đầu bếp chuyên nghiệp</h3>
+            <p>
+              Món ăn được chế biến bởi đội ngũ đầu bếp giàu kinh nghiệm và đam
+              mê.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Categories -->
+    <section class="categories">
+      <div class="container">
+        <h2 class="section-title">Danh mục phổ biến</h2>
+        <div class="categories-container">
+          <div class="category-card">
+            <img
+              src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38"
+              alt="Pizza"
+              class="category-img"
+            />
+            <div class="category-info">
+              <h3>Pizza</h3>
+            </div>
+          </div>
+          <div class="category-card">
+            <img
+              src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
+              alt="Burger"
+              class="category-img"
+            />
+            <div class="category-info">
+              <h3>Burger</h3>
+            </div>
+          </div>
+          <div class="category-card">
+            <img
+              src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8"
+              alt="Đồ uống"
+              class="category-img"
+            />
+            <div class="category-info">
+              <h3>Đồ uống</h3>
+            </div>
+          </div>
+          <div class="category-card">
+            <img
+              src="https://images.unsplash.com/photo-1559847844-5315695dadae"
+              alt="Món Á"
+              class="category-img"
+            />
+            <div class="category-info">
+              <h3>Món Á</h3>
+            </div>
+          </div>
+          <div class="category-card">
+            <img
+              src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd"
+              alt="Salad"
+              class="category-img"
+            />
+            <div class="category-info">
+              <h3>Salad</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recommended for You -->
+    <section class="recommended">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Gợi ý cho bạn</h2>
+          <a href="#" class="view-all">Xem tất cả</a>
+        </div>
+        <div class="products-container">
+          <div class="product-card">
+            <img
+              src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47"
+              alt="Classic Burger"
+              class="product-img"
+            />
+            <div class="product-info">
+              <h3 class="product-title">Classic Burger</h3>
+              <div class="product-category">Burger</div>
+              <div class="product-details">
+                <div class="product-price">69.000 ₫</div>
+                <div class="product-rating">★★★★★</div>
+              </div>
+              <div class="product-actions">
+                <button class="add-to-cart">Thêm vào giỏ</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+          <div class="product-card">
+            <img
+              src="https://images.unsplash.com/photo-1513104890138-7c749659a591"
+              alt="Pizza Margherita"
+              class="product-img"
+            />
+            <div class="product-info">
+              <h3 class="product-title">Pizza Margherita</h3>
+              <div class="product-category">Pizza</div>
+              <div class="product-details">
+                <div class="product-price">109.000 ₫</div>
+                <div class="product-rating">★★★★☆</div>
+              </div>
+              <div class="product-actions">
+                <button class="add-to-cart">Thêm vào giỏ</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+          <div class="product-card">
+            <img
+              src="https://images.unsplash.com/photo-1534353436294-0dbd4bdac845"
+              alt="Trà Sữa Trân Châu"
+              class="product-img"
+            />
+            <div class="product-info">
+              <h3 class="product-title">Trà Sữa Trân Châu</h3>
+              <div class="product-category">Đồ uống</div>
+              <div class="product-details">
+                <div class="product-price">39.000 ₫</div>
+                <div class="product-rating">★★★★★</div>
+              </div>
+              <div class="product-actions">
+                <button class="add-to-cart">Thêm vào giỏ</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+          <div class="product-card">
+            <img
+              src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8"
+              alt="Salad Gà"
+              class="product-img"
+            />
+            <div class="product-info">
+              <h3 class="product-title">Salad Gà</h3>
+              <div class="product-category">Salad</div>
+              <div class="product-details">
+                <div class="product-price">59.000 ₫</div>
+                <div class="product-rating">★★★★☆</div>
+              </div>
+              <div class="product-actions">
+                <button class="add-to-cart">Thêm vào giỏ</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+      <div class="container">
+        <h2 class="section-title">Cách thức hoạt động</h2>
+        <div class="steps-container">
+          <div class="steps-line"></div>
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-icon">🍔</div>
+            <h3>Chọn món ăn</h3>
+            <p>Lựa chọn từ thực đơn đa dạng hoặc nhận gợi ý cá nhân hóa.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-icon">💳</div>
+            <h3>Thanh toán</h3>
+            <p>Thanh toán dễ dàng với nhiều phương thức khác nhau.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-icon">🚚</div>
+            <h3>Giao hàng</h3>
+            <p>Giao hàng nhanh chóng đến địa chỉ của bạn.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-icon">😋</div>
+            <h3>Thưởng thức</h3>
+            <p>Thưởng thức món ăn và đánh giá trải nghiệm của bạn.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+      <div class="container">
+        <h2 class="section-title">Khách hàng nói gì về chúng tôi</h2>
+        <div class="testimonials-container">
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <img
+                src="https://randomuser.me/api/portraits/women/42.jpg"
+                alt="User"
+                class="testimonial-avatar"
+              />
+              <div class="testimonial-author">
+                <h4>Nguyễn Thị Hương</h4>
+                <div class="testimonial-date">12/08/2025</div>
+              </div>
+            </div>
+            <div class="testimonial-rating">★★★★★</div>
+            <p class="testimonial-content">
+              Tôi rất thích cách RETASTE gợi ý món ăn phù hợp với khẩu vị của
+              tôi. Đồ ăn luôn nóng hổi và ngon miệng!
+            </p>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <img
+                src="https://randomuser.me/api/portraits/men/32.jpg"
+                alt="User"
+                class="testimonial-avatar"
+              />
+              <div class="testimonial-author">
+                <h4>Trần Văn Nam</h4>
+                <div class="testimonial-date">05/09/2025</div>
+              </div>
+            </div>
+            <div class="testimonial-rating">★★★★☆</div>
+            <p class="testimonial-content">
+              Dịch vụ giao hàng nhanh chóng và nhân viên rất thân thiện. Các món
+              ăn đều rất ngon và đúng như mô tả.
+            </p>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <img
+                src="https://randomuser.me/api/portraits/women/68.jpg"
+                alt="User"
+                class="testimonial-avatar"
+              />
+              <div class="testimonial-author">
+                <h4>Lê Thị Mai</h4>
+                <div class="testimonial-date">18/09/2025</div>
+              </div>
+            </div>
+            <div class="testimonial-rating">★★★★★</div>
+            <p class="testimonial-content">
+              Tôi đặt đồ ăn hàng tuần từ RETASTE và chưa bao giờ thất vọng. Rất
+              tiện lợi khi app có thể nhớ món yêu thích của tôi!
+            </p>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <img
+                src="https://randomuser.me/api/portraits/men/71.jpg"
+                alt="User"
+                class="testimonial-avatar"
+              />
+              <div class="testimonial-author">
+                <h4>Phạm Minh Tuấn</h4>
+                <div class="testimonial-date">22/09/2025</div>
+              </div>
+            </div>
+            <div class="testimonial-rating">★★★★★</div>
+            <p class="testimonial-content">
+              Tôi rất ấn tượng với tính năng gợi ý món ăn của RETASTE. Nó giúp
+              tôi khám phá nhiều món mới mà tôi thích!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- App Download Section -->
+    <section class="app-download">
+      <div class="container">
+        <div class="app-content">
+          <h2 class="app-title">Tải ứng dụng RETASTE</h2>
+          <p class="app-description">
+            Đặt hàng nhanh hơn, theo dõi đơn hàng và nhận các ưu đãi đặc biệt
+            chỉ có trên ứng dụng!
+          </p>
+          <div class="app-buttons">
+            <button class="app-button">
+              <i>📱</i>
+              <div>
+                <div>Tải về trên</div>
+                <div>App Store</div>
+              </div>
+            </button>
+            <button class="app-button">
+              <i>📱</i>
+              <div>
+                <div>Tải về trên</div>
+                <div>Google Play</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-container">
+          <div class="footer-section">
+            <a href="#" class="footer-logo">RE<span>TASTE</span></a>
+            <p>
+              RETASTE - Khám phá hương vị yêu thích của bạn với công nghệ gợi ý
+              thông minh.
+            </p>
+            <div class="social-links">
+              <a href="#" class="social-icon">📘</a>
+              <a href="#" class="social-icon">🐦</a>
+              <a href="#" class="social-icon">📸</a>
+              <a href="#" class="social-icon">📹</a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Thông tin</h3>
+            <ul class="footer-links">
+              <li><a href="#">Về chúng tôi</a></li>
+              <li><a href="#">Điều khoản dịch vụ</a></li>
+              <li><a href="#">Chính sách bảo mật</a></li>
+              <li><a href="#">Chính sách giao hàng</a></li>
+              <li><a href="#">Câu hỏi thường gặp</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Danh mục</h3>
+            <ul class="footer-links">
+              <li><a href="#">Món mới</a></li>
+              <li><a href="#">Bán chạy nhất</a></li>
+              <li><a href="#">Khuyến mãi</a></li>
+              <li><a href="#">Combo tiết kiệm</a></li>
+              <li><a href="#">Tất cả sản phẩm</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Liên hệ</h3>
+            <ul class="footer-links">
+              <li>📍 123 Đường ABC, Quận XYZ, TP.HCM</li>
+              <li>📞 1900-1234</li>
+              <li>✉️ support@retaste.vn</li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Đăng ký nhận tin</h3>
+            <p>Nhận thông tin về ưu đãi và món mới</p>
+            <form class="subscribe-form">
+              <input type="email" placeholder="Email của bạn" />
+              <button type="submit">Đăng ký</button>
+            </form>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2025 RETASTE. Tất cả quyền được bảo lưu.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Simple JavaScript for mobile menu toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileMenuButton = document.querySelector(".mobile-menu-button");
+        const navMenu = document.querySelector(".nav-menu");
+
+        mobileMenuButton.addEventListener("click", function () {
+          navMenu.classList.toggle("active");
+        });
+
+        // Close mobile menu when clicking on a menu item
+        const navLinks = document.querySelectorAll(".nav-list a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            navMenu.classList.remove("active");
+          });
+        });
+
+        // Simple product recommendation logic (for demo)
+        const favoriteButtons = document.querySelectorAll(".favorite-btn");
+        favoriteButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            if (button.textContent === "❤️") {
+              button.textContent = "❤️";
+              button.style.backgroundColor = "#ff6b35";
+              button.style.color = "#ffffff";
+            } else {
+              button.textContent = "❤️";
+              button.style.backgroundColor = "#ffffff";
+              button.style.color = "#ff6b35";
+            }
+          });
+        });
+
+        // Add to cart functionality (simple demo)
+        const addToCartButtons = document.querySelectorAll(".add-to-cart");
+        const cartCount = document.querySelector(".cart-count");
+        let count = 3;
+
+        addToCartButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            count++;
+            cartCount.textContent = count;
+
+            button.textContent = "Đã thêm";
+            button.style.backgroundColor = "#2a9d8f";
+
+            setTimeout(() => {
+              button.textContent = "Thêm vào giỏ";
+              button.style.backgroundColor = "#ff6b35";
+            }, 2000);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
