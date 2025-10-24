@@ -32,20 +32,21 @@
           var(--primary) 0%,
           var(--secondary) 100%
         );
-        height: 100vh;
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        overflow: hidden; /* Ngăn cuộn toàn bộ trang */
         position: relative;
+        overflow-x: hidden;
+        padding: 20px; /* Thêm padding để tránh tràn màn hình */
       }
 
       /* Background animation */
       body::before {
         content: "";
         position: absolute;
-        width: 100%;
-        height: 100%;
+        width: 200%;
+        height: 200%;
         background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="3" fill="rgba(255,255,255,0.05)"/><circle cx="75" cy="25" r="1.5" fill="rgba(255,255,255,0.08)"/><circle cx="25" cy="75" r="2.5" fill="rgba(255,255,255,0.06)"/></svg>');
         animation: float 20s ease-in-out infinite;
         z-index: 0;
@@ -57,10 +58,10 @@
           transform: translate(0, 0) rotate(0deg);
         }
         33% {
-          transform: translate(-15px, -15px) rotate(120deg);
+          transform: translate(-30px, -30px) rotate(120deg);
         }
         66% {
-          transform: translate(15px, -10px) rotate(240deg);
+          transform: translate(30px, -20px) rotate(240deg);
         }
       }
 
@@ -68,35 +69,30 @@
         background: var(--white);
         border-radius: 20px;
         box-shadow: var(--deep-shadow);
+        overflow: hidden;
         width: 90%;
         max-width: 900px;
-        height: 80vh; /* Giới hạn chiều cao */
-        max-height: 700px;
         position: relative;
         z-index: 1;
         backdrop-filter: blur(10px);
-        overflow: hidden;
+        /* Đã xóa min-height khỏi container */
       }
 
       .auth-wrapper {
         display: flex;
-        height: 100%;
+        position: relative;
+        /* Đã xóa height: 100% và min-height khỏi wrapper */
       }
 
       /* Form sections */
       .form-section {
         flex: 1;
-        padding: 30px 25px;
+        padding: 60px 50px;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        position: relative;
         transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        overflow-y: auto; /* Cho phép cuộn trong form nếu cần */
-        scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
-      }
-
-      .form-section::-webkit-scrollbar {
-        display: none; /* Ẩn thanh cuộn trên Chrome/Safari */
       }
 
       .login-section {
@@ -121,7 +117,7 @@
         justify-content: center;
         align-items: center;
         text-align: center;
-        padding: 25px;
+        padding: 40px;
         transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         z-index: 10;
       }
@@ -131,15 +127,15 @@
       }
 
       .panel-content h2 {
-        font-size: 1.8rem;
-        margin-bottom: 12px;
+        font-size: 2.2rem;
+        margin-bottom: 20px;
         font-weight: 700;
       }
 
       .panel-content p {
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin-bottom: 15px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
         opacity: 0.9;
       }
 
@@ -147,9 +143,9 @@
         background: transparent;
         border: 2px solid var(--white);
         color: var(--white);
-        padding: 8px 20px;
-        border-radius: 20px;
-        font-size: 0.85rem;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -167,11 +163,11 @@
       /* Logo */
       .logo {
         text-align: center;
-        margin-bottom: 25px;
+        margin-bottom: 40px;
       }
 
       .logo h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
         color: var(--primary);
         font-weight: 800;
         letter-spacing: -1px;
@@ -183,38 +179,38 @@
 
       .logo p {
         color: var(--text-light);
-        font-size: 0.85rem;
+        font-size: 0.95rem;
         margin-top: 5px;
       }
 
       /* Form styles */
       .form-title {
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         color: var(--text);
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         font-weight: 600;
       }
 
       .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 25px;
         position: relative;
       }
 
       .form-group label {
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
         color: var(--text);
         font-weight: 500;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
       }
 
       .form-group input {
         width: 100%;
-        padding: 10px 12px;
+        padding: 15px 20px;
         border: 2px solid var(--light-gray);
-        border-radius: 8px;
-        font-size: 0.9rem;
+        border-radius: 12px;
+        font-size: 1rem;
         transition: all 0.3s ease;
         background: var(--white);
       }
@@ -223,6 +219,7 @@
         outline: none;
         border-color: var(--primary);
         box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        transform: translateY(-1px);
       }
 
       .form-group input::placeholder {
@@ -233,18 +230,18 @@
       .checkbox-group {
         display: flex;
         align-items: center;
-        margin-bottom: 15px;
+        margin-bottom: 25px;
       }
 
       .checkbox-group input[type="checkbox"] {
         width: auto;
-        margin-right: 8px;
+        margin-right: 10px;
         accent-color: var(--primary);
       }
 
       .checkbox-group label {
         margin-bottom: 0;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         color: var(--text-light);
       }
 
@@ -267,9 +264,9 @@
         );
         color: var(--white);
         border: none;
-        padding: 10px;
-        border-radius: 8px;
-        font-size: 0.9rem;
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 1.1rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -291,10 +288,10 @@
       /* Social login */
       .social-divider {
         text-align: center;
-        margin: 20px 0;
+        margin: 30px 0;
         position: relative;
         color: var(--text-light);
-        font-size: 0.8rem;
+        font-size: 0.9rem;
       }
 
       .social-divider::before {
@@ -310,22 +307,22 @@
 
       .social-divider span {
         background: var(--white);
-        padding: 0 12px;
+        padding: 0 20px;
         position: relative;
         z-index: 2;
       }
 
       .social-buttons {
         display: flex;
-        gap: 10px;
-        margin-bottom: 12px;
+        gap: 15px;
+        margin-bottom: 20px;
       }
 
       .social-btn {
         flex: 1;
-        padding: 8px;
+        padding: 12px;
         border: 2px solid var(--light-gray);
-        border-radius: 8px;
+        border-radius: 12px;
         background: var(--white);
         color: var(--text);
         cursor: pointer;
@@ -333,7 +330,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 5px;
+        gap: 8px;
         font-weight: 500;
       }
 
@@ -355,9 +352,9 @@
       /* Switch text */
       .switch-text {
         text-align: center;
-        margin-top: 12px;
+        margin-top: 20px;
         color: var(--text-light);
-        font-size: 0.85rem;
+        font-size: 0.95rem;
       }
 
       .switch-text a {
@@ -391,14 +388,14 @@
 
       /* Back to home */
       .back-home {
-        position: fixed;
-        top: 12px;
-        left: 12px;
+        position: absolute;
+        top: 20px;
+        left: 20px;
         background: rgba(255, 255, 255, 0.9);
         color: var(--primary);
         border: none;
-        padding: 6px 14px;
-        border-radius: 16px;
+        padding: 10px 20px;
+        border-radius: 25px;
         cursor: pointer;
         font-weight: 600;
         transition: all 0.3s ease;
@@ -415,13 +412,13 @@
       /* Loading animation */
       .loading {
         display: none;
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
         border: 2px solid transparent;
         border-top: 2px solid var(--white);
         border-radius: 50%;
         animation: spin 1s linear infinite;
-        margin-right: 6px;
+        margin-right: 10px;
       }
 
       @keyframes spin {
@@ -440,26 +437,20 @@
       /* Responsive design */
       @media (max-width: 768px) {
         body {
-          padding: 10px;
-          overflow: hidden;
+          padding: 20px;
         }
 
         .auth-container {
           width: 100%;
-          max-width: 340px;
-          height: auto;
-          max-height: none;
-          min-height: 500px;
+          max-width: 400px;
         }
 
         .auth-wrapper {
           flex-direction: column;
-          height: auto;
         }
 
         .form-section {
-          padding: 20px 15px;
-          height: auto;
+          padding: 40px 30px;
         }
 
         .sliding-panel {
@@ -467,8 +458,7 @@
           left: 0;
           width: 100%;
           order: -1;
-          padding: 15px;
-          min-height: 150px;
+          padding: 30px;
         }
 
         .sliding-panel.signup-mode {
@@ -491,21 +481,11 @@
         }
 
         .logo h1 {
-          font-size: 1.6rem;
+          font-size: 2rem;
         }
 
         .panel-content h2 {
-          font-size: 1.4rem;
-        }
-
-        .form-group input {
-          padding: 8px 10px;
-          font-size: 0.85rem;
-        }
-
-        .submit-btn {
-          padding: 8px;
-          font-size: 0.85rem;
+          font-size: 1.8rem;
         }
 
         .social-buttons {
@@ -517,9 +497,9 @@
       .success-message {
         background: linear-gradient(135deg, #10b981, #059669);
         color: white;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 12px;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
         text-align: center;
         display: none;
         animation: slideIn 0.5s ease;
@@ -527,7 +507,7 @@
 
       @keyframes slideIn {
         from {
-          transform: translateY(-12px);
+          transform: translateY(-20px);
           opacity: 0;
         }
         to {
@@ -540,12 +520,17 @@
       .error-message {
         background: linear-gradient(135deg, #ef4444, #dc2626);
         color: white;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 12px;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 20px;
         text-align: center;
         display: none;
         animation: slideIn 0.5s ease;
+      }
+
+      /* Đảm bảo panel-content hiển thị đúng */
+      .panel-content {
+        width: 100%;
       }
     </style>
   </head>
@@ -714,7 +699,13 @@
               Đăng nhập để tiếp tục khám phá những món ăn ngon và nhận gợi ý cá
               nhân hóa từ RETASTE
             </p>
-            <button class="switch-btn" id="switchToSignup">Đăng ký ngay</button>
+            <button
+              class="switch-btn"
+              id="switchToSignup"
+              onclick="switchMode()"
+            >
+              Đăng ký ngay
+            </button>
           </div>
         </div>
       </div>
