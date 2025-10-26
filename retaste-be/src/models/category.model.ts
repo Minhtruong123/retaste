@@ -11,6 +11,7 @@ export interface ICategory {
   isActive?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  isDeleted?: boolean;
 }
 
 const categorySchema = new Schema<ICategory>(
@@ -21,7 +22,11 @@ const categorySchema = new Schema<ICategory>(
     description: String,
     imageUrl: String,
     displayOrder: { type: Number, default: 0 },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    }
   },
   { collection: COLLECTION_NAME, timestamps: true }
 );

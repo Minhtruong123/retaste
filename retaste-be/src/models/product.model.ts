@@ -1,0 +1,45 @@
+import { model, Schema, Types } from 'mongoose';
+import { DOCUMENT_CATEGORY } from './category.model';
+
+export const DOCUMENT_PRODUCT = 'Product';
+const COLLECTION_NAME = 'products';
+
+export interface IProduct {
+  categoryId: Types.ObjectId;
+  productName: string;
+  productSlug: string;
+  description?: string;
+  basePrice: number;
+  preparationTime: number;
+  imageUrl?: string;
+  isAvailable?: boolean;
+  isFeatured?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+const productSchema = new Schema<IProduct>(
+  {
+    categoryId: { type: Schema.Types.ObjectId, ref: DOCUMENT_CATEGORY, required: true },
+    productName: { type: String, required: true },
+    productSlug: { type: String, required: true, unique: true },
+    description: String,
+    basePrice: { type: Number, required: true, min: 0 },
+    preparationTime: { type: Number, required: true },
+    imageUrl: String,
+    isAvailable: { type: Boolean, default: true },
+    isFeatured: { type: Boolean, default: false }
+  },
+  {
+    collection: COLLECTION_NAME,
+    timestamps: true
+  }
+);
+
+productSchema.index({ categoryId: 1 });
+productSchema.index({ productSlug: 1 });
+productSchema.index({ isAvailable: 1, isFeatured: -1 });
+
+const Product = model(DOCUMENT_PRODUCT, productSchema);
+
+export default Product;
