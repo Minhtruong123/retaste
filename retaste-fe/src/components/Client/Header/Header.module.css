@@ -1,0 +1,169 @@
+.header {
+  background-color: var(--white);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--primary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.logo span {
+  color: var(--secondary);
+}
+
+.searchBar {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 20px;
+  position: relative;
+}
+
+.searchBar input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid var(--gray);
+  outline: none;
+  font-size: 1rem;
+}
+
+.searchBar button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.userActions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.cartIcon,
+.userIcon {
+  font-size: 1.5rem;
+  color: var(--text);
+  text-decoration: none;
+  position: relative;
+}
+
+.cartCount {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--primary);
+  color: var(--white);
+  font-size: 0.7rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navMenu {
+  background-color: var(--secondary);
+  padding: 10px 0;
+}
+
+.navList {
+  display: flex;
+  list-style: none;
+  justify-content: center;
+  gap: 30px;
+}
+
+.navList a {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.navList a:hover {
+  color: var(--light-gray);
+}
+
+.mobileMenuButton {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .headerTop {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .searchBar {
+    max-width: 100%;
+    margin: 15px 0;
+  }
+
+  .navList {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 15px;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 992px) {
+  .mobileMenuButton {
+    display: block;
+  }
+
+  .navMenu {
+    display: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 100%;
+    background-color: var(--secondary);
+  }
+
+  .navMenu.active {
+    display: block;
+  }
+
+  .navList {
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .userActions {
+    margin-left: auto;
+  }
+}
