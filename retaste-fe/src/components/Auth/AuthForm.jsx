@@ -3,8 +3,7 @@ import styles from "./AuthForm.module.css";
 
 export default function AuthForm() {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
-
-  const [signUpData, setSignUpData] = useState({
+  const [signUpForm, setSignUpForm] = useState({
     name: "",
     email: "",
     phone: "",
@@ -12,54 +11,75 @@ export default function AuthForm() {
     confirmPassword: "",
     agreeTerms: false,
   });
-
-  const [signInData, setSignInData] = useState({
+  const [signInForm, setSignInForm] = useState({
     email: "",
     password: "",
     rememberMe: false,
   });
-
   const [signUpError, setSignUpError] = useState("");
   const [signUpSuccess, setSignUpSuccess] = useState("");
   const [signInError, setSignInError] = useState("");
   const [signInSuccess, setSignInSuccess] = useState("");
 
-  const handleToggle = () => {
+  const toggleForm = () => {
     setIsRightPanelActive(!isRightPanelActive);
+  };
+
+  const handleSignUpChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setSignUpForm({
+      ...signUpForm,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleSignInChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setSignInForm({
+      ...signInForm,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSignUpSubmit = (e) => {
     e.preventDefault();
+
+    // Reset messages
     setSignUpError("");
     setSignUpSuccess("");
 
-    const { name, email, password, confirmPassword, agreeTerms } = signUpData;
-
-    if (!name || !email || !password || !confirmPassword) {
+    // Validation
+    if (
+      !signUpForm.name ||
+      !signUpForm.email ||
+      !signUpForm.password ||
+      !signUpForm.confirmPassword
+    ) {
       setSignUpError("Vui lòng điền đầy đủ thông tin bắt buộc");
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (signUpForm.password !== signUpForm.confirmPassword) {
       setSignUpError("Mật khẩu xác nhận không khớp");
       return;
     }
 
-    if (password.length < 6) {
+    if (signUpForm.password.length < 6) {
       setSignUpError("Mật khẩu phải có ít nhất 6 ký tự");
       return;
     }
 
-    if (!agreeTerms) {
+    if (!signUpForm.agreeTerms) {
       setSignUpError("Vui lòng đồng ý với các điều khoản");
       return;
     }
 
+    // Simulate successful registration
     setSignUpSuccess("Đăng ký thành công! Chuyển đến trang đăng nhập...");
+
     setTimeout(() => {
       setIsRightPanelActive(false);
-      e.target.reset();
-      setSignUpData({
+      setSignUpForm({
         name: "",
         email: "",
         phone: "",
@@ -73,236 +93,213 @@ export default function AuthForm() {
 
   const handleSignInSubmit = (e) => {
     e.preventDefault();
+
+    // Reset messages
     setSignInError("");
     setSignInSuccess("");
 
-    const { email, password } = signInData;
-
-    if (!email || !password) {
+    // Validation
+    if (!signInForm.email || !signInForm.password) {
       setSignInError("Vui lòng nhập email và mật khẩu");
       return;
     }
 
+    // Simulate successful login
     setSignInSuccess("Đăng nhập thành công! Đang chuyển hướng...");
+
     setTimeout(() => {
+      // Redirect to main page
       alert("Đăng nhập thành công! Sẽ chuyển về trang chủ.");
-      e.target.reset();
-      setSignInData({ email: "", password: "", rememberMe: false });
+      setSignInForm({
+        email: "",
+        password: "",
+        rememberMe: false,
+      });
       setSignInSuccess("");
     }, 2000);
   };
   return (
     <>
       <div
-        style={{
-          background: "linear-gradient(135deg, #2a9d8f 0%, #ff6b35 100%)",
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "20px",
-        }}
+        className={`${styles.authContainer} ${
+          isRightPanelActive ? styles.rightPanelActive : ""
+        }`}
+        id="container"
       >
-        <div
-          className={`${styles.authContainer} ${
-            isRightPanelActive ? styles.rightPanelActive : ""
-          }`}
-          id="container"
-        >
-          <FoodIcons />
-
-          <div className={`${styles.formContainer} ${styles.signUpContainer}`}>
-            <form onSubmit={handleSignUpSubmit} id="signUpForm">
-              <div className={styles.logo}>
-                RE<span>TASTE</span>
-              </div>
-              <h1>Tạo tài khoản</h1>
-              <div className={styles.socialContainer}>
-                <a href="#" className={styles.social}>
-                  Book
-                </a>
-                <a href="#" className={styles.social}>
-                  Email
-                </a>
-                <a href="#" className={styles.social}>
-                  Link
-                </a>
-              </div>
-              <span>hoặc sử dụng email để đăng ký</span>
-              <input
-                type="text"
-                placeholder="Họ và tên"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, name: e.target.value })
-                }
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, email: e.target.value })
-                }
-                required
-              />
-              <input
-                type="tel"
-                placeholder="Số điện thoại"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, phone: e.target.value })
-                }
-              />
-              <input
-                type="password"
-                placeholder="Mật khẩu"
-                onChange={(e) =>
-                  setSignUpData({ ...signUpData, password: e.target.value })
-                }
-                required
-              />
-              <input
-                type="password"
-                placeholder="Xác nhận mật khẩu"
-                onChange={(e) =>
-                  setSignUpData({
-                    ...signUpData,
-                    confirmPassword: e.target.value,
-                  })
-                }
-                required
-              />
-              <div className={styles.checkboxContainer}>
-                <input
-                  type="checkbox"
-                  id="agreeTerms"
-                  onChange={(e) =>
-                    setSignUpData({
-                      ...signUpData,
-                      agreeTerms: e.target.checked,
-                    })
-                  }
-                  required
-                />
-                <label htmlFor="agreeTerms">
-                  Tôi đồng ý với các điều khoản và chính sách
-                </label>
-              </div>
-              <div
-                className={styles.errorMessage}
-                style={{ display: signUpError ? "block" : "none" }}
-              >
-                {signUpError}
-              </div>
-              <div
-                className={styles.successMessage}
-                style={{ display: signUpSuccess ? "block" : "none" }}
-              >
-                {signUpSuccess}
-              </div>
-              <button type="submit">Đăng ký</button>
-              <div className={styles.mobileToggle}>
-                <button type="button" onClick={handleToggle}>
-                  Đã có tài khoản? Đăng nhập
-                </button>
-              </div>
-            </form>
-          </div>
-
-          {/* Sign In Form */}
-          <div className={`${styles.formContainer} ${styles.signInContainer}`}>
-            <form onSubmit={handleSignInSubmit} id="signInForm">
-              <div className={styles.logo}>
-                RE<span>TASTE</span>
-              </div>
-              <h1>Đăng nhập</h1>
-              <div className={styles.socialContainer}>
-                <a href="#" className={styles.social}>
-                  Book
-                </a>
-                <a href="#" className={styles.social}>
-                  Email
-                </a>
-                <a href="#" className={styles.social}>
-                  Link
-                </a>
-              </div>
-              <span>hoặc sử dụng tài khoản của bạn</span>
-              <input
-                type="email"
-                placeholder="Email"
-                onChange={(e) =>
-                  setSignInData({ ...signInData, email: e.target.value })
-                }
-                required
-              />
-              <input
-                type="password"
-                placeholder="Mật khẩu"
-                onChange={(e) =>
-                  setSignInData({ ...signInData, password: e.target.value })
-                }
-                required
-              />
-              <div className={styles.checkboxContainer}>
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  onChange={(e) =>
-                    setSignInData({
-                      ...signInData,
-                      rememberMe: e.target.checked,
-                    })
-                  }
-                />
-                <label htmlFor="rememberMe">Ghi nhớ đăng nhập</label>
-              </div>
-              <div
-                className={styles.errorMessage}
-                style={{ display: signInError ? "block" : "none" }}
-              >
-                {signInError}
-              </div>
-              <div
-                className={styles.successMessage}
-                style={{ display: signInSuccess ? "block" : "none" }}
-              >
-                {signInSuccess}
-              </div>
-              <button type="submit">Đăng nhập</button>
-              <a href="#" className={styles.forgotPassword}>
-                Quên mật khẩu?
+        <div className={`${styles.formContainer} ${styles.signUpContainer}`}>
+          <form id="signUpForm" onSubmit={handleSignUpSubmit}>
+            <div className={styles.logo}>
+              RE<span>TASTE</span>
+            </div>
+            <h1>Tạo tài khoản</h1>
+            <div className={styles.socialContainer}>
+              <a href="#" className={styles.social}>
+                📘
               </a>
-              <div className={styles.mobileToggle}>
-                <button type="button" onClick={handleToggle}>
-                  Chưa có tài khoản? Đăng ký ngay
-                </button>
-              </div>
-            </form>
-          </div>
+              <a href="#" className={styles.social}>
+                📧
+              </a>
+              <a href="#" className={styles.social}>
+                🔗
+              </a>
+            </div>
+            <span>hoặc sử dụng email để đăng ký</span>
+            <input
+              type="text"
+              placeholder="Họ và tên"
+              name="name"
+              value={signUpForm.name}
+              onChange={handleSignUpChange}
+              required
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              value={signUpForm.email}
+              onChange={handleSignUpChange}
+              required
+            />
+            <input
+              type="tel"
+              placeholder="Số điện thoại"
+              name="phone"
+              value={signUpForm.phone}
+              onChange={handleSignUpChange}
+            />
+            <input
+              type="password"
+              placeholder="Mật khẩu"
+              name="password"
+              value={signUpForm.password}
+              onChange={handleSignUpChange}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Xác nhận mật khẩu"
+              name="confirmPassword"
+              value={signUpForm.confirmPassword}
+              onChange={handleSignUpChange}
+              required
+            />
+            <div className={styles.checkboxContainer}>
+              <input
+                type="checkbox"
+                id="agreeTerms"
+                name="agreeTerms"
+                checked={signUpForm.agreeTerms}
+                onChange={handleSignUpChange}
+                required
+              />
+              <label htmlFor="agreeTerms">
+                Tôi đồng ý với các điều khoản và chính sách
+              </label>
+            </div>
+            {signUpError && (
+              <div className={styles.errorMessage}>{signUpError}</div>
+            )}
+            {signUpSuccess && (
+              <div className={styles.successMessage}>{signUpSuccess}</div>
+            )}
+            <button type="submit">Đăng ký</button>
+            <div className={styles.mobileToggle}>
+              <button type="button" onClick={toggleForm}>
+                Đã có tài khoản? Đăng nhập
+              </button>
+            </div>
+          </form>
+        </div>
 
-          {/* Overlay */}
-          <div className={styles.overlayContainer}>
-            <div className={styles.overlay}>
-              <div className={`${styles.overlayPanel} ${styles.overlayLeft}`}>
-                <h1>Chào mừng trở lại!</h1>
-                <p>
-                  Đăng nhập để tiếp tục khám phá những hương vị yêu thích và
-                  nhận gợi ý món ăn cá nhân hóa
-                </p>
-                <button className={styles.ghost} onClick={handleToggle}>
-                  Đăng nhập
-                </button>
-              </div>
-              <div className={`${styles.overlayPanel} ${styles.overlayRight}`}>
-                <h1>Xin chào!</h1>
-                <p>
-                  Đăng ký tài khoản để bắt đầu hành trình khám phá ẩm thực tuyệt
-                  vời cùng RETASTE
-                </p>
-                <button className={styles.ghost} onClick={handleToggle}>
-                  Đăng ký
-                </button>
-              </div>
+        <div className={`${styles.formContainer} ${styles.signInContainer}`}>
+          <form id="signInForm" onSubmit={handleSignInSubmit}>
+            <div className={styles.logo}>
+              RE<span>TASTE</span>
+            </div>
+            <h1>Đăng nhập</h1>
+            <div className={styles.socialContainer}>
+              <a href="#" className={styles.social}>
+                📘
+              </a>
+              <a href="#" className={styles.social}>
+                📧
+              </a>
+              <a href="#" className={styles.social}>
+                🔗
+              </a>
+            </div>
+            <span>hoặc sử dụng tài khoản của bạn</span>
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              value={signInForm.email}
+              onChange={handleSignInChange}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Mật khẩu"
+              name="password"
+              value={signInForm.password}
+              onChange={handleSignInChange}
+              required
+            />
+            <div className={styles.checkboxContainer}>
+              <input
+                type="checkbox"
+                id="rememberMe"
+                name="rememberMe"
+                checked={signInForm.rememberMe}
+                onChange={handleSignInChange}
+              />
+              <label htmlFor="rememberMe">Ghi nhớ đăng nhập</label>
+            </div>
+            {signInError && (
+              <div className={styles.errorMessage}>{signInError}</div>
+            )}
+            {signInSuccess && (
+              <div className={styles.successMessage}>{signInSuccess}</div>
+            )}
+            <button type="submit">Đăng nhập</button>
+            <a href="#" className={styles.forgotPassword}>
+              Quên mật khẩu?
+            </a>
+            <div className={styles.mobileToggle}>
+              <button type="button" onClick={toggleForm}>
+                Chưa có tài khoản? Đăng ký ngay
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className={styles.overlayContainer}>
+          <div className={styles.overlay}>
+            <div className={styles.foodIcons}>
+              <div className={styles.foodIcon}>🍕</div>
+              <div className={styles.foodIcon}>🍔</div>
+              <div className={styles.foodIcon}>🥗</div>
+              <div className={styles.foodIcon}>🧋</div>
+            </div>
+            <div className={`${styles.overlayPanel} ${styles.overlayLeft}`}>
+              <h1>Chào mừng trở lại!</h1>
+              <p>
+                Đăng nhập để tiếp tục khám phá những hương vị yêu thích và nhận
+                gợi ý món ăn cá nhân hóa
+              </p>
+              <button className={styles.ghost} onClick={toggleForm}>
+                Đăng nhập
+              </button>
+            </div>
+            <div className={`${styles.overlayPanel} ${styles.overlayRight}`}>
+              <h1>Xin chào!</h1>
+              <p>
+                Đăng ký tài khoản để bắt đầu hành trình khám phá ẩm thực tuyệt
+                vời cùng RETASTE
+              </p>
+              <button className={styles.ghost} onClick={toggleForm}>
+                Đăng ký
+              </button>
             </div>
           </div>
         </div>

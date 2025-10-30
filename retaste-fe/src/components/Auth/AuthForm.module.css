@@ -1,3 +1,18 @@
+/* AuthForm.module.css */
+:root {
+  --primary: #ff6b35;
+  --primary-dark: #e85a2a;
+  --secondary: #2a9d8f;
+  --text: #333333;
+  --text-light: #666666;
+  --background: #f9f9f9;
+  --white: #ffffff;
+  --light-gray: #eeeeee;
+  --gray: #dddddd;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-strong: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
 .authContainer {
   position: relative;
   width: 100%;
@@ -7,7 +22,6 @@
   border-radius: 20px;
   box-shadow: var(--shadow-strong);
   overflow: hidden;
-  margin: 20px auto;
 }
 
 .formContainer {
@@ -30,14 +44,14 @@
   z-index: 2;
 }
 
-.rightPanelActive .signUpContainer {
+.authContainer.rightPanelActive .signUpContainer {
   transform: translateX(100%);
   opacity: 1;
   z-index: 5;
   animation: show 0.6s;
 }
 
-.rightPanelActive .signInContainer {
+.authContainer.rightPanelActive .signInContainer {
   transform: translateX(100%);
 }
 
@@ -54,7 +68,7 @@
   }
 }
 
-form {
+.formContainer form {
   background: var(--white);
   display: flex;
   align-items: center;
@@ -76,7 +90,7 @@ form {
   color: var(--secondary);
 }
 
-h1 {
+.formContainer h1 {
   font-weight: bold;
   margin-bottom: 20px;
   color: var(--text);
@@ -99,7 +113,6 @@ h1 {
   text-decoration: none;
   color: var(--text);
   transition: all 0.3s ease;
-  font-size: 1.2rem;
 }
 
 .social:hover {
@@ -108,13 +121,13 @@ h1 {
   transform: translateY(-2px);
 }
 
-span {
+.formContainer span {
   font-size: 12px;
   color: var(--text-light);
   margin: 15px 0;
 }
 
-input {
+.formContainer input {
   background: var(--light-gray);
   border: none;
   padding: 12px 15px;
@@ -126,14 +139,14 @@ input {
   transition: all 0.3s ease;
 }
 
-input:focus {
+.formContainer input:focus {
   background: var(--white);
   border: 2px solid var(--primary);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(255, 107, 53, 0.2);
 }
 
-button {
+.formContainer button {
   border-radius: 20px;
   border: 1px solid var(--primary);
   background: var(--primary);
@@ -148,7 +161,7 @@ button {
   margin-top: 15px;
 }
 
-button:hover {
+.formContainer button:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
@@ -176,7 +189,7 @@ button.ghost:hover {
   z-index: 100;
 }
 
-.rightPanelActive .overlayContainer {
+.authContainer.rightPanelActive .overlayContainer {
   transform: translateX(-100%);
 }
 
@@ -194,7 +207,7 @@ button.ghost:hover {
   transition: transform 0.6s ease-in-out;
 }
 
-.rightPanelActive .overlay {
+.authContainer.rightPanelActive .overlay {
   transform: translateX(50%);
 }
 
@@ -217,7 +230,7 @@ button.ghost:hover {
   transform: translateX(-20%);
 }
 
-.rightPanelActive .overlayLeft {
+.authContainer.rightPanelActive .overlayLeft {
   transform: translateX(0);
 }
 
@@ -226,7 +239,7 @@ button.ghost:hover {
   transform: translateX(0);
 }
 
-.rightPanelActive .overlayRight {
+.authContainer.rightPanelActive .overlayRight {
   transform: translateX(20%);
 }
 
@@ -250,7 +263,6 @@ button.ghost:hover {
   text-decoration: none;
   margin-top: 15px;
   transition: color 0.3s ease;
-  display: block;
 }
 
 .forgotPassword:hover {
@@ -268,6 +280,8 @@ button.ghost:hover {
 .checkboxContainer input[type="checkbox"] {
   width: auto;
   margin-right: 10px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .foodIcons {
@@ -276,7 +290,6 @@ button.ghost:hover {
   height: 100%;
   overflow: hidden;
   pointer-events: none;
-  z-index: 0;
 }
 
 .foodIcon {
@@ -320,35 +333,21 @@ button.ghost:hover {
   }
 }
 
-.mobileToggle {
-  display: none;
-  text-align: center;
-  margin-top: 20px;
-}
-
-.mobileToggle button {
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-size: 14px;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 5px;
-  text-transform: none;
-  letter-spacing: normal;
-}
-
 .errorMessage {
   color: #e74c3c;
   font-size: 12px;
   margin-top: 5px;
-  display: none;
+  display: block;
 }
 
 .successMessage {
   color: var(--secondary);
   font-size: 12px;
   margin-top: 5px;
+  display: block;
+}
+
+.mobileToggle {
   display: none;
 }
 
@@ -370,19 +369,35 @@ button.ghost:hover {
     position: static;
   }
 
-  .rightPanelActive .signUpContainer {
+  .authContainer.rightPanelActive .signUpContainer {
     transform: none;
   }
 
-  .rightPanelActive .signInContainer {
+  .authContainer.rightPanelActive .signInContainer {
+    transform: none;
     display: none;
   }
 
   .mobileToggle {
     display: block;
+    text-align: center;
+    margin-top: 20px;
   }
 
-  form {
+  .mobileToggle button {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 5px;
+    margin: 0;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  .formContainer form {
     padding: 40px 30px;
   }
 

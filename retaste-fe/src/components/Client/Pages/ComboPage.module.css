@@ -1,0 +1,341 @@
+.pageBanner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("https://images.unsplash.com/photo-1504674900247-0877df9cc836");
+  background-size: cover;
+  background-position: center;
+  color: var(--white);
+  padding: 60px 0;
+  text-align: center;
+}
+
+.pageBanner h1 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.pageBanner p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.filterSection {
+  padding: 20px 0;
+  background-color: var(--white);
+  margin: 20px 0;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+  padding: 0 20px;
+}
+
+.filterLabel {
+  font-weight: bold;
+  min-width: 100px;
+}
+
+.filterOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 1;
+}
+
+.filterOption {
+  padding: 8px 15px;
+  background-color: var(--light-gray);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.filterOption:hover,
+.filterOption.active {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+.sortOptions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.sortSelect {
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: 1px solid var(--gray);
+  outline: none;
+  cursor: pointer;
+}
+
+.comboSection {
+  padding: 40px 0;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: var(--text);
+}
+
+.combosContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.comboCard {
+  background-color: var(--white);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.comboCard:hover {
+  transform: translateY(-10px);
+}
+
+.comboImgContainer {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.comboImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.comboCard:hover .comboImg {
+  transform: scale(1.1);
+}
+
+.comboDiscount {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--primary);
+  color: var(--white);
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.comboInfo {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.comboTitle {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.comboDescription {
+  color: var(--text-light);
+  margin-bottom: 15px;
+  flex-grow: 1;
+}
+
+.comboItems {
+  margin-bottom: 15px;
+}
+
+.comboItemsTitle {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: var(--secondary);
+}
+
+.comboItem {
+  padding: 5px 0;
+  border-bottom: 1px dashed var(--gray);
+}
+
+.comboItem:last-child {
+  border-bottom: none;
+}
+
+.comboPriceContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.comboPrice {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.comboOriginalPrice {
+  font-size: 1.1rem;
+  text-decoration: line-through;
+  color: var(--text-light);
+}
+
+.comboActions {
+  display: flex;
+  gap: 10px;
+}
+
+.orderButton {
+  flex: 1;
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.orderButton:hover {
+  background-color: var(--primary-dark);
+}
+
+.favoriteBtn {
+  background-color: var(--white);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.favoriteBtn:hover {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  gap: 10px;
+}
+
+.paginationButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--white);
+  border: 1px solid var(--gray);
+  color: var(--text);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.paginationButton:hover,
+.paginationButton.active {
+  background-color: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+}
+
+.specialOffers {
+  padding: 50px 0;
+  background-color: var(--light-gray);
+}
+
+.offerBanner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("https://images.unsplash.com/photo-1544148103-0773bf10d330");
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  color: var(--white);
+  text-align: center;
+}
+
+.offerTitle {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.offerSubtitle {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  max-width: 600px;
+}
+
+.offerCode {
+  background-color: var(--white);
+  color: var(--text);
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+.offerButton {
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.offerButton:hover {
+  background-color: var(--primary-dark);
+}
+
+@media (max-width: 768px) {
+  .pageBanner {
+    padding: 40px 0;
+  }
+
+  .pageBanner h1 {
+    font-size: 2rem;
+  }
+
+  .filterContainer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sortOptions {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .combosContainer {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
