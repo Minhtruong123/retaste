@@ -1,19 +1,19 @@
 import { createObjectId } from '~/utils/format';
-import Category, { ICategory } from '../category.model';
+import Product, { IProduct } from '../product.model';
 import slugify from 'slugify';
 
 const findOneById = async (id: string) => {
-  return await Category.findOne({
+  return await Product.findOne({
     _id: createObjectId(id),
     isDeleted: false
   });
 };
 
-const createNew = async (data: ICategory) => {
-  return await Category.insertOne(data);
+const createNew = async (data: IProduct) => {
+  return await Product.insertOne(data);
 };
-const update = async (data: Partial<ICategory>, id: string) => {
-  return await Category.updateOne(
+const update = async (data: Partial<IProduct>, id: string) => {
+  return await Product.updateOne(
     {
       _id: createObjectId(id),
       isDeleted: false
@@ -23,10 +23,7 @@ const update = async (data: Partial<ICategory>, id: string) => {
     }
   );
 };
-const deleteById = async (id: string) => {
-  return await Category.findOneAndDelete({ _id: createObjectId(id), isDeleted: false });
-};
-const getListCategory = async (option: {
+const getListProduct = async (option: {
   limit: number;
   page: number;
   keyWord: string | undefined;
@@ -52,19 +49,34 @@ const getListCategory = async (option: {
   } else {
     sort['updatedAt'] = 1;
   }
-  return await Category.find({
-    _destroy: false,
+  return await Product.find({
+    isDeleted: false,
     ...query
   })
     .limit(limit)
     .skip(page)
     .sort(sort);
 };
-
-export const categoryRepo = {
+const deleteProduct = async (id: string) => {
+  return await Product.updateOne(
+    {
+      _id: createObjectId(id)
+    },
+    {
+      $set: {
+        isDeleted: false
+      }
+    }
+  );
+};
+const getDetail = async (id: string) => {
+  return await Product.findById(id);
+};
+export const productRepo = {
   createNew,
-  findOneById,
   update,
-  getListCategory,
-  deleteById
+  getListProduct,
+  deleteProduct,
+  getDetail,
+  findOneById
 };

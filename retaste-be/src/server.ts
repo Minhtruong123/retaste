@@ -23,6 +23,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(API_V1, indexRoute);
 app.use(errorHandling);
 
+app.get('/', (req, res) => {
+  res.json({
+    ok: 'ok'
+  });
+});
 // database
 connectRedis();
 database();

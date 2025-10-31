@@ -30,6 +30,7 @@ export interface IUser {
   verifyToken: string | null;
   emailVerified: boolean;
   phoneVerified: boolean;
+
   addresses: IAddress[];
   createdAt?: Date;
   updatedAt?: Date;

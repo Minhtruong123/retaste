@@ -11,6 +11,7 @@ export interface ICustomizationGroup {
   minSelections?: number;
   maxSelections?: number;
   displayOrder?: number;
+  isDeleted?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -24,6 +25,7 @@ const customizationGroupSchema = new Schema<ICustomizationGroup>(
       required: true
     },
     isRequired: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
     minSelections: { type: Number, default: 0 },
     maxSelections: Number,
     displayOrder: { type: Number, default: 0 }

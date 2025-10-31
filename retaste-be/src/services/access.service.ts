@@ -16,7 +16,7 @@ class AccessService {
   static register = async (data: {
     email: string;
     phoneNumber?: string;
-    passwordHash: string;
+    password: string;
     fullName: string;
   }) => {
     const emailExist = await userRepo.findOneByEmail(data.email);
@@ -26,7 +26,7 @@ class AccessService {
       }
       throw new BAD_REQUEST('Email is already exist !');
     }
-    const newPassowrd = bcrypt.hashSync(data.passwordHash, 10);
+    const newPassowrd = bcrypt.hashSync(data.password, 10);
     const newUser = {
       ...data,
       passwordHash: newPassowrd,
@@ -40,6 +40,7 @@ class AccessService {
     if (!userCreated) {
       throw new BAD_REQUEST('Create account falure');
     }
+
     await BrevoProvider.verifyAccount(newUser.email, newUser.verifyToken);
     return 'Create new user success !';
   };
@@ -77,14 +78,14 @@ class AccessService {
     return {
       accessToken,
       refreshToken,
-      user: pickUser(getUser)
+      user: pickUser(getUser, ['email', 'phoneNumber', 'fullName'])
     };
   };
   static verifyAccount = async (data: { verifyToken: string }) => {
     const { verifyToken } = data;
     const user = await userRepo.findOneByVerifyToken(verifyToken);
     if (!user) {
-      throw new BAD_REQUEST();
+      throw new BAD_REQUEST('You comfirmed');
     }
     await userRepo.update({ verifyToken: null, emailVerified: true }, user._id.toString());
 

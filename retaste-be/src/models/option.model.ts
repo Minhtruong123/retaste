@@ -15,6 +15,7 @@ export interface IProductOption {
   caloriesPerUnit?: number;
   isAvailable?: boolean;
   displayOrder?: number;
+  isDeleted?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -39,6 +40,7 @@ const optionSchema = new Schema<IProductOption>(
     pricePerUnit: Number,
     caloriesPerUnit: Number,
     isAvailable: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
     displayOrder: { type: Number, default: 0 }
   },
   {
