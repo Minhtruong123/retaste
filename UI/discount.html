@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RETASTE - Khuyến mãi</title>
+    <style>
+      :root {
+        --primary: #ff6b35;
+        --primary-dark: #e85a2a;
+        --secondary: #2a9d8f;
+        --text: #333333;
+        --text-light: #666666;
+        --background: #f9f9f9;
+        --white: #ffffff;
+        --light-gray: #eeeeee;
+        --gray: #dddddd;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      /* Header */
+      header {
+        background-color: var(--white);
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo span {
+        color: var(--secondary);
+      }
+
+      .search-bar {
+        flex: 1;
+        max-width: 500px;
+        margin: 0 20px;
+        position: relative;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 25px;
+        border: 1px solid var(--gray);
+        outline: none;
+        font-size: 1rem;
+      }
+
+      .search-bar button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+      }
+
+      .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .cart-icon,
+      .user-icon {
+        font-size: 1.5rem;
+        color: var(--text);
+        text-decoration: none;
+        position: relative;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--primary);
+        color: var(--white);
+        font-size: 0.7rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-menu {
+        background-color: var(--secondary);
+        padding: 10px 0;
+      }
+
+      .nav-list {
+        display: flex;
+        list-style: none;
+        justify-content: center;
+        gap: 30px;
+      }
+
+      .nav-list a {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .nav-list a.active {
+        border-bottom: 2px solid var(--white);
+        padding-bottom: 5px;
+      }
+
+      .nav-list a:hover {
+        color: var(--light-gray);
+      }
+
+      /* Page Banner */
+      .page-banner {
+        background-image: linear-gradient(
+            rgba(0, 0, 0, 0.6),
+            rgba(0, 0, 0, 0.6)
+          ),
+          url("https://images.unsplash.com/photo-1504674900247-0877df9cc836");
+        background-size: cover;
+        background-position: center;
+        color: var(--white);
+        padding: 70px 0;
+        text-align: center;
+      }
+
+      .page-banner h1 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+      }
+
+      .page-banner p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      /* Promotion Filters */
+      .promotion-filters {
+        background-color: var(--white);
+        padding: 20px 0;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+      }
+
+      .filter-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+
+      .filter-button {
+        background-color: var(--light-gray);
+        color: var(--text);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .filter-button:hover,
+      .filter-button.active {
+        background-color: var(--primary);
+        color: var(--white);
+      }
+
+      /* Promotion Cards */
+      .promotions-section {
+        padding: 50px 0;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 40px;
+        color: var(--text);
+      }
+
+      .promotions-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 30px;
+      }
+
+      .promotion-card {
+        background-color: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s;
+        position: relative;
+      }
+
+      .promotion-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .promotion-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .discount-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: var(--primary);
+        color: var(--white);
+        font-weight: bold;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 1.2rem;
+      }
+
+      .promotion-info {
+        padding: 20px;
+      }
+
+      .promotion-title {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: var(--text);
+      }
+
+      .promotion-desc {
+        color: var(--text-light);
+        margin-bottom: 15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .promotion-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+        color: var(--text-light);
+      }
+
+      .validity {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .promo-code {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--light-gray);
+        padding: 12px 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+
+      .code {
+        font-weight: bold;
+        letter-spacing: 1px;
+        color: var(--text);
+      }
+
+      .copy-btn {
+        background-color: var(--secondary);
+        color: var(--white);
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+      }
+
+      .copy-btn:hover {
+        background-color: #248a7e;
+      }
+
+      .use-promo {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 12px 0;
+        border-radius: 5px;
+        font-weight: 500;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s;
+        font-size: 1rem;
+      }
+
+      .use-promo:hover {
+        background-color: var(--primary-dark);
+      }
+
+      /* Newsletter */
+      .newsletter {
+        background-color: var(--secondary);
+        padding: 60px 0;
+        color: var(--white);
+        text-align: center;
+        margin-top: 50px;
+      }
+
+      .newsletter-content {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .newsletter h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+      }
+
+      .newsletter p {
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+      }
+
+      .newsletter-form {
+        display: flex;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      .newsletter-form input {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+        font-size: 1rem;
+      }
+
+      .newsletter-form button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 15px 25px;
+        border-radius: 0 5px 5px 0;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .newsletter-form button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      /* Pagination */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
+        gap: 10px;
+      }
+
+      .page-btn {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--gray);
+        background-color: var(--white);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .page-btn:hover,
+      .page-btn.active {
+        background-color: var(--primary);
+        color: var(--white);
+        border-color: var(--primary);
+      }
+
+      /* Featured Promotion */
+      .featured-promotion {
+        padding: 50px 0;
+        background-color: var(--light-gray);
+      }
+
+      .featured-card {
+        display: flex;
+        background-color: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      .featured-img {
+        flex: 1;
+        min-height: 300px;
+        background-image: url("https://images.unsplash.com/photo-1563729784474-d77dbb933a9e");
+        background-size: cover;
+        background-position: center;
+      }
+
+      .featured-content {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .featured-label {
+        display: inline-block;
+        background-color: var(--secondary);
+        color: var(--white);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+      }
+
+      .featured-title {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        color: var(--text);
+      }
+
+      .featured-desc {
+        color: var(--text-light);
+        margin-bottom: 25px;
+      }
+
+      .featured-cta {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 5px;
+        font-weight: 500;
+        cursor: pointer;
+        width: fit-content;
+        transition: background-color 0.3s;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .featured-cta:hover {
+        background-color: var(--primary-dark);
+      }
+
+      /* Footer */
+      footer {
+        background-color: #264653;
+        color: var(--white);
+        padding: 50px 0 20px;
+      }
+
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .footer-logo {
+        color: var(--white);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .footer-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .footer-section h3::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 50px;
+        height: 2px;
+        background-color: var(--primary);
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+
+      .footer-links a {
+        color: var(--light-gray);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary);
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .social-icon {
+        color: var(--white);
+        font-size: 1.5rem;
+        transition: color 0.3s;
+      }
+
+      .social-icon:hover {
+        color: var(--primary);
+      }
+
+      .subscribe-form {
+        display: flex;
+        margin-top: 15px;
+      }
+
+      .subscribe-form input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+      }
+
+      .subscribe-form button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .subscribe-form button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--gray);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 992px) {
+        .featured-card {
+          flex-direction: column;
+        }
+
+        .featured-img {
+          min-height: 200px;
+        }
+
+        .featured-content {
+          padding: 30px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header-top {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .search-bar {
+          max-width: 100%;
+          margin: 15px 0;
+        }
+
+        .nav-list {
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          gap: 15px;
+          padding: 0 15px;
+        }
+
+        .page-banner {
+          padding: 40px 0;
+        }
+
+        .page-banner h1 {
+          font-size: 2rem;
+        }
+
+        .promotions-container {
+          grid-template-columns: 1fr;
+        }
+
+        .newsletter-form {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .newsletter-form input,
+        .newsletter-form button {
+          width: 100%;
+          border-radius: 5px;
+        }
+      }
+
+      /* Mobile menu */
+      .mobile-menu-button {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      @media (max-width: 992px) {
+        .mobile-menu-button {
+          display: block;
+        }
+
+        .nav-menu {
+          display: none;
+          position: absolute;
+          width: 100%;
+          left: 0;
+          top: 100%;
+          background-color: var(--secondary);
+        }
+
+        .nav-menu.active {
+          display: block;
+        }
+
+        .nav-list {
+          flex-direction: column;
+          padding: 20px;
+          gap: 15px;
+        }
+
+        .user-actions {
+          margin-left: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <a href="#" class="logo">RE<span>TASTE</span></a>
+
+          <button class="mobile-menu-button">☰</button>
+
+          <div class="search-bar">
+            <input type="text" placeholder="Tìm kiếm món ăn, thức uống..." />
+            <button>🔍</button>
+          </div>
+
+          <div class="user-actions">
+            <a href="#" class="cart-icon"
+              >🛒 <span class="cart-count">3</span></a
+            >
+            <a href="#" class="user-icon">👤</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <div class="container">
+          <ul class="nav-list">
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Thực đơn</a></li>
+            <li><a href="#">Món được gợi ý</a></li>
+            <li><a href="#">Combo</a></li>
+            <li><a href="#" class="active">Khuyến mãi</a></li>
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="page-banner">
+      <div class="container">
+        <h1>Ưu Đãi & Khuyến Mãi</h1>
+        <p>
+          Khám phá các ưu đãi hấp dẫn từ RETASTE. Tiết kiệm hơn khi thưởng thức
+          những món ăn yêu thích.
+        </p>
+      </div>
+    </section>
+
+    <!-- Promotion Filters -->
+    <div class="promotion-filters">
+      <div class="container">
+        <div class="filter-container">
+          <button class="filter-button active">Tất cả</button>
+          <button class="filter-button">Miễn phí giao hàng</button>
+          <button class="filter-button">Giảm giá món</button>
+          <button class="filter-button">Combo tiết kiệm</button>
+          <button class="filter-button">Ưu đãi đặc biệt</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Promotion -->
+    <section class="featured-promotion">
+      <div class="container">
+        <div class="featured-card">
+          <div class="featured-img"></div>
+          <div class="featured-content">
+            <span class="featured-label">Ưu đãi đặc biệt</span>
+            <h2 class="featured-title">Giảm 50% cho đơn hàng đầu tiên</h2>
+            <p class="featured-desc">
+              Đặt món lần đầu tiên tại RETASTE và nhận ưu đãi giảm 50% (tối đa
+              100.000đ) cho đơn hàng đầu tiên của bạn. Áp dụng cho tất cả các
+              món ăn và thức uống.
+            </p>
+            <a href="#" class="featured-cta">Đặt món ngay</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Promotions List -->
+    <section class="promotions-section">
+      <div class="container">
+        <h2 class="section-title">Tất cả khuyến mãi</h2>
+
+        <div class="promotions-container">
+          <!-- Promotion 1 -->
+          <div class="promotion-card">
+            <img
+              src="https://images.unsplash.com/photo-1626203050124-483ea5c30968"
+              alt="Free Delivery"
+              class="promotion-img"
+            />
+            <span class="discount-badge">Miễn phí</span>
+            <div class="promotion-info">
+              <h3 class="promotion-title">Miễn phí giao hàng</h3>
+              <p class="promotion-desc">
+                Miễn phí giao hàng cho tất cả đơn hàng từ 150.000đ trong khu vực
+                nội thành.
+              </p>
+              <div class="promotion-meta">
+                <div class="validity"><span>📅</span> Hết hạn: 31/12/2025</div>
+                <div class="usage-count">Đã sử dụng: 1.2k+</div>
+              </div>
+              <div class="promo-code">
+                <span class="code">FREESHIP150K</span>
+                <button class="copy-btn">Sao chép</button>
+              </div>
+              <button class="use-promo">Sử dụng ngay</button>
+            </div>
+          </div>
+
+          <!-- Promotion 2 -->
+          <div class="promotion-card">
+            <img
+              src="https://images.unsplash.com/photo-1606471191009-63994c53433b"
+              alt="Weekend Discount"
+              class="promotion-img"
+            />
+            <span class="discount-badge">-30%</span>
+            <div class="promotion-info">
+              <h3 class="promotion-title">Ưu đãi cuối tuần</h3>
+              <p class="promotion-desc">
+                Giảm 30% cho tất cả các món ăn vào thứ 7 và Chủ nhật. Áp dụng
+                cho đơn hàng từ 200.000đ.
+              </p>
+              <div class="promotion-meta">
+                <div class="validity"><span>📅</span> Hết hạn: 30/11/2025</div>
+                <div class="usage-count">Đã sử dụng: 3.5k+</div>
+              </div>
+              <div class="promo-code">
+                <span class="code">WEEKEND30</span>
+                <button class="copy-btn">Sao chép</button>
+              </div>
+              <button class="use-promo">Sử dụng ngay</button>
+            </div>
+          </div>
+
+          <!-- Promotion 3 -->
+          <div class="promotion-card">
+            <img
+              src="https://images.unsplash.com/photo-1596662951482-0c4ba74a6df6"
+              alt="Family Combo"
+              class="promotion-img"
+            />
+            <span class="discount-badge">-25%</span>
+            <div class="promotion-info">
+              <h3 class="promotion-title">Combo gia đình</h3>
+              <p class="promotion-desc">
+                Tiết kiệm 25% khi đặt combo gia đình gồm 4 món chính, 2 món
+                tráng miệng và 4 đồ uống.
+              </p>
+              <div class="promotion-meta">
+                <div class="validity"><span>📅</span> Hết hạn: 15/12/2025</div>
+                <div class="usage-count">Đã sử dụng: 2.8k+</div>
+              </div>
+              <div class="promo-code">
+                <span class="code">FAMILY25</span>
+                <button class="copy-btn">Sao chép</button>
+              </div>
+              <button class="use-promo">Sử dụng ngay</button>
+            </div>
+          </div>
+
+          <!-- Promotion 4 -->
+          <div class="promotion-card">
+            <img
+              src="https://images.unsplash.com/photo-1593504049359-74330189a345"
+              alt="Lunch Special"
+              class="promotion-img"
+            />
+            <span class="discount-badge">-20%</span>
+            <div class="promotion-info">
+              <h3 class="promotion-title">Ưu đãi bữa trưa</h3>
+              <p class="promotion-desc">
+                Giảm 20% cho tất cả đơn hàng từ 11:00 - 14:00 từ thứ 2 đến thứ
+                6. Áp dụng cho đơn hàng từ 100.000đ.
+              </p>
+              <div class="promotion-meta">
+                <div class="validity"><span>📅</span> Hết hạn: 31/01/2026</div>
+                <div class="usage-count">Đã sử dụng: 5k+</div>
+              </div>
+              <div class="promo-code">
+                <span class="code">LUNCH20</span>
+                <button class="copy-btn">Sao chép</button>
+              </div>
+              <button class="use-promo">Sử dụng ngay</button>
+            </div>
+          </div>
+
+          <!-- Promotion 5 -->
+          <div class="promotion-card">
+            <img
+              src="https://images.unsplash.com/photo-1544025162-d76694265947"
+              alt="Birthday Special"
+              class="promotion-img"
+            />
+            <span class="discount-badge">-40%</span>
+            <div class="promotion-info">
+              <h3 class="promotion-title">Ưu đãi sinh nhật</h3>
+              <p class="promotion-desc">
+                Mừng sinh nhật của bạn với ưu đãi giảm 40% cho đơn hàng trong
+                ngày sinh nhật. Yêu cầu xác minh ngày sinh.
+              </p>
+              <div class="promotion-meta">
+                <div class="validity"><span>📅</span> Quanh năm</div>
+                <div class="usage-count">Đã sử dụng: 9.2k+</div>
+              </div>
+              <div class="promo-code">
+                <span class="code">BIRTHDAY40</span>
+                <button class="copy-btn">Sao chép</button>
+              </div>
+              <button class="use-promo">Sử dụng ngay</button>
+            </div>
+          </div>
+
+          <!-- Promotion 6 -->
+          <div class="promotion-card">
+            <img
+              src="https://images.unsplash.com/photo-1569864358642-9d1684040f43"
+              alt="New App User"
+              class="promotion-img"
+            />
+            <span class="discount-badge">-35%</span>
+            <div class="promotion-info">
+              <h3 class="promotion-title">Ưu đãi người dùng app mới</h3>
+              <p class="promotion-desc">
+                Tải ứng dụng RETASTE và nhận ưu đãi 35% cho 3 đơn hàng đầu tiên
+                đặt qua ứng dụng.
+              </p>
+              <div class="promotion-meta">
+                <div class="validity"><span>📅</span> Hết hạn: 31/12/2025</div>
+                <div class="usage-count">Đã sử dụng: 7.8k+</div>
+              </div>
+              <div class="promo-code">
+                <span class="code">NEWAPP35</span>
+                <button class="copy-btn">Sao chép</button>
+              </div>
+              <button class="use-promo">Sử dụng ngay</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">4</button>
+          <button class="page-btn">></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter">
+      <div class="container">
+        <div class="newsletter-content">
+          <h2>Đừng bỏ lỡ ưu đãi mới!</h2>
+          <p>
+            Đăng ký để nhận thông báo về các khuyến mãi mới và ưu đãi đặc biệt.
+          </p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Email của bạn" required />
+            <button type="submit">Đăng ký</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-container">
+          <div class="footer-section">
+            <a href="#" class="footer-logo">RE<span>TASTE</span></a>
+            <p>
+              RETASTE - Khám phá hương vị yêu thích của bạn với công nghệ gợi ý
+              thông minh.
+            </p>
+            <div class="social-links">
+              <a href="#" class="social-icon">📘</a>
+              <a href="#" class="social-icon">🐦</a>
+              <a href="#" class="social-icon">📸</a>
+              <a href="#" class="social-icon">📹</a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Thông tin</h3>
+            <ul class="footer-links">
+              <li><a href="#">Về chúng tôi</a></li>
+              <li><a href="#">Điều khoản dịch vụ</a></li>
+              <li><a href="#">Chính sách bảo mật</a></li>
+              <li><a href="#">Chính sách giao hàng</a></li>
+              <li><a href="#">Câu hỏi thường gặp</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Danh mục</h3>
+            <ul class="footer-links">
+              <li><a href="#">Món mới</a></li>
+              <li><a href="#">Bán chạy nhất</a></li>
+              <li><a href="#">Khuyến mãi</a></li>
+              <li><a href="#">Combo tiết kiệm</a></li>
+              <li><a href="#">Tất cả sản phẩm</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Liên hệ</h3>
+            <ul class="footer-links">
+              <li>📍 123 Đường ABC, Quận XYZ, TP.HCM</li>
+              <li>📞 1900-1234</li>
+              <li>✉️ support@retaste.vn</li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Đăng ký nhận tin</h3>
+            <p>Nhận thông tin về ưu đãi và món mới</p>
+            <form class="subscribe-form">
+              <input type="email" placeholder="Email của bạn" />
+              <button type="submit">Đăng ký</button>
+            </form>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2025 RETASTE. Tất cả quyền được bảo lưu.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileMenuButton = document.querySelector(".mobile-menu-button");
+        const navMenu = document.querySelector(".nav-menu");
+
+        mobileMenuButton.addEventListener("click", function () {
+          navMenu.classList.toggle("active");
+        });
+
+        // Close mobile menu when clicking on a menu item
+        const navLinks = document.querySelectorAll(".nav-list a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            navMenu.classList.remove("active");
+          });
+        });
+
+        // Filter buttons functionality
+        const filterButtons = document.querySelectorAll(".filter-button");
+        filterButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            // Remove active class from all buttons
+            filterButtons.forEach((btn) => btn.classList.remove("active"));
+            // Add active class to clicked button
+            button.classList.add("active");
+
+            // Here you would typically filter the promotions
+            // For demo purposes, we'll just log the filter
+            console.log("Filtered by: " + button.textContent);
+          });
+        });
+
+        // Copy promo code functionality
+        const copyButtons = document.querySelectorAll(".copy-btn");
+        copyButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const codeElement = button
+              .closest(".promo-code")
+              .querySelector(".code");
+            const code = codeElement.textContent;
+
+            // Create temporary element for copying
+            const el = document.createElement("textarea");
+            el.value = code;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand("copy");
+            document.body.removeChild(el);
+
+            // Change button text temporarily
+            button.textContent = "Đã sao chép!";
+            setTimeout(() => {
+              button.textContent = "Sao chép";
+            }, 2000);
+          });
+        });
+
+        // Pagination functionality
+        const pageButtons = document.querySelectorAll(".page-btn");
+        pageButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            pageButtons.forEach((btn) => btn.classList.remove("active"));
+            button.classList.add("active");
+
+            // Here you would typically load new page content
+            console.log("Switched to page: " + button.textContent);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

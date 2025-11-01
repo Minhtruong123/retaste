@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liên hệ - RETASTE</title>
+    <style>
+      :root {
+        --primary: #ff6b35;
+        --primary-dark: #e85a2a;
+        --secondary: #2a9d8f;
+        --text: #333333;
+        --text-light: #666666;
+        --background: #f9f9f9;
+        --white: #ffffff;
+        --light-gray: #eeeeee;
+        --gray: #dddddd;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --success: #28a745;
+        --error: #dc3545;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      /* Header - Same as homepage */
+      header {
+        background-color: var(--white);
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo span {
+        color: var(--secondary);
+      }
+
+      .search-bar {
+        flex: 1;
+        max-width: 500px;
+        margin: 0 20px;
+        position: relative;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 25px;
+        border: 1px solid var(--gray);
+        outline: none;
+        font-size: 1rem;
+      }
+
+      .search-bar button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+      }
+
+      .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .cart-icon,
+      .user-icon {
+        font-size: 1.5rem;
+        color: var(--text);
+        text-decoration: none;
+        position: relative;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--primary);
+        color: var(--white);
+        font-size: 0.7rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-menu {
+        background-color: var(--secondary);
+        padding: 10px 0;
+      }
+
+      .nav-list {
+        display: flex;
+        list-style: none;
+        justify-content: center;
+        gap: 30px;
+      }
+
+      .nav-list a {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .nav-list a:hover,
+      .nav-list a.active {
+        color: var(--light-gray);
+      }
+
+      .mobile-menu-button {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* Contact Hero Section */
+      .contact-hero {
+        background-image: linear-gradient(
+            rgba(42, 157, 143, 0.9),
+            rgba(42, 157, 143, 0.9)
+          ),
+          url("https://images.unsplash.com/photo-1556909114-f6e7ad7d3136");
+        background-size: cover;
+        background-position: center;
+        color: var(--white);
+        padding: 80px 0;
+        text-align: center;
+      }
+
+      .contact-hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+      }
+
+      .contact-hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .breadcrumb {
+        background-color: var(--white);
+        padding: 15px 0;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .breadcrumb-list {
+        display: flex;
+        list-style: none;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .breadcrumb-list a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+
+      .breadcrumb-list span {
+        color: var(--text-light);
+      }
+
+      /* Contact Content */
+      .contact-content {
+        padding: 60px 0;
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        margin-bottom: 60px;
+      }
+
+      /* Contact Info */
+      .contact-info h2 {
+        font-size: 2rem;
+        color: var(--text);
+        margin-bottom: 20px;
+      }
+
+      .contact-info p {
+        color: var(--text-light);
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+      }
+
+      .contact-details {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .contact-icon {
+        background-color: var(--primary);
+        color: var(--white);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+
+      .contact-text h3 {
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+        color: var(--text);
+      }
+
+      .contact-text p {
+        color: var(--text-light);
+        margin: 0;
+      }
+
+      /* Contact Form */
+      .contact-form {
+        background-color: var(--white);
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+      }
+
+      .contact-form h2 {
+        font-size: 2rem;
+        color: var(--text);
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid var(--light-gray);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+        outline: none;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: var(--primary);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      .form-group.required label::after {
+        content: " *";
+        color: var(--error);
+      }
+
+      .submit-btn {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+      }
+
+      .submit-btn:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .submit-btn:disabled {
+        background-color: var(--gray);
+        cursor: not-allowed;
+      }
+
+      /* Social Contact */
+      .social-contact {
+        background-color: var(--white);
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        text-align: center;
+      }
+
+      .social-contact h3 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        color: var(--text);
+      }
+
+      .social-contact p {
+        color: var(--text-light);
+        margin-bottom: 25px;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        text-decoration: none;
+        font-size: 1.3rem;
+        transition: transform 0.3s;
+      }
+
+      .social-link:hover {
+        transform: scale(1.1);
+      }
+
+      .social-link.facebook {
+        background-color: #1877f2;
+        color: var(--white);
+      }
+
+      .social-link.zalo {
+        background-color: #0068ff;
+        color: var(--white);
+      }
+
+      .social-link.instagram {
+        background: linear-gradient(
+          45deg,
+          #f09433,
+          #e6683c,
+          #dc2743,
+          #cc2366,
+          #bc1888
+        );
+        color: var(--white);
+      }
+
+      .social-link.youtube {
+        background-color: #ff0000;
+        color: var(--white);
+      }
+
+      /* Map Section */
+      .map-section {
+        background-color: var(--white);
+        padding: 60px 0;
+      }
+
+      .map-section h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 30px;
+        color: var(--text);
+      }
+
+      .map-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        height: 400px;
+        background-color: var(--light-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: var(--text-light);
+      }
+
+      /* FAQ Section */
+      .faq-section {
+        padding: 60px 0;
+        background-color: var(--background);
+      }
+
+      .faq-section h2 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 40px;
+        color: var(--text);
+      }
+
+      .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .faq-item {
+        background-color: var(--white);
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: var(--shadow);
+      }
+
+      .faq-question {
+        width: 100%;
+        padding: 20px;
+        border: none;
+        background: none;
+        text-align: left;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .faq-question:hover {
+        color: var(--primary);
+      }
+
+      .faq-answer {
+        padding: 0 20px 20px;
+        color: var(--text-light);
+        display: none;
+      }
+
+      .faq-item.active .faq-answer {
+        display: block;
+      }
+
+      .faq-item.active .faq-question {
+        color: var(--primary);
+      }
+
+      /* Success/Error Messages */
+      .message {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .message.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      /* Footer - Same as homepage */
+      footer {
+        background-color: #264653;
+        color: var(--white);
+        padding: 50px 0 20px;
+      }
+
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .footer-logo {
+        color: var(--white);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .footer-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .footer-section h3::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 50px;
+        height: 2px;
+        background-color: var(--primary);
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+
+      .footer-links a {
+        color: var(--light-gray);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary);
+      }
+
+      .subscribe-form {
+        display: flex;
+        margin-top: 15px;
+      }
+
+      .subscribe-form input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+      }
+
+      .subscribe-form button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .subscribe-form button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--gray);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 992px) {
+        .mobile-menu-button {
+          display: block;
+        }
+
+        .nav-menu {
+          display: none;
+          position: absolute;
+          width: 100%;
+          left: 0;
+          top: 100%;
+          background-color: var(--secondary);
+        }
+
+        .nav-menu.active {
+          display: block;
+        }
+
+        .nav-list {
+          flex-direction: column;
+          padding: 20px;
+          gap: 15px;
+        }
+
+        .user-actions {
+          margin-left: auto;
+        }
+
+        .contact-grid {
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header-top {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .search-bar {
+          max-width: 100%;
+          margin: 15px 0;
+        }
+
+        .nav-list {
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          gap: 15px;
+          padding: 0 15px;
+        }
+
+        .contact-hero {
+          padding: 50px 0;
+        }
+
+        .contact-hero h1 {
+          font-size: 2rem;
+        }
+
+        .contact-form {
+          padding: 25px;
+        }
+
+        .social-contact {
+          padding: 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <a href="#" class="logo">RE<span>TASTE</span></a>
+
+          <button class="mobile-menu-button">☰</button>
+
+          <div class="search-bar">
+            <input type="text" placeholder="Tìm kiếm món ăn, thức uống..." />
+            <button>🔍</button>
+          </div>
+
+          <div class="user-actions">
+            <a href="#" class="cart-icon"
+              >🛒 <span class="cart-count">3</span></a
+            >
+            <a href="#" class="user-icon">👤</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <div class="container">
+          <ul class="nav-list">
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Thực đơn</a></li>
+            <li><a href="#">Món được gợi ý</a></li>
+            <li><a href="#">Combo</a></li>
+            <li><a href="#">Khuyến mãi</a></li>
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#" class="active">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contact Hero -->
+    <section class="contact-hero">
+      <div class="container">
+        <h1>Liên hệ với chúng tôi</h1>
+        <p>
+          Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn. Hãy liên hệ với
+          RETASTE để được tư vấn và giải đáp mọi thắc mắc.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contact Content -->
+    <section class="contact-content">
+      <div class="container">
+        <div class="contact-grid">
+          <!-- Contact Information -->
+          <div class="contact-info">
+            <h2>Thông tin liên hệ</h2>
+            <p>
+              Đội ngũ RETASTE luôn sẵn sàng hỗ trợ bạn 24/7. Hãy liên hệ với
+              chúng tôi qua các kênh dưới đây hoặc điền form để được tư vấn
+              nhanh nhất.
+            </p>
+
+            <div class="contact-details">
+              <div class="contact-item">
+                <div class="contact-icon">📍</div>
+                <div class="contact-text">
+                  <h3>Địa chỉ</h3>
+                  <p>123 Đường Nguyễn Văn Linh<br />Quận 7, TP. Hồ Chí Minh</p>
+                </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon">📞</div>
+                <div class="contact-text">
+                  <h3>Hotline</h3>
+                  <p>1900-1234 (Miễn phí)<br />028-1234-5678</p>
+                </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon">✉️</div>
+                <div class="contact-text">
+                  <h3>Email</h3>
+                  <p>support@retaste.vn<br />info@retaste.vn</p>
+                </div>
+              </div>
+
+              <div class="contact-item">
+                <div class="contact-icon">⏰</div>
+                <div class="contact-text">
+                  <h3>Giờ làm việc</h3>
+                  <p>Thứ 2 - Chủ Nhật<br />06:00 - 23:00</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Form -->
+          <div class="contact-form">
+            <h2>Gửi tin nhắn cho chúng tôi</h2>
+
+            <div id="message" class="message"></div>
+
+            <form id="contactForm">
+              <div class="form-row">
+                <div class="form-group required">
+                  <label for="firstName">Họ</label>
+                  <input type="text" id="firstName" name="firstName" required />
+                </div>
+                <div class="form-group required">
+                  <label for="lastName">Tên</label>
+                  <input type="text" id="lastName" name="lastName" required />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group required">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" name="email" required />
+                </div>
+                <div class="form-group required">
+                  <label for="phone">Số điện thoại</label>
+                  <input type="tel" id="phone" name="phone" required />
+                </div>
+              </div>
+
+              <div class="form-group required">
+                <label for="subject">Chủ đề</label>
+                <select id="subject" name="subject" required>
+                  <option value="">Chọn chủ đề</option>
+                  <option value="order">Hỗ trợ đặt hàng</option>
+                  <option value="delivery">Vấn đề giao hàng</option>
+                  <option value="quality">Chất lượng sản phẩm</option>
+                  <option value="account">Tài khoản & Thanh toán</option>
+                  <option value="suggestion">Góp ý & Đề xuất</option>
+                  <option value="partnership">Hợp tác kinh doanh</option>
+                  <option value="other">Khác</option>
+                </select>
+              </div>
+
+              <div class="form-group required">
+                <label for="message">Nội dung</label>
+                <textarea
+                  id="messageContent"
+                  name="message"
+                  placeholder="Vui lòng mô tả chi tiết vấn đề hoặc câu hỏi của bạn..."
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="submit-btn">Gửi tin nhắn</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Social Contact -->
+        <div class="social-contact">
+          <h3>Kết nối với chúng tôi</h3>
+          <p>
+            Theo dõi RETASTE trên các mạng xã hội để cập nhật thông tin mới nhất
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-link facebook">📘</a>
+            <a href="#" class="social-link zalo">💬</a>
+            <a href="#" class="social-link instagram">📸</a>
+            <a href="#" class="social-link youtube">📹</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+      <div class="container">
+        <h2>Vị trí của chúng tôi</h2>
+        <div class="map-container">
+          <p>🗺️ Bản đồ sẽ được hiển thị tại đây</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <div class="container">
+        <h2>Câu hỏi thường gặp</h2>
+        <div class="faq-container">
+          <div class="faq-item">
+            <button class="faq-question">
+              Thời gian giao hàng của RETASTE là bao lâu?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                RETASTE cam kết giao hàng trong vòng 30-45 phút từ khi xác nhận
+                đơn hàng. Đối với khu vực xa trung tâm, thời gian có thể kéo dài
+                thêm 15-20 phút.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              Làm thế nào để theo dõi đơn hàng?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Bạn có thể theo dõi đơn hàng qua ứng dụng RETASTE hoặc nhận SMS
+                thông báo. Chúng tôi sẽ cập nhật trạng thái đơn hàng theo thời
+                gian thực.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              RETASTE có giao hàng miễn phí không?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Chúng tôi miễn phí giao hàng cho đơn hàng từ 150.000đ trở lên
+                trong bán kính 5km. Các đơn hàng khác sẽ có phí giao hàng từ
+                15.000đ-25.000đ tùy khoảng cách.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              Tôi có thể hủy đơn hàng không?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Bạn có thể hủy đơn hàng trong vòng 5 phút sau khi đặt. Sau thời
+                gian này, vui lòng liên hệ hotline 1900-1234 để được hỗ trợ.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              Làm thế nào để được hoàn tiền?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Trong trường hợp cần hoàn tiền, chúng tôi sẽ xử lý trong vòng
+                3-5 ngày làm việc. Tiền sẽ được hoàn về phương thức thanh toán
+                ban đầu của bạn.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-container">
+          <div class="footer-section">
+            <a href="#" class="footer-logo">RE<span>TASTE</span></a>
+            <p>
+              RETASTE - Khám phá hương vị yêu thích của bạn với công nghệ gợi ý
+              thông minh.
+            </p>
+          </div>
+          <div class="footer-section">
+            <h3>Thông tin</h3>
+            <ul class="footer-links">
+              <li><a href="#">Về chúng tôi</a></li>
+              <li><a href="#">Điều khoản dịch vụ</a></li>
+              <li><a href="#">Chính sách bảo mật</a></li>
+              <li><a href="#">Chính sách giao hàng</a></li>
+              <li><a href="#">Câu hỏi thường gặp</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Danh mục</h3>
+            <ul class="footer-links">
+              <li><a href="#">Món mới</a></li>
+              <li><a href="#">Bán chạy nhất</a></li>
+              <li><a href="#">Khuyến mãi</a></li>
+              <li><a href="#">Combo tiết kiệm</a></li>
+              <li><a href="#">Tất cả sản phẩm</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Liên hệ</h3>
+            <ul class="footer-links">
+              <li>📍 123 Đường ABC, Quận XYZ, TP.HCM</li>
+              <li>📞 1900-1234</li>
+              <li>✉️ support@retaste.vn</li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Đăng ký nhận tin</h3>
+            <p>Nhận thông tin về ưu đãi và món mới</p>
+            <form class="subscribe-form">
+              <input type="email" placeholder="Email của bạn" />
+              <button type="submit">Đăng ký</button>
+            </form>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2025 RETASTE. Tất cả quyền được bảo lưu.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileMenuButton = document.querySelector(".mobile-menu-button");
+        const navMenu = document.querySelector(".nav-menu");
+
+        mobileMenuButton.addEventListener("click", function () {
+          navMenu.classList.toggle("active");
+        });
+
+        // Close mobile menu when clicking on a menu item
+        const navLinks = document.querySelectorAll(".nav-list a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            navMenu.classList.remove("active");
+          });
+        });
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll(".faq-item");
+        faqItems.forEach((item) => {
+          const question = item.querySelector(".faq-question");
+          const icon = question.querySelector("span");
+
+          question.addEventListener("click", function () {
+            const isActive = item.classList.contains("active");
+
+            // Close all FAQ items
+            faqItems.forEach((faqItem) => {
+              faqItem.classList.remove("active");
+              faqItem.querySelector(".faq-question span").textContent = "+";
+            });
+
+            // Open clicked item if it wasn't active
+            if (!isActive) {
+              item.classList.add("active");
+              icon.textContent = "−";
+            }
+          });
+        });
+
+        // Contact Form Handling
+        const contactForm = document.getElementById("contactForm");
+        const messageDiv = document.getElementById("message");
+
+        contactForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Get form data
+          const formData = new FormData(contactForm);
+          const data = Object.fromEntries(formData);
+
+          // Simple validation
+          if (
+            !data.firstName ||
+            !data.lastName ||
+            !data.email ||
+            !data.phone ||
+            !data.subject ||
+            !data.message
+          ) {
+            showMessage("Vui lòng điền đầy đủ thông tin bắt buộc.", "error");
+            return;
+          }
+
+          // Email validation
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(data.email)) {
+            showMessage("Vui lòng nhập email hợp lệ.", "error");
+            return;
+          }
+
+          // Phone validation
+          const phoneRegex = /^[0-9]{10,11}$/;
+          if (!phoneRegex.test(data.phone.replace(/\s/g, ""))) {
+            showMessage("Vui lòng nhập số điện thoại hợp lệ.", "error");
+            return;
+          }
+
+          // Simulate form submission
+          const submitBtn = contactForm.querySelector(".submit-btn");
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Đang gửi...";
+
+          setTimeout(() => {
+            showMessage(
+              "Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong vòng 24 giờ.",
+              "success"
+            );
+            contactForm.reset();
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Gửi tin nhắn";
+          }, 2000);
+        });
+
+        function showMessage(text, type) {
+          messageDiv.textContent = text;
+          messageDiv.className = `message ${type}`;
+          messageDiv.style.display = "block";
+
+          setTimeout(() => {
+            messageDiv.style.display = "none";
+          }, 5000);
+        }
+      });
+    </script>
+  </body>
+</html>
