@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import styles from "./AuthForm.module.css";
+import * as authService from "../../service/auth_service";
+import { validateAuth } from "../../utils/validate";
 
 export default function AuthForm() {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
   const [signUpForm, setSignUpForm] = useState({
-    name: "",
+    fullName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     password: "",
     confirmPassword: "",
     agreeTerms: false,
+    gender: "",
   });
   const [signInForm, setSignInForm] = useState({
     email: "",
@@ -41,82 +44,60 @@ export default function AuthForm() {
     });
   };
 
-  const handleSignUpSubmit = (e) => {
+  const handleSignUpSubmit = async (e) => {
     e.preventDefault();
 
-    // Reset messages
     setSignUpError("");
     setSignUpSuccess("");
 
-    // Validation
-    if (
-      !signUpForm.name ||
-      !signUpForm.email ||
-      !signUpForm.password ||
-      !signUpForm.confirmPassword
-    ) {
-      setSignUpError("Vui lòng điền đầy đủ thông tin bắt buộc");
-      return;
-    }
+    const emailErr = validateAuth.email(signUpForm.email);
+    if (emailErr) return setSignUpError(emailErr);
 
-    if (signUpForm.password !== signUpForm.confirmPassword) {
-      setSignUpError("Mật khẩu xác nhận không khớp");
-      return;
-    }
+    const phoneErr = validateAuth.phone(signUpForm.phoneNumber);
+    if (phoneErr) return setSignUpError(phoneErr);
 
-    if (signUpForm.password.length < 6) {
-      setSignUpError("Mật khẩu phải có ít nhất 6 ký tự");
-      return;
-    }
+    const passErr = validateAuth.password(signUpForm.password);
+    if (passErr) return setSignUpError(passErr);
 
-    if (!signUpForm.agreeTerms) {
-      setSignUpError("Vui lòng đồng ý với các điều khoản");
-      return;
-    }
+    const confirmErr = validateAuth.confirm(
+      signUpForm.password,
+      signUpForm.confirmPassword
+    );
+    if (confirmErr) return setSignUpError(confirmErr);
 
-    // Simulate successful registration
-    setSignUpSuccess("Đăng ký thành công! Chuyển đến trang đăng nhập...");
+    if (!signUpForm.agreeTerms)
+      return setSignUpError("Vui lòng đồng ý điều khoản");
 
-    setTimeout(() => {
-      setIsRightPanelActive(false);
-      setSignUpForm({
-        name: "",
-        email: "",
-        phone: "",
-        password: "",
-        confirmPassword: "",
-        agreeTerms: false,
+    try {
+      await authService.register({
+        fullName: signUpForm.fullName,
+        email: signUpForm.email,
+        phoneNumber: signUpForm.phoneNumber,
+        gender: signUpForm.gender,
+        password: signUpForm.password,
       });
-      setSignUpSuccess("");
-    }, 2000);
+
+      setSignUpSuccess("Đăng ký thành công! Kiểm tra email để xác thực.");
+      setTimeout(() => setIsRightPanelActive(false), 1500);
+    } catch (err) {
+      setSignUpError(err?.message ?? "Đăng ký thất bại");
+    }
   };
 
-  const handleSignInSubmit = (e) => {
+  const handleSignInSubmit = async (e) => {
     e.preventDefault();
 
-    // Reset messages
-    setSignInError("");
-    setSignInSuccess("");
-
-    // Validation
-    if (!signInForm.email || !signInForm.password) {
-      setSignInError("Vui lòng nhập email và mật khẩu");
-      return;
-    }
-
-    // Simulate successful login
-    setSignInSuccess("Đăng nhập thành công! Đang chuyển hướng...");
-
-    setTimeout(() => {
-      // Redirect to main page
-      alert("Đăng nhập thành công! Sẽ chuyển về trang chủ.");
-      setSignInForm({
-        email: "",
-        password: "",
-        rememberMe: false,
+    try {
+      await authService.login({
+        email: signInForm.email,
+        password: signInForm.password,
       });
-      setSignInSuccess("");
-    }, 2000);
+
+      setSignInSuccess("Đăng nhập thành công!");
+      setTimeout(() => (window.location.href = "/"), 1000);
+    } catch (err) {
+      setSignInError(err?.message ?? "Đăng nhập thất bại");
+    }
   };
   return (
     <>
@@ -147,8 +128,8 @@ export default function AuthForm() {
             <input
               type="text"
               placeholder="Họ và tên"
-              name="name"
-              value={signUpForm.name}
+              name="fullName"
+              value={signUpForm.fullName}
               onChange={handleSignUpChange}
               required
             />
@@ -163,8 +144,8 @@ export default function AuthForm() {
             <input
               type="tel"
               placeholder="Số điện thoại"
-              name="phone"
-              value={signUpForm.phone}
+              name="phoneNumber"
+              value={signUpForm.phoneNumber}
               onChange={handleSignUpChange}
             />
             <input

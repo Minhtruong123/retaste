@@ -111,6 +111,12 @@
   color: var(--light-gray);
 }
 
+.navList a.active {
+  color: var(--primary-color);
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary-color);
+}
+
 .mobileMenuButton {
   display: none;
   background: none;

@@ -343,7 +343,6 @@ export default function PromotionPage() {
           </div>
         </section>
 
-        {/* Newsletter */}
         <section className="bg-teal-600 text-white py-16">
           <div className="max-w-3xl mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-6">Đừng bỏ lỡ ưu đãi mới!</h2>

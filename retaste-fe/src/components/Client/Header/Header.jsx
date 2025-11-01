@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Header.module.css";
+import { NavLink } from "react-router-dom";
 
 export default function Header() {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
@@ -16,9 +17,9 @@ export default function Header() {
       <header className={styles.header}>
         <div className={styles.container}>
           <div className={styles.headerTop}>
-            <a href="#" className={styles.logo}>
+            <NavLink to="/" className={styles.logo}>
               RE<span>TASTE</span>
-            </a>
+            </NavLink>
 
             <button
               className={styles.mobileMenuButton}
@@ -36,9 +37,9 @@ export default function Header() {
               <a href="#" className={styles.cartIcon}>
                 🛒 <span className={styles.cartCount}>3</span>
               </a>
-              <a href="#" className={styles.userIcon}>
+              <NavLink to="/auth" className={styles.userIcon}>
                 👤
-              </a>
+              </NavLink>
             </div>
           </div>
         </div>
@@ -51,39 +52,39 @@ export default function Header() {
           <div className={styles.container}>
             <ul className={styles.navList}>
               <li>
-                <a href="#" onClick={handleNavLinkClick}>
+                <NavLink to="/" onClick={handleNavLinkClick}>
                   Trang chủ
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" onClick={handleNavLinkClick}>
+                <NavLink to="/menu" onClick={handleNavLinkClick}>
                   Thực đơn
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" onClick={handleNavLinkClick}>
+                <NavLink to="/suggest" onClick={handleNavLinkClick}>
                   Món được gợi ý
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" onClick={handleNavLinkClick}>
+                <NavLink to="/combo" onClick={handleNavLinkClick}>
                   Combo
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" onClick={handleNavLinkClick}>
+                <NavLink to="/promotion" onClick={handleNavLinkClick}>
                   Khuyến mãi
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" onClick={handleNavLinkClick}>
+                <NavLink to="/about" onClick={handleNavLinkClick}>
                   Về chúng tôi
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a href="#" onClick={handleNavLinkClick}>
+                <NavLink to="/contact" onClick={handleNavLinkClick}>
                   Liên hệ
-                </a>
+                </NavLink>
               </li>
             </ul>
           </div>

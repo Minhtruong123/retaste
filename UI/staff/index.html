@@ -1,0 +1,2207 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RETASTE Staff - Trang quản lý nhân viên</title>
+    <style>
+      :root {
+        --primary: #ff6b35;
+        --primary-dark: #e85a2a;
+        --primary-light: #ff8a5c;
+        --secondary: #2a9d8f;
+        --secondary-dark: #1e7268;
+        --secondary-light: #40b3a2;
+        --success: #4caf50;
+        --success-light: #a5d6a7;
+        --warning: #ffc107;
+        --warning-light: #ffe082;
+        --danger: #f44336;
+        --danger-light: #ef9a9a;
+        --info: #2196f3;
+        --info-light: #90caf9;
+        --text: #333333;
+        --text-light: #666666;
+        --background: #f9f9f9;
+        --white: #ffffff;
+        --light-gray: #eeeeee;
+        --gray: #dddddd;
+        --dark-gray: #999999;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --border-radius: 8px;
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--light-gray);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--dark-gray);
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--secondary);
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: 260px;
+        background: linear-gradient(to bottom, #264653, #1d3540);
+        color: var(--white);
+        position: fixed;
+        height: 100vh;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        z-index: 10;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .sidebar-header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--white);
+        text-decoration: none;
+        transition: var(--transition);
+      }
+
+      .logo span {
+        color: var(--primary);
+      }
+
+      .logo:hover {
+        transform: scale(1.05);
+      }
+
+      .staff-info {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .staff-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        transition: var(--transition);
+      }
+
+      .staff-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .staff-details {
+        flex: 1;
+      }
+
+      .staff-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .staff-role {
+        font-size: 0.8rem;
+        color: var(--light-gray);
+        margin-bottom: 5px;
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.8rem;
+      }
+
+      .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--success);
+        box-shadow: 0 0 5px var(--success-light);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 5px rgba(76, 175, 80, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+        }
+      }
+
+      .menu-section {
+        padding: 20px 0;
+      }
+
+      .menu-title {
+        font-size: 0.8rem;
+        color: var(--dark-gray);
+        text-transform: uppercase;
+        padding: 0 20px 10px;
+        letter-spacing: 1px;
+      }
+
+      .menu-list {
+        list-style: none;
+      }
+
+      .menu-item {
+        margin-bottom: 5px;
+      }
+
+      .menu-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        text-decoration: none;
+        color: var(--white);
+        transition: var(--transition);
+        border-left: 3px solid transparent;
+      }
+
+      .menu-link:hover,
+      .menu-link.active {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: var(--primary);
+        border-left: 3px solid var(--primary);
+        transform: translateX(5px);
+      }
+
+      .menu-icon {
+        font-size: 1.2rem;
+        min-width: 25px;
+        text-align: center;
+        transition: var(--transition);
+      }
+
+      .menu-link:hover .menu-icon,
+      .menu-link.active .menu-icon {
+        transform: scale(1.2);
+      }
+
+      /* Main Content */
+      .main-content {
+        margin-left: 260px;
+        flex: 1;
+        padding: 20px;
+        transition: var(--transition);
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        background-color: var(--white);
+        padding: 15px 20px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--text);
+        position: relative;
+      }
+
+      .page-title:after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--primary);
+        border-radius: 3px;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .notification-btn,
+      .message-btn,
+      .profile-btn {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        color: var(--text-light);
+        cursor: pointer;
+        position: relative;
+        transition: var(--transition);
+      }
+
+      .notification-btn:hover,
+      .message-btn:hover,
+      .profile-btn:hover {
+        color: var(--primary);
+        transform: scale(1.1);
+      }
+
+      .notification-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: var(--primary);
+        color: var(--white);
+        font-size: 0.7rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: bounce 1s infinite alternate;
+      }
+
+      @keyframes bounce {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1.2);
+        }
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        background-color: var(--light-gray);
+        border-radius: 20px;
+        padding: 5px 15px;
+        transition: var(--transition);
+      }
+
+      .search-box:focus-within {
+        box-shadow: 0 0 0 2px var(--primary-light);
+      }
+
+      .search-box input {
+        background: none;
+        border: none;
+        outline: none;
+        padding: 5px;
+        font-size: 0.9rem;
+        width: 150px;
+        transition: var(--transition);
+      }
+
+      .search-box input:focus {
+        width: 180px;
+      }
+
+      .search-box button {
+        background: none;
+        border: none;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .search-box button:hover {
+        color: var(--primary);
+        transform: scale(1.1);
+      }
+
+      /* Dashboard Widgets */
+      .dashboard-widgets {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .widget {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: var(--transition);
+        border-left: 4px solid transparent;
+      }
+
+      .widget:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .widget:nth-child(1) {
+        border-left-color: var(--primary);
+      }
+
+      .widget:nth-child(2) {
+        border-left-color: var(--secondary);
+      }
+
+      .widget:nth-child(3) {
+        border-left-color: var(--success);
+      }
+
+      .widget:nth-child(4) {
+        border-left-color: var(--warning);
+      }
+
+      .widget-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--white);
+        transition: var(--transition);
+      }
+
+      .widget:hover .widget-icon {
+        transform: scale(1.1) rotate(10deg);
+      }
+
+      .widget-info {
+        flex: 1;
+      }
+
+      .widget-title {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        margin-bottom: 5px;
+      }
+
+      .widget-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--text);
+        margin-bottom: 5px;
+      }
+
+      .widget-change {
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .widget-change.positive {
+        color: var(--success);
+      }
+
+      .widget-change.negative {
+        color: var(--danger);
+      }
+
+      /* Calendar Section */
+      .section {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 30px;
+        overflow: hidden;
+        transition: var(--transition);
+        scroll-margin-top: 20px;
+      }
+
+      .section:hover {
+        box-shadow: var(--shadow-lg);
+      }
+
+      .section-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--light-gray);
+        background-color: rgba(42, 157, 143, 0.05);
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .section-title::before {
+        content: "│";
+        color: var(--secondary);
+        font-weight: bold;
+        font-size: 1.5rem;
+      }
+
+      .section-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .action-button {
+        background-color: var(--light-gray);
+        border: none;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .action-button.primary {
+        background-color: var(--primary);
+        color: var(--white);
+      }
+
+      .action-button.primary:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .section-content {
+        padding: 20px;
+      }
+
+      /* Calendar */
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .calendar-month {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--text);
+      }
+
+      .calendar-nav {
+        display: flex;
+        gap: 10px;
+      }
+
+      .calendar-nav button {
+        background: none;
+        border: 1px solid var(--gray);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+      }
+
+      .calendar-nav button:hover {
+        background-color: var(--light-gray);
+        transform: scale(1.1);
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 10px;
+      }
+
+      .calendar-weekday {
+        text-align: center;
+        font-weight: 500;
+        color: var(--text-light);
+        padding-bottom: 10px;
+      }
+
+      .calendar-day {
+        height: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+        border: 1px solid transparent;
+      }
+
+      .calendar-day:hover {
+        background-color: var(--light-gray);
+        transform: scale(1.05);
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .calendar-day.today {
+        background-color: var(--primary-light);
+        color: var(--white);
+        font-weight: bold;
+      }
+
+      .calendar-day.scheduled {
+        color: var(--white);
+        background-color: var(--secondary);
+      }
+
+      .calendar-day.requested {
+        color: var(--white);
+        background-color: var(--warning);
+      }
+
+      .calendar-day.other-month {
+        color: var(--dark-gray);
+      }
+
+      .day-details {
+        font-size: 0.7rem;
+        margin-top: 2px;
+        text-align: center;
+      }
+
+      .hours-worked {
+        position: absolute;
+        bottom: 2px;
+        font-size: 0.6rem;
+        font-weight: bold;
+      }
+
+      /* Upcoming Shifts */
+      .shifts-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .shift-card {
+        display: flex;
+        align-items: center;
+        background-color: var(--light-gray);
+        border-radius: var(--border-radius);
+        padding: 15px;
+        transition: var(--transition);
+        border-left: 4px solid var(--secondary);
+      }
+
+      .shift-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+      }
+
+      .shift-date {
+        width: 70px;
+        text-align: center;
+        padding-right: 15px;
+        border-right: 1px solid var(--gray);
+      }
+
+      .shift-day {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--text);
+      }
+
+      .shift-month {
+        font-size: 0.8rem;
+        color: var(--text-light);
+      }
+
+      .shift-info {
+        flex: 1;
+        padding: 0 15px;
+      }
+
+      .shift-time {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .shift-hours {
+        font-size: 0.8rem;
+        background-color: var(--secondary-light);
+        color: var(--white);
+        padding: 2px 8px;
+        border-radius: 10px;
+        margin-left: 5px;
+      }
+
+      .shift-position {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        margin-bottom: 5px;
+      }
+
+      .shift-wage {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--primary-dark);
+      }
+
+      .shift-status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+
+      .shift-status.confirmed {
+        background-color: rgba(76, 175, 80, 0.1);
+        color: var(--success);
+      }
+
+      .shift-status.pending {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: var(--warning);
+      }
+
+      /* Order Management */
+      .orders-header {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+
+      .order-filter {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        border: 1px solid var(--gray);
+        background-color: var(--white);
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .order-filter:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .order-filter.active {
+        background-color: var(--primary);
+        color: var(--white);
+        border-color: var(--primary);
+      }
+
+      .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .orders-table th,
+      .orders-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .orders-table th {
+        font-weight: 600;
+        color: var(--text-light);
+        background-color: var(--light-gray);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      .orders-table tbody tr {
+        transition: var(--transition);
+      }
+
+      .orders-table tbody tr:hover {
+        background-color: rgba(42, 157, 143, 0.05);
+      }
+
+      .order-id {
+        font-weight: bold;
+        color: var(--primary);
+      }
+
+      .order-time {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .order-status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-align: center;
+        display: inline-block;
+        font-weight: 500;
+      }
+
+      .order-status.new {
+        background-color: rgba(33, 150, 243, 0.1);
+        color: var(--info);
+      }
+
+      .order-status.preparing {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: var(--warning);
+      }
+
+      .order-status.ready {
+        background-color: rgba(76, 175, 80, 0.1);
+        color: var(--success);
+      }
+
+      .order-status.delivered {
+        background-color: rgba(158, 158, 158, 0.1);
+        color: var(--dark-gray);
+      }
+
+      .order-customer {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .customer-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: var(--secondary);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .order-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .order-btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: var(--transition);
+      }
+
+      .order-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .order-btn.view {
+        background-color: var(--light-gray);
+        color: var(--text);
+      }
+
+      .order-btn.view:hover {
+        background-color: var(--gray);
+      }
+
+      .order-btn.process {
+        background-color: var(--secondary);
+        color: var(--white);
+      }
+
+      .order-btn.process:hover {
+        background-color: var(--secondary-dark);
+      }
+
+      /* Communication Section */
+      .communication-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .tab-link {
+        padding: 15px 20px;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: var(--transition);
+        font-weight: 500;
+      }
+
+      .tab-link:hover {
+        background-color: var(--light-gray);
+      }
+
+      .tab-link.active {
+        border-bottom-color: var(--primary);
+        color: var(--primary);
+        font-weight: bold;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 20px;
+      }
+
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      /* Messages */
+      .message-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      .message {
+        display: flex;
+        gap: 15px;
+        max-width: 80%;
+      }
+
+      .message.incoming {
+        align-self: flex-start;
+      }
+
+      .message.outgoing {
+        flex-direction: row-reverse;
+        align-self: flex-end;
+      }
+
+      .message-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--secondary);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+
+      .message-bubble {
+        padding: 12px 15px;
+        border-radius: 18px;
+        position: relative;
+        transition: var(--transition);
+      }
+
+      .message.incoming .message-bubble {
+        background-color: var(--light-gray);
+        border-bottom-left-radius: 5px;
+      }
+
+      .message.outgoing .message-bubble {
+        background-color: var(--secondary);
+        color: var(--white);
+        border-bottom-right-radius: 5px;
+      }
+
+      .message-text {
+        margin-bottom: 5px;
+      }
+
+      .message-time {
+        text-align: right;
+        font-size: 0.8rem;
+        opacity: 0.7;
+      }
+
+      .message-input {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .message-input textarea {
+        flex: 1;
+        padding: 12px 15px;
+        border: 1px solid var(--gray);
+        border-radius: 25px;
+        outline: none;
+        resize: none;
+        height: 50px;
+        font-size: 0.9rem;
+        transition: var(--transition);
+      }
+
+      .message-input textarea:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
+      }
+
+      .message-input button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .message-input button:hover {
+        background-color: var(--primary-dark);
+        transform: rotate(15deg);
+      }
+
+      /* Feedback Form */
+      .feedback-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-group label {
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: var(--text);
+      }
+
+      .form-control {
+        padding: 10px 15px;
+        border: 1px solid var(--gray);
+        border-radius: 5px;
+        font-size: 0.9rem;
+        outline: none;
+        transition: var(--transition);
+      }
+
+      .form-control:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
+      }
+
+      textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .submit-btn {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 12px;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .submit-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Earnings Information */
+      .earnings-info {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        padding: 15px;
+        border-left: 4px solid var(--primary);
+        margin-bottom: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .earnings-detail {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .earnings-label {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        margin-bottom: 5px;
+      }
+
+      .earnings-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--text);
+      }
+
+      .earnings-period {
+        display: inline-block;
+        font-size: 0.8rem;
+        color: var(--text-light);
+        margin-left: 5px;
+        font-weight: normal;
+      }
+
+      .progress-container {
+        width: 100%;
+        background-color: var(--light-gray);
+        border-radius: 5px;
+        height: 8px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        background-color: var(--primary);
+        width: 65%;
+      }
+
+      /* Work History */
+      .work-history {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .history-date {
+        font-weight: 500;
+      }
+
+      .history-details {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      .history-hours {
+        font-weight: 500;
+        color: var(--secondary);
+      }
+
+      .history-wage {
+        font-size: 0.9rem;
+        color: var(--primary);
+      }
+
+      /* Mobile Responsiveness */
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 80px;
+        }
+
+        .sidebar-header,
+        .staff-info {
+          justify-content: center;
+          padding: 15px 10px;
+        }
+
+        .logo span,
+        .staff-details,
+        .menu-text {
+          display: none;
+        }
+
+        .menu-link {
+          justify-content: center;
+          padding: 15px;
+        }
+
+        .menu-title {
+          text-align: center;
+          padding: 10px 0;
+        }
+
+        .main-content {
+          margin-left: 80px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-widgets {
+          grid-template-columns: 1fr;
+        }
+
+        .header {
+          flex-direction: column;
+          gap: 15px;
+          align-items: flex-start;
+        }
+
+        .header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .search-box {
+          width: 100%;
+          max-width: 300px;
+        }
+
+        .orders-table {
+          overflow-x: auto;
+          display: block;
+          white-space: nowrap;
+        }
+
+        .section-header {
+          flex-direction: column;
+          gap: 10px;
+          align-items: flex-start;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .sidebar {
+          width: 0;
+          overflow: hidden;
+        }
+
+        .sidebar.active {
+          width: 260px;
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+
+        .mobile-toggle {
+          display: flex !important;
+        }
+
+        .message {
+          max-width: 90%;
+        }
+
+        .earnings-info {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .earnings-detail {
+          width: 100%;
+        }
+      }
+
+      /* Mobile Menu Toggle */
+      .mobile-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 1.5rem;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+
+      /* Sidebar Overlay */
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 5;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      /* Back to top button */
+      .back-to-top {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        background-color: var(--primary);
+        color: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+        opacity: 0;
+        transition: var(--transition);
+        z-index: 99;
+      }
+
+      .back-to-top.visible {
+        opacity: 1;
+      }
+
+      .back-to-top:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-3px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="logo">RE<span>TASTE</span></a>
+      </div>
+
+      <div class="staff-info">
+        <div class="staff-avatar">NT</div>
+        <div class="staff-details">
+          <div class="staff-name">Nguyễn Thế</div>
+          <div class="staff-role">Phục vụ</div>
+          <div class="status">
+            <span class="status-indicator"></span>
+            <span>Đang làm việc</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-section">
+        <h3 class="menu-title">Chính</h3>
+        <ul class="menu-list">
+          <li class="menu-item">
+            <a href="#dashboard" class="menu-link active">
+              <span class="menu-icon">📊</span>
+              <span class="menu-text">Dashboard</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#schedule" class="menu-link">
+              <span class="menu-icon">📅</span>
+              <span class="menu-text">Lịch làm việc</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#orders" class="menu-link">
+              <span class="menu-icon">🛒</span>
+              <span class="menu-text">Đơn hàng</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="menu-section">
+        <h3 class="menu-title">Liên lạc</h3>
+        <ul class="menu-list">
+          <li class="menu-item">
+            <a href="#communications" class="menu-link">
+              <span class="menu-icon">💬</span>
+              <span class="menu-text">Nhắn tin</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#feedback" class="menu-link">
+              <span class="menu-icon">📝</span>
+              <span class="menu-text">Góp ý</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="menu-section">
+        <h3 class="menu-title">Khác</h3>
+        <ul class="menu-list">
+          <li class="menu-item">
+            <a href="#profile" class="menu-link">
+              <span class="menu-icon">👤</span>
+              <span class="menu-text">Hồ sơ</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#settings" class="menu-link">
+              <span class="menu-icon">⚙️</span>
+              <span class="menu-text">Cài đặt</span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#logout" class="menu-link">
+              <span class="menu-icon">🚪</span>
+              <span class="menu-text">Đăng xuất</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <button class="mobile-toggle">☰</button>
+        <h1 class="page-title">Dashboard</h1>
+        <div class="header-actions">
+          <div class="search-box">
+            <input type="text" placeholder="Tìm kiếm..." />
+            <button>🔍</button>
+          </div>
+          <button class="notification-btn">
+            🔔
+            <span class="notification-count">3</span>
+          </button>
+          <button class="message-btn">💬</button>
+          <button class="profile-btn">👤</button>
+        </div>
+      </div>
+
+      <!-- Dashboard Widgets -->
+      <div id="dashboard" class="dashboard-widgets">
+        <div class="widget">
+          <div class="widget-icon" style="background-color: var(--primary)">
+            ⏱️
+          </div>
+          <div class="widget-info">
+            <div class="widget-title">Giờ làm việc tháng này</div>
+            <div class="widget-value">128</div>
+            <div class="widget-change positive">↑ 8% so với tháng trước</div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-icon" style="background-color: var(--secondary)">
+            🛒
+          </div>
+          <div class="widget-info">
+            <div class="widget-title">Đơn hàng phục vụ</div>
+            <div class="widget-value">47</div>
+            <div class="widget-change positive">↑ 12% so với tuần trước</div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-icon" style="background-color: var(--success)">
+            ⭐
+          </div>
+          <div class="widget-info">
+            <div class="widget-title">Đánh giá dịch vụ</div>
+            <div class="widget-value">4.8</div>
+            <div class="widget-change positive">↑ 0.2 so với tháng trước</div>
+          </div>
+        </div>
+
+        <div class="widget">
+          <div class="widget-icon" style="background-color: var(--warning)">
+            💰
+          </div>
+          <div class="widget-info">
+            <div class="widget-title">Tiền thưởng dự kiến</div>
+            <div class="widget-value">850.000 ₫</div>
+            <div class="widget-change positive">↑ 15% so với tháng trước</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Earnings Information -->
+      <div class="earnings-info">
+        <div class="earnings-detail">
+          <div class="earnings-label">Lương hiện tại</div>
+          <div class="earnings-value">
+            3.850.000 ₫ <span class="earnings-period">Tháng 11/2025</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar"></div>
+          </div>
+        </div>
+        <div class="earnings-detail">
+          <div class="earnings-label">Lương theo giờ</div>
+          <div class="earnings-value">35.000 ₫/giờ</div>
+        </div>
+        <div class="earnings-detail">
+          <div class="earnings-label">Tổng giờ làm (tháng)</div>
+          <div class="earnings-value">110/168 giờ</div>
+        </div>
+      </div>
+
+      <!-- Work Schedule -->
+      <div id="schedule" class="section">
+        <div class="section-header">
+          <h2 class="section-title">Lịch làm việc</h2>
+          <div class="section-actions">
+            <button class="action-button" id="history-btn">Lịch đã làm</button>
+            <button class="action-button primary" id="register-btn">
+              Đăng ký lịch
+            </button>
+          </div>
+        </div>
+
+        <div class="section-content">
+          <div class="calendar-header">
+            <div class="calendar-month">Tháng 11, 2025</div>
+            <div class="calendar-nav">
+              <button>←</button>
+              <button>→</button>
+            </div>
+          </div>
+
+          <div class="calendar-grid">
+            <div class="calendar-weekday">CN</div>
+            <div class="calendar-weekday">T2</div>
+            <div class="calendar-weekday">T3</div>
+            <div class="calendar-weekday">T4</div>
+            <div class="calendar-weekday">T5</div>
+            <div class="calendar-weekday">T6</div>
+            <div class="calendar-weekday">T7</div>
+
+            <div class="calendar-day other-month">29</div>
+            <div class="calendar-day other-month">30</div>
+            <div class="calendar-day other-month">31</div>
+            <div class="calendar-day scheduled">
+              1
+              <div class="day-details">8:00-14:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">2</div>
+            <div class="calendar-day scheduled">
+              3
+              <div class="day-details">17:00-23:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">4</div>
+
+            <div class="calendar-day">5</div>
+            <div class="calendar-day scheduled">
+              6
+              <div class="day-details">8:00-14:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">7</div>
+            <div class="calendar-day">8</div>
+            <div class="calendar-day scheduled">
+              9
+              <div class="day-details">17:00-23:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">10</div>
+            <div class="calendar-day">11</div>
+
+            <div class="calendar-day">12</div>
+            <div class="calendar-day scheduled">
+              13
+              <div class="day-details">8:00-14:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">14</div>
+            <div class="calendar-day scheduled">
+              15
+              <div class="day-details">17:00-23:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">16</div>
+            <div class="calendar-day scheduled">
+              17
+              <div class="day-details">8:00-14:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">18</div>
+
+            <div class="calendar-day">19</div>
+            <div class="calendar-day scheduled">
+              20
+              <div class="day-details">17:00-23:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">21</div>
+            <div class="calendar-day scheduled">
+              22
+              <div class="day-details">8:00-14:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">23</div>
+            <div class="calendar-day scheduled">
+              24
+              <div class="day-details">17:00-23:00</div>
+              <div class="hours-worked">6h</div>
+            </div>
+            <div class="calendar-day">25</div>
+
+            <div class="calendar-day">26</div>
+            <div class="calendar-day">27</div>
+            <div class="calendar-day requested">
+              28
+              <div class="day-details">8:00-14:00</div>
+            </div>
+            <div class="calendar-day requested">
+              29
+              <div class="day-details">17:00-23:00</div>
+            </div>
+            <div class="calendar-day requested">
+              30
+              <div class="day-details">8:00-14:00</div>
+            </div>
+            <div class="calendar-day other-month">1</div>
+            <div class="calendar-day other-month">2</div>
+          </div>
+        </div>
+
+        <!-- Work History -->
+        <div
+          class="section-content work-history"
+          id="work-history"
+          style="display: none"
+        >
+          <h3 style="margin-bottom: 15px">Lịch sử làm việc</h3>
+          <div class="history-item">
+            <div class="history-date">01/11/2025</div>
+            <div class="history-details">
+              <div class="history-hours">6 giờ (8:00 - 14:00)</div>
+              <div class="history-wage">210.000 ₫</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-date">03/11/2025</div>
+            <div class="history-details">
+              <div class="history-hours">6 giờ (17:00 - 23:00)</div>
+              <div class="history-wage">210.000 ₫</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-date">06/11/2025</div>
+            <div class="history-details">
+              <div class="history-hours">6 giờ (8:00 - 14:00)</div>
+              <div class="history-wage">210.000 ₫</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-date">09/11/2025</div>
+            <div class="history-details">
+              <div class="history-hours">6 giờ (17:00 - 23:00)</div>
+              <div class="history-wage">210.000 ₫</div>
+            </div>
+          </div>
+          <div class="history-item">
+            <div class="history-date">13/11/2025</div>
+            <div class="history-details">
+              <div class="history-hours">6 giờ (8:00 - 14:00)</div>
+              <div class="history-wage">210.000 ₫</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Shifts -->
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">Ca làm việc sắp tới</h2>
+          <div class="section-actions">
+            <button class="action-button">Xem tất cả</button>
+          </div>
+        </div>
+
+        <div class="section-content">
+          <div class="shifts-list">
+            <div class="shift-card">
+              <div class="shift-date">
+                <div class="shift-day">03</div>
+                <div class="shift-month">Tháng 11</div>
+              </div>
+              <div class="shift-info">
+                <div class="shift-time">
+                  Ca sáng (8:00 - 14:00) <span class="shift-hours">6 giờ</span>
+                </div>
+                <div class="shift-position">Phục vụ - Khu vực A</div>
+                <div class="shift-wage">Lương: 210.000 đ</div>
+              </div>
+              <div class="shift-status confirmed">Đã xác nhận</div>
+            </div>
+
+            <div class="shift-card">
+              <div class="shift-date">
+                <div class="shift-day">06</div>
+                <div class="shift-month">Tháng 11</div>
+              </div>
+              <div class="shift-info">
+                <div class="shift-time">
+                  Ca tối (17:00 - 23:00) <span class="shift-hours">6 giờ</span>
+                </div>
+                <div class="shift-position">Phục vụ - Khu vực B</div>
+                <div class="shift-wage">Lương: 210.000 đ</div>
+              </div>
+              <div class="shift-status confirmed">Đã xác nhận</div>
+            </div>
+
+            <div class="shift-card">
+              <div class="shift-date">
+                <div class="shift-day">09</div>
+                <div class="shift-month">Tháng 11</div>
+              </div>
+              <div class="shift-info">
+                <div class="shift-time">
+                  Ca sáng (8:00 - 14:00) <span class="shift-hours">6 giờ</span>
+                </div>
+                <div class="shift-position">Thu ngân</div>
+                <div class="shift-wage">Lương: 210.000 đ</div>
+              </div>
+              <div class="shift-status confirmed">Đã xác nhận</div>
+            </div>
+
+            <div class="shift-card">
+              <div class="shift-date">
+                <div class="shift-day">28</div>
+                <div class="shift-month">Tháng 11</div>
+              </div>
+              <div class="shift-info">
+                <div class="shift-time">
+                  Ca sáng (8:00 - 14:00) <span class="shift-hours">6 giờ</span>
+                </div>
+                <div class="shift-position">Phục vụ - Khu vực A</div>
+                <div class="shift-wage">Lương (dự kiến): 210.000 đ</div>
+              </div>
+              <div class="shift-status pending">Chờ duyệt</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Management -->
+      <div id="orders" class="section">
+        <div class="section-header">
+          <h2 class="section-title">Quản lý đơn hàng</h2>
+          <div class="section-actions">
+            <button class="action-button">Làm mới</button>
+          </div>
+        </div>
+
+        <div class="section-content">
+          <div class="orders-header">
+            <button class="order-filter active">Tất cả</button>
+            <button class="order-filter">Mới</button>
+            <button class="order-filter">Đang chuẩn bị</button>
+            <button class="order-filter">Sẵn sàng giao</button>
+            <button class="order-filter">Đã giao</button>
+          </div>
+
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Mã đơn</th>
+                <th>Thời gian</th>
+                <th>Khách hàng</th>
+                <th>Số món</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="order-id">#ORD-2567</td>
+                <td class="order-time">15 phút trước</td>
+                <td>
+                  <div class="order-customer">
+                    <div class="customer-avatar">TH</div>
+                    <div>Trần Huyền</div>
+                  </div>
+                </td>
+                <td>3</td>
+                <td>245.000 ₫</td>
+                <td>
+                  <span class="order-status new">Mới</span>
+                </td>
+                <td>
+                  <div class="order-actions">
+                    <button class="order-btn view">Xem</button>
+                    <button class="order-btn process">Xử lý</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="order-id">#ORD-2566</td>
+                <td class="order-time">25 phút trước</td>
+                <td>
+                  <div class="order-customer">
+                    <div class="customer-avatar">NM</div>
+                    <div>Nguyễn Minh</div>
+                  </div>
+                </td>
+                <td>2</td>
+                <td>178.000 ₫</td>
+                <td>
+                  <span class="order-status preparing">Đang chuẩn bị</span>
+                </td>
+                <td>
+                  <div class="order-actions">
+                    <button class="order-btn view">Xem</button>
+                    <button class="order-btn process">Xử lý</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="order-id">#ORD-2565</td>
+                <td class="order-time">45 phút trước</td>
+                <td>
+                  <div class="order-customer">
+                    <div class="customer-avatar">PT</div>
+                    <div>Phạm Thảo</div>
+                  </div>
+                </td>
+                <td>5</td>
+                <td>420.000 ₫</td>
+                <td>
+                  <span class="order-status ready">Sẵn sàng giao</span>
+                </td>
+                <td>
+                  <div class="order-actions">
+                    <button class="order-btn view">Xem</button>
+                    <button class="order-btn process">Xử lý</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="order-id">#ORD-2564</td>
+                <td class="order-time">1 giờ trước</td>
+                <td>
+                  <div class="order-customer">
+                    <div class="customer-avatar">HL</div>
+                    <div>Hoàng Long</div>
+                  </div>
+                </td>
+                <td>1</td>
+                <td>69.000 ₫</td>
+                <td>
+                  <span class="order-status delivered">Đã giao</span>
+                </td>
+                <td>
+                  <div class="order-actions">
+                    <button class="order-btn view">Xem</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="order-id">#ORD-2563</td>
+                <td class="order-time">2 giờ trước</td>
+                <td>
+                  <div class="order-customer">
+                    <div class="customer-avatar">VP</div>
+                    <div>Vũ Phương</div>
+                  </div>
+                </td>
+                <td>4</td>
+                <td>325.000 ₫</td>
+                <td>
+                  <span class="order-status delivered">Đã giao</span>
+                </td>
+                <td>
+                  <div class="order-actions">
+                    <button class="order-btn view">Xem</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Communication Section -->
+      <div id="communications" class="section">
+        <div class="section-header">
+          <h2 class="section-title">Liên lạc</h2>
+        </div>
+
+        <div class="communication-tabs">
+          <div class="tab-link active" data-tab="messages">Tin nhắn</div>
+          <div class="tab-link" data-tab="feedback">Góp ý</div>
+        </div>
+
+        <div class="tab-content active" id="messages">
+          <div class="message-list">
+            <div class="message incoming">
+              <div class="message-avatar">QT</div>
+              <div class="message-bubble">
+                <div class="message-text">
+                  Chào Thế, tuần sau chúng ta sẽ có một nhóm khách VIP vào thứ
+                  5. Bạn có thể xắp xếp lịch để phục vụ không?
+                </div>
+                <div class="message-time">10:30 AM</div>
+              </div>
+            </div>
+
+            <div class="message outgoing">
+              <div class="message-avatar">NT</div>
+              <div class="message-bubble">
+                <div class="message-text">
+                  Chào anh, em đã xem lịch và có thể sắp xếp được. Em sẽ có mặt
+                  vào thứ 5 tuần sau.
+                </div>
+                <div class="message-time">10:35 AM</div>
+              </div>
+            </div>
+
+            <div class="message incoming">
+              <div class="message-avatar">QT</div>
+              <div class="message-bubble">
+                <div class="message-text">
+                  Tuyệt vời! Cảm ơn bạn. Chúng ta sẽ có cuộc họp nhanh vào sáng
+                  thứ 5 để chuẩn bị nhé.
+                </div>
+                <div class="message-time">10:40 AM</div>
+              </div>
+            </div>
+
+            <div class="message outgoing">
+              <div class="message-avatar">NT</div>
+              <div class="message-bubble">
+                <div class="message-text">
+                  Vâng ạ, em sẽ có mặt sớm vào buổi họp. Em cũng muốn hỏi về
+                  đồng phục mới, mình sẽ bắt đầu sử dụng từ khi nào ạ?
+                </div>
+                <div class="message-time">10:45 AM</div>
+              </div>
+            </div>
+
+            <div class="message incoming">
+              <div class="message-avatar">QT</div>
+              <div class="message-bubble">
+                <div class="message-text">
+                  Đồng phục mới sẽ được phát vào đầu tháng sau. Tôi sẽ thông báo
+                  chi tiết trong cuộc họp nhân viên vào tuần tới.
+                </div>
+                <div class="message-time">10:50 AM</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="message-input">
+            <textarea placeholder="Nhập tin nhắn..."></textarea>
+            <button>📤</button>
+          </div>
+        </div>
+
+        <div class="tab-content" id="feedback">
+          <form class="feedback-form">
+            <div class="form-group">
+              <label for="feedback-subject">Tiêu đề</label>
+              <input
+                type="text"
+                id="feedback-subject"
+                class="form-control"
+                placeholder="Nhập tiêu đề góp ý"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="feedback-type">Loại góp ý</label>
+              <select id="feedback-type" class="form-control">
+                <option value="">Chọn loại góp ý</option>
+                <option value="suggestion">Đề xuất cải thiện</option>
+                <option value="issue">Vấn đề gặp phải</option>
+                <option value="compliment">Khen ngợi</option>
+                <option value="other">Khác</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="feedback-message">Nội dung</label>
+              <textarea
+                id="feedback-message"
+                class="form-control"
+                placeholder="Chia sẻ ý kiến của bạn..."
+              ></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Gửi góp ý</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Back to top button -->
+      <div class="back-to-top" id="backToTop">↑</div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Mobile menu toggle
+        const mobileToggle = document.querySelector(".mobile-toggle");
+        const sidebar = document.querySelector(".sidebar");
+        const sidebarOverlay = document.querySelector(".sidebar-overlay");
+        const mainContent = document.querySelector(".main-content");
+
+        if (mobileToggle) {
+          mobileToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("active");
+            sidebarOverlay.style.display = sidebar.classList.contains("active")
+              ? "block"
+              : "none";
+          });
+        }
+
+        if (sidebarOverlay) {
+          sidebarOverlay.addEventListener("click", function () {
+            sidebar.classList.remove("active");
+            sidebarOverlay.style.display = "none";
+          });
+        }
+
+        // Menu links
+        const menuLinks = document.querySelectorAll(".menu-link");
+        menuLinks.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            // Remove active class from all links
+            menuLinks.forEach((item) => item.classList.remove("active"));
+
+            // Add active class to clicked link
+            this.classList.add("active");
+
+            if (window.innerWidth <= 576) {
+              sidebar.classList.remove("active");
+              sidebarOverlay.style.display = "none";
+            }
+
+            // Change page title based on the clicked menu
+            const menuText = this.querySelector(".menu-text").textContent;
+            document.querySelector(".page-title").textContent = menuText;
+          });
+        });
+
+        // Communication tabs
+        const tabLinks = document.querySelectorAll(".tab-link");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabLinks.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            const tabId = this.getAttribute("data-tab");
+
+            // Remove active class from all tabs and contents
+            tabLinks.forEach((item) => item.classList.remove("active"));
+            tabContents.forEach((item) => item.classList.remove("active"));
+
+            // Add active class to clicked tab and corresponding content
+            this.classList.add("active");
+            document.getElementById(tabId).classList.add("active");
+          });
+        });
+
+        // Calendar day click
+        const calendarDays = document.querySelectorAll(".calendar-day");
+        calendarDays.forEach((day) => {
+          day.addEventListener("click", function () {
+            const isOtherMonth = this.classList.contains("other-month");
+            if (!isOtherMonth) {
+              this.classList.toggle("requested");
+
+              // If toggling to requested, add details
+              if (
+                this.classList.contains("requested") &&
+                !this.querySelector(".day-details")
+              ) {
+                const timeSlots = ["8:00-14:00", "17:00-23:00"];
+                const randomSlot =
+                  timeSlots[Math.floor(Math.random() * timeSlots.length)];
+
+                // Create day details if doesn't exist
+                if (!this.querySelector(".day-details")) {
+                  const details = document.createElement("div");
+                  details.className = "day-details";
+                  details.textContent = randomSlot;
+                  this.appendChild(details);
+                }
+              }
+            }
+          });
+        });
+
+        // Order filters
+        const orderFilters = document.querySelectorAll(".order-filter");
+        orderFilters.forEach((filter) => {
+          filter.addEventListener("click", function () {
+            orderFilters.forEach((item) => item.classList.remove("active"));
+            this.classList.add("active");
+          });
+        });
+
+        // Send message functionality
+        const messageInput = document.querySelector(".message-input textarea");
+        const sendButton = document.querySelector(".message-input button");
+        const messageList = document.querySelector(".message-list");
+
+        if (sendButton && messageInput) {
+          sendButton.addEventListener("click", function () {
+            const message = messageInput.value.trim();
+            if (message) {
+              const time = new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              const messageHTML = `
+              <div class="message outgoing fade-in">
+                <div class="message-avatar">NT</div>
+                <div class="message-bubble">
+                  <div class="message-text">${message}</div>
+                  <div class="message-time">${time}</div>
+                </div>
+              </div>
+            `;
+              messageList.insertAdjacentHTML("beforeend", messageHTML);
+              messageInput.value = "";
+              messageList.scrollTop = messageList.scrollHeight;
+            }
+          });
+
+          messageInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendButton.click();
+            }
+          });
+        }
+
+        // Submit feedback form
+        const feedbackForm = document.querySelector(".feedback-form");
+        if (feedbackForm) {
+          feedbackForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const subject = document.getElementById("feedback-subject").value;
+            const message = document.getElementById("feedback-message").value;
+
+            if (subject && message) {
+              alert("Cảm ơn bạn đã gửi góp ý!");
+              this.reset();
+            } else {
+              alert("Vui lòng điền đầy đủ thông tin");
+            }
+          });
+        }
+
+        // Process order
+        const processButtons = document.querySelectorAll(".order-btn.process");
+        processButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const row = this.closest("tr");
+            const statusCell = row.querySelector(".order-status");
+            const currentStatus = statusCell.textContent.trim();
+
+            if (currentStatus === "Mới") {
+              statusCell.className = "order-status preparing";
+              statusCell.textContent = "Đang chuẩn bị";
+            } else if (currentStatus === "Đang chuẩn bị") {
+              statusCell.className = "order-status ready";
+              statusCell.textContent = "Sẵn sàng giao";
+            } else if (currentStatus === "Sẵn sàng giao") {
+              statusCell.className = "order-status delivered";
+              statusCell.textContent = "Đã giao";
+              this.style.display = "none";
+            }
+          });
+        });
+
+        // Work history toggle
+        const historyBtn = document.getElementById("history-btn");
+        const registerBtn = document.getElementById("register-btn");
+        const calendarContent =
+          document.querySelector(".calendar-header").parentNode;
+        const workHistory = document.getElementById("work-history");
+
+        historyBtn.addEventListener("click", function () {
+          calendarContent.style.display = "none";
+          workHistory.style.display = "block";
+          historyBtn.classList.add("primary");
+          registerBtn.classList.remove("primary");
+        });
+
+        registerBtn.addEventListener("click", function () {
+          calendarContent.style.display = "block";
+          workHistory.style.display = "none";
+          historyBtn.classList.remove("primary");
+          registerBtn.classList.add("primary");
+        });
+
+        // Back to top button
+        const backToTopBtn = document.getElementById("backToTop");
+
+        window.addEventListener("scroll", function () {
+          if (window.pageYOffset > 300) {
+            backToTopBtn.classList.add("visible");
+          } else {
+            backToTopBtn.classList.remove("visible");
+          }
+        });
+
+        backToTopBtn.addEventListener("click", function () {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
