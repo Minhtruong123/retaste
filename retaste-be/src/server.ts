@@ -6,7 +6,7 @@ import morgan from 'morgan';
 import env from './configs/environments';
 import cors from 'cors';
 import corsOptions from './configs/cors';
-import database from './configs/database';
+import './configs/database';
 import { errorHandling } from './middlewares/errorsHandle.middleware';
 import { indexRoute } from './routers';
 import { connectRedis } from './configs/redis';
@@ -30,7 +30,6 @@ app.get('/', (req, res) => {
 });
 // database
 connectRedis();
-database();
 
 app.listen(env.APP_PORT, env.APP_HOST, () => {
   console.log(`App is running on http://${env.APP_HOST}:${env.APP_PORT} !`);

@@ -18,7 +18,6 @@ const streamUpload = (fileBuffer: Buffer, folderName: string) => {
         else resolve(result);
       }
     );
-    // thực hiện upload cái luồng trên lib streamifierstreamifier
     streamifier.createReadStream(fileBuffer).pipe(stream);
   });
 };

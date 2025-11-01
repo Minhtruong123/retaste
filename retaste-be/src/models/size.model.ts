@@ -13,7 +13,7 @@ export interface ISize {
   createdAt?: Date;
   updatedAt?: Date;
 }
-const customizationGroupSchema = new Schema<ISize>(
+const sizeSchema = new Schema<ISize>(
   {
     productId: { type: Schema.Types.ObjectId, ref: DOCUMENT_PRODUCT, required: true },
     sizeName: { type: String, required: true },
@@ -27,6 +27,13 @@ const customizationGroupSchema = new Schema<ISize>(
     timestamps: true
   }
 );
+sizeSchema.index({ productId: 1 });
+sizeSchema.index({ isDeleted: 1 });
 
-const Size = model<ISize>(DOCUMENT_SIZE, customizationGroupSchema);
+const Size = model<ISize>(DOCUMENT_SIZE, sizeSchema);
+
+export const sizeModel = {
+  COLLECTION_NAME,
+  DOCUMENT_SIZE
+};
 export default Size;

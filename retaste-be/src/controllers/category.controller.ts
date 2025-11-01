@@ -15,7 +15,7 @@ class CategoryController {
   };
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!req.params.productId) {
+      if (!req.params.id) {
         throw new BAD_REQUEST('Invalid request !');
       }
       new OK({
@@ -37,11 +37,11 @@ class CategoryController {
   };
   deleteById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!req.params.productId) {
+      if (!req.params.id) {
         throw new BAD_REQUEST('Invalid request !');
       }
       new OK({
-        metadata: await CategoryService.delete(req.params.productId)
+        metadata: await CategoryService.delete(req.params.id)
       }).send(res);
     } catch (error) {
       next(error);
@@ -49,11 +49,11 @@ class CategoryController {
   };
   getDetail = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!req.params.productId) {
+      if (!req.params.id) {
         throw new BAD_REQUEST('Invalid request !');
       }
       new OK({
-        metadata: await CategoryService.getDetail(req.params.productId)
+        metadata: await CategoryService.getDetail(req.params.id)
       }).send(res);
     } catch (error) {
       next(error);

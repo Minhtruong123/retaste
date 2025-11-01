@@ -46,7 +46,7 @@ const deleteById = async (id: string) => {
   );
 };
 const deleteByCustomId = async (customId: string) => {
-  return await Option.updateOne(
+  return await Option.updateMany(
     {
       customizationGroupId: createObjectId(customId),
       isDeleted: false

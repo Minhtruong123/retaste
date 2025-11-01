@@ -1,15 +1,18 @@
 import { BAD_REQUEST } from '~/core/errors.response';
 import { categoryRepo } from '~/models/repositories/category.repo';
+import { customSlug } from '~/utils/format';
 
 class CategoryService {
   static create = async (data: {
     categoryName: string;
-    categorySlug: string;
     description?: string;
     imageUrl?: string;
     isActive?: boolean;
   }) => {
-    const created = await categoryRepo.createNew(data);
+    const created = await categoryRepo.createNew({
+      ...data,
+      categorySlug: customSlug(data.categoryName)
+    });
     const newCategory = await categoryRepo.findOneById(created._id.toString());
     if (!newCategory) throw new BAD_REQUEST("Cann't craete new category !");
     return newCategory;
@@ -17,15 +20,20 @@ class CategoryService {
   static update = async (
     data: {
       categoryName: string;
-      categorySlug: string;
       description?: string;
       imageUrl?: string;
       isActive?: boolean;
     },
     id: string
   ) => {
-    const updated = await categoryRepo.update(data, id);
-    if (!updated) throw new BAD_REQUEST("Cann't updaet category !");
+    const updated = await categoryRepo.update(
+      {
+        ...data,
+        categorySlug: customSlug(data.categoryName)
+      },
+      id
+    );
+    if (!updated.matchedCount) throw new BAD_REQUEST("Cann't updaet category !");
     return 'Update sucess !';
   };
   static getListCategory = async (query: {
@@ -46,7 +54,7 @@ class CategoryService {
   };
   static delete = async (id: string) => {
     const deleted = await categoryRepo.deleteById(id);
-    if (!deleted) throw new BAD_REQUEST("Cann't delete category !");
+    if (!deleted.matchedCount) throw new BAD_REQUEST("Cann't delete category !");
     return deleted;
   };
   static getDetail = async (id: string) => {

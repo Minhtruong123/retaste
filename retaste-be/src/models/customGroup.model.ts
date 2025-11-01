@@ -36,8 +36,15 @@ const customizationGroupSchema = new Schema<ICustomizationGroup>(
   }
 );
 
+customizationGroupSchema.index({ productId: 1 });
+customizationGroupSchema.index({ isDeleted: 1 });
+
 const CustomizationGroup = model<ICustomizationGroup>(
   DOCUMENT_CUSTOM_GROUP,
   customizationGroupSchema
 );
+export const customGroupModel = {
+  COLLECTION_NAME,
+  DOCUMENT_CUSTOM_GROUP
+};
 export default CustomizationGroup;

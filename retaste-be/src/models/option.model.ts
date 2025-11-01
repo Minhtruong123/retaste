@@ -49,5 +49,12 @@ const optionSchema = new Schema<IProductOption>(
   }
 );
 
+optionSchema.index({ customizationGroupId: 1 });
+optionSchema.index({ isDeleted: 1 });
+
 const Option = model<IProductOption>(DOCUMENT_OPTIONS, optionSchema);
+export const optionModel = {
+  COLLECTION_NAME,
+  DOCUMENT_OPTIONS
+};
 export default Option;

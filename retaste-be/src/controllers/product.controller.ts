@@ -15,11 +15,11 @@ class ProductController {
   };
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!req.params.productId) {
+      if (!req.params.id) {
         throw new BAD_REQUEST('Invalid request !');
       }
       new OK({
-        metadata: await ProductService.update(req.body, req.params.productId)
+        metadata: await ProductService.update(req.body, req.params.id)
       }).send(res);
     } catch (error) {
       next(error);

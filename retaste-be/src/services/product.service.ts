@@ -14,7 +14,6 @@ class CategoryService {
   static create = async (data: {
     categoryId: string;
     productName: string;
-    productSlug: string;
     description?: string;
     basePrice: number;
     preparationTime: number;
@@ -83,14 +82,17 @@ class CategoryService {
     const createdCustom = await customRepo.createMany(custom);
     if (!createdCustom) throw new BAD_REQUEST("Cann't create new product !");
     const option: IProductOption[] = [];
+    let idx = 0;
     data.customizationGroups.forEach((i) => {
       i.options.forEach((o) => {
         option.push({
           ...o,
-          customizationGroupId: createdCustom[0]._id
+          customizationGroupId: createdCustom[idx]._id
         });
       });
+      ++idx;
     });
+    console.log(option);
     const createdOption = await optionRepo.createMany(option);
     if (!createdOption) throw new BAD_REQUEST("Cann't create new product !");
     return 'Create new product sucescfully !';
@@ -99,7 +101,6 @@ class CategoryService {
     data: {
       categoryId: string;
       productName: string;
-      productSlug: string;
       description?: string;
       basePrice: number;
       preparationTime: number;
@@ -108,14 +109,17 @@ class CategoryService {
     },
     id: string
   ) => {
+    const getCategory = await categoryRepo.findOneById(data.categoryId);
+    if (!getCategory) throw new BAD_REQUEST('Category is not exist !');
     const updated = await productRepo.update(
       {
         ...data,
-        categoryId: createObjectId(data.categoryId)
+        categoryId: createObjectId(data.categoryId),
+        productSlug: customSlug(data.productName)
       },
       id
     );
-    if (!updated) throw new BAD_REQUEST("Cann't update service !");
+    if (!updated.matchedCount) throw new BAD_REQUEST("Cann't update product !");
     return 'Update sucessfully !';
   };
   static getListProduct = async (query: {
@@ -137,18 +141,21 @@ class CategoryService {
   static getDetail = async (id: string) => {
     const getProduct = await productRepo.getDetail(id);
     if (!getProduct) throw new BAD_REQUEST('Product is not exist !');
-    return getProduct;
+    return getProduct[0] || null;
   };
   static delete = async (id: string) => {
     const deletedProduct = await productRepo.deleteProduct(id);
-    const productId = deletedProduct?.upsertedId?.toString();
+    if (!deletedProduct) throw new BAD_REQUEST('Product is not exist !');
+    const productId = deletedProduct._id.toString();
     if (!productId) throw new BAD_REQUEST("Cann't delete product !");
     const deletedSize = await sizeRepo.deleteByProductId(productId);
-    if (!deletedSize.upsertedId) throw new BAD_REQUEST("Cann't delete product !");
+    if (!deletedSize.matchedCount) throw new BAD_REQUEST("Cann't delete product !");
     const deletedCustom = await customRepo.deleteByProductId(productId);
-    if (!deletedCustom.upsertedId) throw new BAD_REQUEST("Cann't delete product !");
-    const deleteOption = await optionRepo.deleteByCustomId(deletedCustom.upsertedId.toString());
-    if (!deleteOption.upsertedId) throw new BAD_REQUEST("Cann't delete product !");
+    if (!deletedCustom.matchedCount) throw new BAD_REQUEST("Cann't delete product !");
+    const getCustom = await customRepo.findByProductId(productId);
+    if (!getCustom) throw new BAD_REQUEST("Cann't delete product !");
+    const deleteOption = await optionRepo.deleteByCustomId(getCustom._id.toString());
+    if (!deleteOption.matchedCount) throw new BAD_REQUEST("Cann't delete product !");
     return 'Delete product successfully';
   };
 }

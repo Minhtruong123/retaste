@@ -30,6 +30,11 @@ const categorySchema = new Schema<ICategory>(
   },
   { collection: COLLECTION_NAME, timestamps: true }
 );
+categorySchema.index({ isDeleted: 1 });
 
 const Category = model<ICategory>(DOCUMENT_CATEGORY, categorySchema);
+export const categoryModel = {
+  DOCUMENT_CATEGORY,
+  COLLECTION_NAME
+};
 export default Category;

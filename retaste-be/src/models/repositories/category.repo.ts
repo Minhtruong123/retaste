@@ -24,7 +24,17 @@ const update = async (data: Partial<ICategory>, id: string) => {
   );
 };
 const deleteById = async (id: string) => {
-  return await Category.findOneAndDelete({ _id: createObjectId(id), isDeleted: false });
+  return await Category.updateOne(
+    {
+      _id: createObjectId(id),
+      isDeleted: false
+    },
+    {
+      $set: {
+        isDeleted: true
+      }
+    }
+  );
 };
 const getListCategory = async (option: {
   limit: number;

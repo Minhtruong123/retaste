@@ -11,6 +11,7 @@ import { HEADERS } from '~/utils/constant';
  */
 const authentication = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const start = Date.now();
     const clientId = req.headers[HEADERS.CLIENT_ID]?.toString();
     const accessToken = req.headers[HEADERS.ACCESS_TOKEN]?.toString();
     if (!clientId || !accessToken) {
@@ -21,6 +22,7 @@ const authentication = async (req: Request, res: Response, next: NextFunction) =
       const decodedToken = JwtProvider.verifyToken(accessToken, getKeyRedis.publicKey) as User;
       req.user = decodedToken;
     } else {
+      console.log('-----------------------casa 2=----------------------');
       const getKeyUser = await keyStoreRepo.findOneByUserId(clientId);
       if (!getKeyUser) {
         throw new UNAUTHORIZED();
@@ -28,6 +30,8 @@ const authentication = async (req: Request, res: Response, next: NextFunction) =
       const decodedToken = JwtProvider.verifyToken(accessToken, getKeyUser.publicKey) as User;
       req.user = decodedToken;
     }
+    const end = Date.now();
+    console.log(`function authen ${end - start} ms`);
     return next();
   } catch (error) {
     if (error instanceof Error) {

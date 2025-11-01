@@ -37,12 +37,12 @@ class OptionService {
     id: string
   ) => {
     const updated = await optionRepo.update(data, id);
-    if (!updated) throw new BAD_REQUEST("Cann't update size !");
+    if (!updated.matchedCount) throw new BAD_REQUEST("Cann't update size !");
     return updated;
   };
   static delete = async (id: string) => {
     const deleted = await optionRepo.deleteById(id);
-    if (!deleted) throw new BAD_REQUEST("Cann't delete size !");
+    if (!deleted.matchedCount) throw new BAD_REQUEST("Cann't delete size !");
     return deleted;
   };
 }

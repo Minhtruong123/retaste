@@ -1,6 +1,13 @@
 import { createObjectId } from '~/utils/format';
 import Size, { ISize } from '../size.model';
 
+const findOneById = async (id: string) => {
+  return Size.findOne({
+    _id: createObjectId(id),
+    isDeleted: false
+  });
+};
+
 const createNew = async (data: ISize) => {
   return await Size.insertOne(data);
 };
@@ -22,7 +29,9 @@ const deleteByProductId = async (productId: string) => {
       isDeleted: false
     },
     {
-      isDeleted: true
+      $set: {
+        isDeleted: true
+      }
     }
   );
 };
@@ -59,5 +68,6 @@ export const sizeRepo = {
   getSizeByProductId,
   deleteByProductId,
   deleteById,
-  update
+  update,
+  findOneById
 };
