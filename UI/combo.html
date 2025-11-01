@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RETASTE - Combo Khuyến Mãi</title>
+    <style>
+      :root {
+        --primary: #ff6b35;
+        --primary-dark: #e85a2a;
+        --secondary: #2a9d8f;
+        --text: #333333;
+        --text-light: #666666;
+        --background: #f9f9f9;
+        --white: #ffffff;
+        --light-gray: #eeeeee;
+        --gray: #dddddd;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      /* Header */
+      header {
+        background-color: var(--white);
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo span {
+        color: var(--secondary);
+      }
+
+      .search-bar {
+        flex: 1;
+        max-width: 500px;
+        margin: 0 20px;
+        position: relative;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 25px;
+        border: 1px solid var(--gray);
+        outline: none;
+        font-size: 1rem;
+      }
+
+      .search-bar button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+      }
+
+      .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .cart-icon,
+      .user-icon {
+        font-size: 1.5rem;
+        color: var(--text);
+        text-decoration: none;
+        position: relative;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--primary);
+        color: var(--white);
+        font-size: 0.7rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-menu {
+        background-color: var(--secondary);
+        padding: 10px 0;
+      }
+
+      .nav-list {
+        display: flex;
+        list-style: none;
+        justify-content: center;
+        gap: 30px;
+      }
+
+      .nav-list a {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .nav-list a:hover {
+        color: var(--light-gray);
+      }
+
+      .nav-list a.active {
+        color: var(--primary-dark);
+        font-weight: 700;
+        text-decoration: underline;
+      }
+
+      /* Page Banner */
+      .page-banner {
+        background-image: linear-gradient(
+            rgba(0, 0, 0, 0.6),
+            rgba(0, 0, 0, 0.6)
+          ),
+          url("https://images.unsplash.com/photo-1504674900247-0877df9cc836");
+        background-size: cover;
+        background-position: center;
+        color: var(--white);
+        padding: 60px 0;
+        text-align: center;
+      }
+
+      .page-banner h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+      }
+
+      .page-banner p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      /* Filter Section */
+      .filter-section {
+        padding: 20px 0;
+        background-color: var(--white);
+        margin: 20px 0;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+      }
+
+      .filter-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+        padding: 0 20px;
+      }
+
+      .filter-label {
+        font-weight: bold;
+        min-width: 100px;
+      }
+
+      .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        flex: 1;
+      }
+
+      .filter-option {
+        padding: 8px 15px;
+        background-color: var(--light-gray);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .filter-option:hover,
+      .filter-option.active {
+        background-color: var(--primary);
+        color: var(--white);
+      }
+
+      .sort-options {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+      }
+
+      .sort-select {
+        padding: 8px 15px;
+        border-radius: 5px;
+        border: 1px solid var(--gray);
+        outline: none;
+        cursor: pointer;
+      }
+
+      /* Combo Section */
+      .combo-section {
+        padding: 40px 0;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 40px;
+        color: var(--text);
+      }
+
+      .combos-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+      }
+
+      .combo-card {
+        background-color: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .combo-card:hover {
+        transform: translateY(-10px);
+      }
+
+      .combo-img-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+      }
+
+      .combo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+
+      .combo-card:hover .combo-img {
+        transform: scale(1.1);
+      }
+
+      .combo-discount {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: var(--primary);
+        color: var(--white);
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
+
+      .combo-info {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .combo-title {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: var(--text);
+      }
+
+      .combo-description {
+        color: var(--text-light);
+        margin-bottom: 15px;
+        flex-grow: 1;
+      }
+
+      .combo-items {
+        margin-bottom: 15px;
+      }
+
+      .combo-items-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: var(--secondary);
+      }
+
+      .combo-item {
+        padding: 5px 0;
+        border-bottom: 1px dashed var(--gray);
+      }
+
+      .combo-item:last-child {
+        border-bottom: none;
+      }
+
+      .combo-price-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .combo-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary);
+      }
+
+      .combo-original-price {
+        font-size: 1.1rem;
+        text-decoration: line-through;
+        color: var(--text-light);
+      }
+
+      .combo-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .order-button {
+        flex: 1;
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .order-button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .favorite-btn {
+        background-color: var(--white);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: 5px;
+        padding: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .favorite-btn:hover {
+        background-color: var(--primary);
+        color: var(--white);
+      }
+
+      /* Pagination */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+        gap: 10px;
+      }
+
+      .pagination-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--white);
+        border: 1px solid var(--gray);
+        color: var(--text);
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .pagination-button:hover,
+      .pagination-button.active {
+        background-color: var(--primary);
+        color: var(--white);
+        border-color: var(--primary);
+      }
+
+      /* Special Offers Section */
+      .special-offers {
+        padding: 50px 0;
+        background-color: var(--light-gray);
+      }
+
+      .offer-banner {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        background-image: linear-gradient(
+            rgba(0, 0, 0, 0.7),
+            rgba(0, 0, 0, 0.7)
+          ),
+          url("https://images.unsplash.com/photo-1544148103-0773bf10d330");
+        background-size: cover;
+        background-position: center;
+        border-radius: 10px;
+        color: var(--white);
+        text-align: center;
+      }
+
+      .offer-title {
+        font-size: 2rem;
+        margin-bottom: 15px;
+      }
+
+      .offer-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        max-width: 600px;
+      }
+
+      .offer-code {
+        background-color: var(--white);
+        color: var(--text);
+        padding: 10px 20px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        letter-spacing: 2px;
+      }
+
+      .offer-button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .offer-button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      /* Footer */
+      footer {
+        background-color: #264653;
+        color: var(--white);
+        padding: 50px 0 20px;
+      }
+
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .footer-logo {
+        color: var(--white);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .footer-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .footer-section h3::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 50px;
+        height: 2px;
+        background-color: var(--primary);
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+
+      .footer-links a {
+        color: var(--light-gray);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary);
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .social-icon {
+        color: var(--white);
+        font-size: 1.5rem;
+        transition: color 0.3s;
+      }
+
+      .social-icon:hover {
+        color: var(--primary);
+      }
+
+      .subscribe-form {
+        display: flex;
+        margin-top: 15px;
+      }
+
+      .subscribe-form input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+      }
+
+      .subscribe-form button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .subscribe-form button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--gray);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header-top {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .search-bar {
+          max-width: 100%;
+          margin: 15px 0;
+        }
+
+        .nav-list {
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          gap: 15px;
+          padding: 0 15px;
+        }
+
+        .page-banner {
+          padding: 40px 0;
+        }
+
+        .page-banner h1 {
+          font-size: 2rem;
+        }
+
+        .filter-container {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .sort-options {
+          margin-left: 0;
+          margin-top: 10px;
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .combos-container {
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+      }
+
+      /* Mobile menu */
+      .mobile-menu-button {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      @media (max-width: 992px) {
+        .mobile-menu-button {
+          display: block;
+        }
+
+        .nav-menu {
+          display: none;
+          position: absolute;
+          width: 100%;
+          left: 0;
+          top: 100%;
+          background-color: var(--secondary);
+        }
+
+        .nav-menu.active {
+          display: block;
+        }
+
+        .nav-list {
+          flex-direction: column;
+          padding: 20px;
+          gap: 15px;
+        }
+
+        .user-actions {
+          margin-left: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <a href="#" class="logo">RE<span>TASTE</span></a>
+
+          <button class="mobile-menu-button">☰</button>
+
+          <div class="search-bar">
+            <input type="text" placeholder="Tìm kiếm món ăn, thức uống..." />
+            <button>🔍</button>
+          </div>
+
+          <div class="user-actions">
+            <a href="#" class="cart-icon"
+              >🛒 <span class="cart-count">3</span></a
+            >
+            <a href="#" class="user-icon">👤</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <div class="container">
+          <ul class="nav-list">
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Thực đơn</a></li>
+            <li><a href="#">Món được gợi ý</a></li>
+            <li><a href="#" class="active">Combo</a></li>
+            <li><a href="#">Khuyến mãi</a></li>
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="page-banner">
+      <div class="container">
+        <h1>Combo Tiết Kiệm</h1>
+        <p>
+          Khám phá các combo đặc biệt với giá cực hấp dẫn, tiết kiệm đến 40% so
+          với mua lẻ
+        </p>
+      </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+      <div class="container">
+        <div class="filter-container">
+          <div class="filter-label">Loại combo:</div>
+          <div class="filter-options">
+            <div class="filter-option active">Tất cả</div>
+            <div class="filter-option">Cặp đôi</div>
+            <div class="filter-option">Gia đình</div>
+            <div class="filter-option">Bạn bè</div>
+            <div class="filter-option">Tiệc nhỏ</div>
+          </div>
+
+          <div class="sort-options">
+            <span>Sắp xếp:</span>
+            <select class="sort-select">
+              <option>Phổ biến nhất</option>
+              <option>Giá tăng dần</option>
+              <option>Giá giảm dần</option>
+              <option>Đánh giá cao</option>
+              <option>Mới nhất</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Combo Section -->
+    <section class="combo-section">
+      <div class="container">
+        <h2 class="section-title">Combo Đặc Biệt</h2>
+        <div class="combos-container">
+          <!-- Combo 1 -->
+          <div class="combo-card">
+            <div class="combo-img-container">
+              <img
+                src="https://images.unsplash.com/photo-1457460866886-40ef8d4b42a0"
+                alt="Combo Cặp Đôi"
+                class="combo-img"
+              />
+              <div class="combo-discount">-25%</div>
+            </div>
+            <div class="combo-info">
+              <h3 class="combo-title">Combo Cặp Đôi Hạnh Phúc</h3>
+              <p class="combo-description">
+                Combo hoàn hảo cho buổi hẹn hò lãng mạn với những món ăn ngon
+                nhất của chúng tôi.
+              </p>
+              <div class="combo-items">
+                <p class="combo-items-title">Bao gồm:</p>
+                <div class="combo-item">2 x Burger Bò Phô Mai</div>
+                <div class="combo-item">1 x Khoai tây chiên (size lớn)</div>
+                <div class="combo-item">2 x Nước ngọt tự chọn</div>
+                <div class="combo-item">1 x Bánh kem Socola nhỏ</div>
+              </div>
+              <div class="combo-price-container">
+                <div class="combo-price">179.000 ₫</div>
+                <div class="combo-original-price">239.000 ₫</div>
+              </div>
+              <div class="combo-actions">
+                <button class="order-button">Đặt ngay</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Combo 2 -->
+          <div class="combo-card">
+            <div class="combo-img-container">
+              <img
+                src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1"
+                alt="Combo Gia Đình"
+                class="combo-img"
+              />
+              <div class="combo-discount">-30%</div>
+            </div>
+            <div class="combo-info">
+              <h3 class="combo-title">Combo Gia Đình Vui Vẻ</h3>
+              <p class="combo-description">
+                Combo đầy đủ cho cả gia đình thưởng thức, với nhiều món ăn phong
+                phú và đa dạng.
+              </p>
+              <div class="combo-items">
+                <p class="combo-items-title">Bao gồm:</p>
+                <div class="combo-item">1 x Pizza Hải Sản (cỡ lớn)</div>
+                <div class="combo-item">4 x Gà rán giòn (đùi/cánh)</div>
+                <div class="combo-item">2 x Khoai tây chiên (size vừa)</div>
+                <div class="combo-item">4 x Nước ngọt tự chọn</div>
+                <div class="combo-item">1 x Salad trộn</div>
+              </div>
+              <div class="combo-price-container">
+                <div class="combo-price">349.000 ₫</div>
+                <div class="combo-original-price">499.000 ₫</div>
+              </div>
+              <div class="combo-actions">
+                <button class="order-button">Đặt ngay</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Combo 3 -->
+          <div class="combo-card">
+            <div class="combo-img-container">
+              <img
+                src="https://images.unsplash.com/photo-1533777857889-4be7c70b33f7"
+                alt="Combo Bạn Bè"
+                class="combo-img"
+              />
+              <div class="combo-discount">-20%</div>
+            </div>
+            <div class="combo-info">
+              <h3 class="combo-title">Combo Hội Bạn Thân</h3>
+              <p class="combo-description">
+                Combo dành cho nhóm bạn 3-4 người, đầy đủ các món ăn nhẹ và nước
+                uống.
+              </p>
+              <div class="combo-items">
+                <p class="combo-items-title">Bao gồm:</p>
+                <div class="combo-item">2 x Pizza (cỡ vừa, 2 loại)</div>
+                <div class="combo-item">1 x Gà nugget (10 miếng)</div>
+                <div class="combo-item">1 x Mực chiên giòn</div>
+                <div class="combo-item">4 x Nước tự chọn</div>
+                <div class="combo-item">1 x Bánh cookie (6 miếng)</div>
+              </div>
+              <div class="combo-price-container">
+                <div class="combo-price">269.000 ₫</div>
+                <div class="combo-original-price">339.000 ₫</div>
+              </div>
+              <div class="combo-actions">
+                <button class="order-button">Đặt ngay</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Combo 4 -->
+          <div class="combo-card">
+            <div class="combo-img-container">
+              <img
+                src="https://images.unsplash.com/photo-1550547660-d9450f859349"
+                alt="Combo Tiệc Nhỏ"
+                class="combo-img"
+              />
+              <div class="combo-discount">-35%</div>
+            </div>
+            <div class="combo-info">
+              <h3 class="combo-title">Combo Tiệc Nhỏ</h3>
+              <p class="combo-description">
+                Combo phong phú dành cho các buổi tụ tập nhỏ từ 5-6 người, đa
+                dạng món ăn.
+              </p>
+              <div class="combo-items">
+                <p class="combo-items-title">Bao gồm:</p>
+                <div class="combo-item">2 x Pizza (cỡ lớn, 2 loại)</div>
+                <div class="combo-item">2 x Gà rán (12 miếng)</div>
+                <div class="combo-item">3 x Khoai tây chiên (size lớn)</div>
+                <div class="combo-item">6 x Nước ngọt tự chọn</div>
+                <div class="combo-item">1 x Bánh kem (size vừa)</div>
+              </div>
+              <div class="combo-price-container">
+                <div class="combo-price">489.000 ₫</div>
+                <div class="combo-original-price">749.000 ₫</div>
+              </div>
+              <div class="combo-actions">
+                <button class="order-button">Đặt ngay</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Combo 5 -->
+          <div class="combo-card">
+            <div class="combo-img-container">
+              <img
+                src="https://images.unsplash.com/photo-1616669943046-fafbd1d2e623"
+                alt="Combo Sáng"
+                class="combo-img"
+              />
+              <div class="combo-discount">-15%</div>
+            </div>
+            <div class="combo-info">
+              <h3 class="combo-title">Combo Bữa Sáng Dinh Dưỡng</h3>
+              <p class="combo-description">
+                Combo dinh dưỡng và đầy đủ cho bữa sáng năng động của bạn.
+              </p>
+              <div class="combo-items">
+                <p class="combo-items-title">Bao gồm:</p>
+                <div class="combo-item">1 x Sandwich Gà Teriyaki</div>
+                <div class="combo-item">1 x Salad Trộn Rau Củ</div>
+                <div class="combo-item">1 x Nước ép cam tươi</div>
+                <div class="combo-item">1 x Sữa chua hoa quả</div>
+              </div>
+              <div class="combo-price-container">
+                <div class="combo-price">89.000 ₫</div>
+                <div class="combo-original-price">105.000 ₫</div>
+              </div>
+              <div class="combo-actions">
+                <button class="order-button">Đặt ngay</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Combo 6 -->
+          <div class="combo-card">
+            <div class="combo-img-container">
+              <img
+                src="https://images.unsplash.com/photo-1565299507177-b0ac66763828"
+                alt="Combo Healthy"
+                class="combo-img"
+              />
+              <div class="combo-discount">-20%</div>
+            </div>
+            <div class="combo-info">
+              <h3 class="combo-title">Combo Healthy Choice</h3>
+              <p class="combo-description">
+                Combo dành cho người ăn kiêng với các món ăn ít calo, đầy đủ
+                dinh dưỡng.
+              </p>
+              <div class="combo-items">
+                <p class="combo-items-title">Bao gồm:</p>
+                <div class="combo-item">1 x Salad Gà Nướng</div>
+                <div class="combo-item">1 x Sandwich Ngũ Cốc Nguyên Cám</div>
+                <div class="combo-item">1 x Soup Rau Củ</div>
+                <div class="combo-item">1 x Nước ép rau củ xanh</div>
+                <div class="combo-item">1 x Trái cây theo mùa</div>
+              </div>
+              <div class="combo-price-container">
+                <div class="combo-price">129.000 ₫</div>
+                <div class="combo-original-price">159.000 ₫</div>
+              </div>
+              <div class="combo-actions">
+                <button class="order-button">Đặt ngay</button>
+                <button class="favorite-btn">❤️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <button class="pagination-button">«</button>
+          <button class="pagination-button active">1</button>
+          <button class="pagination-button">2</button>
+          <button class="pagination-button">3</button>
+          <button class="pagination-button">»</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Special Offers -->
+    <section class="special-offers">
+      <div class="container">
+        <div class="offer-banner">
+          <h2 class="offer-title">ƯU ĐÃI ĐẶC BIỆT</h2>
+          <p class="offer-subtitle">
+            Nhập mã giảm thêm 10% cho tất cả các combo khi đặt hàng qua ứng dụng
+            RETASTE trước 30/11/2025
+          </p>
+          <div class="offer-code">COMBO10</div>
+          <button class="offer-button">Tải ứng dụng ngay</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-container">
+          <div class="footer-section">
+            <a href="#" class="footer-logo">RE<span>TASTE</span></a>
+            <p>
+              RETASTE - Khám phá hương vị yêu thích của bạn với công nghệ gợi ý
+              thông minh.
+            </p>
+            <div class="social-links">
+              <a href="#" class="social-icon">📘</a>
+              <a href="#" class="social-icon">🐦</a>
+              <a href="#" class="social-icon">📸</a>
+              <a href="#" class="social-icon">📹</a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Thông tin</h3>
+            <ul class="footer-links">
+              <li><a href="#">Về chúng tôi</a></li>
+              <li><a href="#">Điều khoản dịch vụ</a></li>
+              <li><a href="#">Chính sách bảo mật</a></li>
+              <li><a href="#">Chính sách giao hàng</a></li>
+              <li><a href="#">Câu hỏi thường gặp</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Danh mục</h3>
+            <ul class="footer-links">
+              <li><a href="#">Món mới</a></li>
+              <li><a href="#">Bán chạy nhất</a></li>
+              <li><a href="#">Khuyến mãi</a></li>
+              <li><a href="#">Combo tiết kiệm</a></li>
+              <li><a href="#">Tất cả sản phẩm</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Liên hệ</h3>
+            <ul class="footer-links">
+              <li>📍 123 Đường ABC, Quận XYZ, TP.HCM</li>
+              <li>📞 1900-1234</li>
+              <li>✉️ support@retaste.vn</li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Đăng ký nhận tin</h3>
+            <p>Nhận thông tin về ưu đãi và món mới</p>
+            <form class="subscribe-form">
+              <input type="email" placeholder="Email của bạn" />
+              <button type="submit">Đăng ký</button>
+            </form>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2025 RETASTE. Tất cả quyền được bảo lưu.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Simple JavaScript for mobile menu toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileMenuButton = document.querySelector(".mobile-menu-button");
+        const navMenu = document.querySelector(".nav-menu");
+
+        mobileMenuButton.addEventListener("click", function () {
+          navMenu.classList.toggle("active");
+        });
+
+        // Close mobile menu when clicking on a menu item
+        const navLinks = document.querySelectorAll(".nav-list a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            navMenu.classList.remove("active");
+          });
+        });
+
+        // Filter options
+        const filterOptions = document.querySelectorAll(".filter-option");
+        filterOptions.forEach((option) => {
+          option.addEventListener("click", function () {
+            filterOptions.forEach((opt) => opt.classList.remove("active"));
+            option.classList.add("active");
+          });
+        });
+
+        // Favorite button functionality
+        const favoriteButtons = document.querySelectorAll(".favorite-btn");
+        favoriteButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            if (button.style.backgroundColor === "rgb(255, 107, 53)") {
+              button.style.backgroundColor = "#ffffff";
+              button.style.color = "#ff6b35";
+            } else {
+              button.style.backgroundColor = "#ff6b35";
+              button.style.color = "#ffffff";
+            }
+          });
+        });
+
+        // Add to cart functionality
+        const orderButtons = document.querySelectorAll(".order-button");
+        const cartCount = document.querySelector(".cart-count");
+        let count = 3;
+
+        orderButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            count++;
+            cartCount.textContent = count;
+
+            button.textContent = "Đã thêm";
+            button.style.backgroundColor = "#2a9d8f";
+
+            setTimeout(() => {
+              button.textContent = "Đặt ngay";
+              button.style.backgroundColor = "#ff6b35";
+            }, 2000);
+          });
+        });
+
+        // Pagination functionality
+        const paginationButtons =
+          document.querySelectorAll(".pagination-button");
+        paginationButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            if (button.textContent !== "«" && button.textContent !== "»") {
+              paginationButtons.forEach((btn) =>
+                btn.classList.remove("active")
+              );
+              button.classList.add("active");
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
