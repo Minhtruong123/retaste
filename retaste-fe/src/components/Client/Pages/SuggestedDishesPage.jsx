@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "./RecommendedPage.module.css";
+import styles from "./SuggestedDishesPage.module.css";
 
 export default function SuggestedDishesPage() {
   const [viewMode, setViewMode] = useState("grid");
@@ -7,12 +7,10 @@ export default function SuggestedDishesPage() {
   const [activeFilter, setActiveFilter] = useState("Tất cả");
   const [activePage, setActivePage] = useState(1);
 
-  // Xử lý toggle view giữa dạng lưới và danh sách
   const toggleView = (mode) => {
     setViewMode(mode);
   };
 
-  // Xử lý thêm vào giỏ hàng
   const handleAddToCart = (event) => {
     setCartCount(cartCount + 1);
 
@@ -26,7 +24,6 @@ export default function SuggestedDishesPage() {
     }, 2000);
   };
 
-  // Xử lý sự kiện yêu thích
   const handleFavorite = (event) => {
     const button = event.target;
 
@@ -39,7 +36,6 @@ export default function SuggestedDishesPage() {
     }
   };
 
-  // Danh sách các sản phẩm được gợi ý
   const recommendedProducts = [
     {
       id: 1,
@@ -133,14 +129,12 @@ export default function SuggestedDishesPage() {
     "Tráng miệng",
   ];
 
-  // Render rating stars
   const renderStars = (rating) => {
     return "★".repeat(rating) + "☆".repeat(5 - rating);
   };
   return (
     <>
       <div className={styles.pageContainer}>
-        {/* Page Title Section */}
         <section className={styles.pageTitleSection}>
           <div className={styles.container}>
             <h1>Món được gợi ý cho bạn</h1>

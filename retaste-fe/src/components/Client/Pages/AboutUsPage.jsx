@@ -35,7 +35,6 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* About Us Content */}
       <section className={styles.aboutSection}>
         <div className={styles.container}>
           <div className={styles.aboutContent}>

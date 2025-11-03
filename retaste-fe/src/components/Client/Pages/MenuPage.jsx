@@ -14,7 +14,6 @@ export default function MenuPage() {
             </p>
           </div>
 
-          {/* Special Offers */}
           <div className={styles.specialOffers}>
             <h2 className={styles.offerTitle}>Ưu đãi đặc biệt</h2>
             <div className={styles.offersContainer}>

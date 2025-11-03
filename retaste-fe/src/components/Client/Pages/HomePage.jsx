@@ -34,7 +34,6 @@ export default function HomePage() {
   return (
     <>
       <main>
-        {/* Hero Section */}
         <section className={styles.hero}>
           <div className={styles.container}>
             <h1>Khám phá hương vị mới mỗi ngày</h1>
@@ -46,7 +45,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Features */}
         <section className={styles.features}>
           <div className={styles.container}>
             <h2 className={styles.sectionTitle}>Tại sao chọn RETASTE?</h2>
@@ -79,7 +77,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Popular Categories */}
         <section className={styles.categories}>
           <div className={styles.container}>
             <h2 className={styles.sectionTitle}>Danh mục phổ biến</h2>

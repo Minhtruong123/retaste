@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Classic Burger - Chi tiết món ăn | RETASTE</title>
+    <style>
+      :root {
+        --primary: #ff6b35;
+        --primary-dark: #e85a2a;
+        --secondary: #2a9d8f;
+        --text: #333333;
+        --text-light: #666666;
+        --background: #f9f9f9;
+        --white: #ffffff;
+        --light-gray: #eeeeee;
+        --gray: #dddddd;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      /* Header */
+      header {
+        background-color: var(--white);
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo span {
+        color: var(--secondary);
+      }
+
+      .search-bar {
+        flex: 1;
+        max-width: 500px;
+        margin: 0 20px;
+        position: relative;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 25px;
+        border: 1px solid var(--gray);
+        outline: none;
+        font-size: 1rem;
+      }
+
+      .search-bar button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+      }
+
+      .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .cart-icon,
+      .user-icon {
+        font-size: 1.5rem;
+        color: var(--text);
+        text-decoration: none;
+        position: relative;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--primary);
+        color: var(--white);
+        font-size: 0.7rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-menu {
+        background-color: var(--secondary);
+        padding: 10px 0;
+      }
+
+      .nav-list {
+        display: flex;
+        list-style: none;
+        justify-content: center;
+        gap: 30px;
+      }
+
+      .nav-list a {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .nav-list a:hover {
+        color: var(--light-gray);
+      }
+
+      /* Breadcrumbs */
+      .breadcrumbs {
+        padding: 15px 0;
+        font-size: 0.9rem;
+      }
+
+      .breadcrumbs a {
+        color: var(--secondary);
+        text-decoration: none;
+      }
+
+      .breadcrumbs span {
+        color: var(--text-light);
+        margin: 0 5px;
+      }
+
+      /* Product Detail */
+      .product-detail {
+        padding: 30px 0 60px;
+      }
+
+      .product-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        background-color: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        padding: 30px;
+        margin-bottom: 40px;
+      }
+
+      .product-gallery {
+        position: relative;
+      }
+
+      .main-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+
+      .image-thumbnails {
+        display: flex;
+        gap: 10px;
+      }
+
+      .thumbnail {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+      }
+
+      .thumbnail:hover {
+        transform: scale(1.05);
+      }
+
+      .thumbnail.active {
+        border-color: var(--primary);
+      }
+
+      .product-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: var(--primary);
+        color: var(--white);
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: bold;
+      }
+
+      .product-info h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        color: var(--text);
+      }
+
+      .product-meta {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .product-rating {
+        display: flex;
+        align-items: center;
+        color: #ffba08;
+      }
+
+      .product-rating span {
+        color: var(--text-light);
+        margin-left: 5px;
+      }
+
+      .product-category {
+        color: var(--text-light);
+        font-size: 0.95rem;
+        background-color: var(--light-gray);
+        padding: 3px 10px;
+        border-radius: 15px;
+      }
+
+      .product-price {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--secondary);
+        margin-bottom: 20px;
+      }
+
+      .product-description {
+        color: var(--text);
+        margin-bottom: 25px;
+        line-height: 1.7;
+      }
+
+      .product-features {
+        margin-bottom: 25px;
+      }
+
+      .product-features h3 {
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+      }
+
+      .features-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .feature-icon {
+        color: var(--primary);
+      }
+
+      .quantity-selector {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .quantity-selector label {
+        margin-right: 15px;
+        font-weight: 500;
+      }
+
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--gray);
+        border-radius: 5px;
+        overflow: hidden;
+      }
+
+      .quantity-btn {
+        background-color: var(--light-gray);
+        border: none;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .quantity-btn:hover {
+        background-color: var(--gray);
+      }
+
+      .quantity-input {
+        width: 60px;
+        height: 40px;
+        text-align: center;
+        border: none;
+        border-left: 1px solid var(--gray);
+        border-right: 1px solid var(--gray);
+        font-size: 1rem;
+      }
+
+      .customization {
+        margin-bottom: 25px;
+      }
+
+      .customization h3 {
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+
+      .options-group {
+        margin-bottom: 15px;
+      }
+
+      .options-group h4 {
+        margin-bottom: 10px;
+        color: var(--text);
+        font-size: 1rem;
+      }
+
+      .options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .option-item {
+        position: relative;
+      }
+
+      .option-input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .option-label {
+        display: inline-block;
+        padding: 8px 15px;
+        background-color: var(--light-gray);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .option-input:checked + .option-label {
+        background-color: var(--secondary);
+        color: var(--white);
+      }
+
+      .addon-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .addon-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .addon-price {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .product-actions {
+        display: flex;
+        gap: 15px;
+      }
+
+      .add-to-cart {
+        flex: 1;
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .add-to-cart:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .buy-now {
+        flex: 1;
+        background-color: var(--secondary);
+        color: var(--white);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .buy-now:hover {
+        background-color: #248f82;
+      }
+
+      .favorite-btn {
+        width: 50px;
+        height: 50px;
+        background-color: var(--white);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1.3rem;
+      }
+
+      .favorite-btn:hover {
+        background-color: var(--primary);
+        color: var(--white);
+      }
+
+      .share-btn {
+        width: 50px;
+        height: 50px;
+        background-color: var(--white);
+        color: var(--text);
+        border: 1px solid var(--gray);
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 1.3rem;
+      }
+
+      .share-btn:hover {
+        background-color: var(--light-gray);
+      }
+
+      /* Tabs */
+      .product-tabs {
+        margin-bottom: 40px;
+      }
+
+      .tabs-header {
+        display: flex;
+        border-bottom: 1px solid var(--gray);
+        margin-bottom: 20px;
+      }
+
+      .tab-button {
+        padding: 12px 20px;
+        background-color: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .tab-button.active {
+        color: var(--secondary);
+        border-color: var(--secondary);
+      }
+
+      .tab-content {
+        display: none;
+        padding: 20px;
+        background-color: var(--white);
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .nutrition-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+
+      .nutrition-table th,
+      .nutrition-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .nutrition-table th {
+        background-color: var(--light-gray);
+        font-weight: 500;
+      }
+
+      .nutrition-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Reviews */
+      .review-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .overall-rating {
+        text-align: center;
+      }
+
+      .rating-number {
+        font-size: 3.5rem;
+        font-weight: bold;
+        color: var(--text);
+        line-height: 1;
+      }
+
+      .rating-stars {
+        font-size: 1.5rem;
+        color: #ffba08;
+        margin: 10px 0;
+      }
+
+      .rating-count {
+        color: var(--text-light);
+      }
+
+      .rating-breakdown {
+        flex: 1;
+        max-width: 400px;
+        margin-left: 40px;
+      }
+
+      .rating-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .rating-label {
+        min-width: 40px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .progress-bar {
+        flex: 1;
+        height: 8px;
+        background-color: var(--light-gray);
+        border-radius: 10px;
+        margin: 0 10px;
+        overflow: hidden;
+      }
+
+      .progress {
+        height: 100%;
+        background-color: #ffba08;
+        border-radius: 10px;
+      }
+
+      .rating-percent {
+        min-width: 40px;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        text-align: right;
+      }
+
+      .write-review {
+        text-align: center;
+      }
+
+      .write-review-btn {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .write-review-btn:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .review-list {
+        margin-top: 30px;
+      }
+
+      .review-item {
+        padding: 20px 0;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .review-item:last-child {
+        border-bottom: none;
+      }
+
+      .review-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+      }
+
+      .reviewer {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .reviewer-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .reviewer-info h4 {
+        margin-bottom: 5px;
+      }
+
+      .review-date {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .review-rating {
+        color: #ffba08;
+        font-size: 1.1rem;
+      }
+
+      .review-content {
+        line-height: 1.7;
+        margin-bottom: 15px;
+      }
+
+      .review-photos {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .review-photo {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .review-actions {
+        display: flex;
+        gap: 20px;
+      }
+
+      .review-action {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--text-light);
+        cursor: pointer;
+      }
+
+      .review-action:hover {
+        color: var(--primary);
+      }
+
+      /* Similar Products */
+      .similar-products {
+        padding: 50px 0;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        color: var(--text);
+      }
+
+      .view-all {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .products-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 25px;
+      }
+
+      .product-card {
+        background-color: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.3s;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .product-img {
+        height: 180px;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .product-info {
+        padding: 15px;
+      }
+
+      .product-title {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: var(--text);
+      }
+
+      .product-category {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+      }
+
+      .product-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .product-price {
+        font-weight: bold;
+        color: var(--secondary);
+        font-size: 1.1rem;
+      }
+
+      .product-rating {
+        display: flex;
+        align-items: center;
+        color: #ffba08;
+      }
+
+      .product-actions {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .add-to-cart {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        flex: 1;
+        margin-right: 10px;
+      }
+
+      .add-to-cart:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .favorite-btn {
+        background-color: var(--white);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        border-radius: 5px;
+        padding: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .favorite-btn:hover {
+        background-color: var(--primary);
+        color: var(--white);
+      }
+
+      /* Footer */
+      footer {
+        background-color: #264653;
+        color: var(--white);
+        padding: 50px 0 20px;
+      }
+
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .footer-logo {
+        color: var(--white);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .footer-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .footer-section h3::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 50px;
+        height: 2px;
+        background-color: var(--primary);
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+
+      .footer-links a {
+        color: var(--light-gray);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary);
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .social-icon {
+        color: var(--white);
+        font-size: 1.5rem;
+        transition: color 0.3s;
+      }
+
+      .social-icon:hover {
+        color: var(--primary);
+      }
+
+      .subscribe-form {
+        display: flex;
+        margin-top: 15px;
+      }
+
+      .subscribe-form input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+      }
+
+      .subscribe-form button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .subscribe-form button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--gray);
+        font-size: 0.9rem;
+      }
+
+      /* Mobile menu */
+      .mobile-menu-button {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 992px) {
+        .product-container {
+          grid-template-columns: 1fr;
+        }
+
+        .mobile-menu-button {
+          display: block;
+        }
+
+        .nav-menu {
+          display: none;
+          position: absolute;
+          width: 100%;
+          left: 0;
+          top: 100%;
+          background-color: var(--secondary);
+        }
+
+        .nav-menu.active {
+          display: block;
+        }
+
+        .nav-list {
+          flex-direction: column;
+          padding: 20px;
+          gap: 15px;
+        }
+
+        .user-actions {
+          margin-left: auto;
+        }
+
+        .tabs-header {
+          overflow-x: auto;
+          white-space: nowrap;
+          padding-bottom: 5px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header-top {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .search-bar {
+          max-width: 100%;
+          margin: 15px 0;
+        }
+
+        .product-features .features-list {
+          grid-template-columns: 1fr;
+        }
+
+        .review-stats {
+          flex-direction: column;
+          gap: 30px;
+        }
+
+        .rating-breakdown {
+          margin-left: 0;
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <a href="#" class="logo">RE<span>TASTE</span></a>
+
+          <button class="mobile-menu-button">☰</button>
+
+          <div class="search-bar">
+            <input type="text" placeholder="Tìm kiếm món ăn, thức uống..." />
+            <button>🔍</button>
+          </div>
+
+          <div class="user-actions">
+            <a href="#" class="cart-icon"
+              >🛒 <span class="cart-count">3</span></a
+            >
+            <a href="#" class="user-icon">👤</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <div class="container">
+          <ul class="nav-list">
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Thực đơn</a></li>
+            <li><a href="#">Món được gợi ý</a></li>
+            <li><a href="#">Combo</a></li>
+            <li><a href="#">Khuyến mãi</a></li>
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Breadcrumbs -->
+    <div class="container">
+      <div class="breadcrumbs">
+        <a href="#">Trang chủ</a>
+        <span>/</span>
+        <a href="#">Thực đơn</a>
+        <span>/</span>
+        <a href="#">Burger</a>
+        <span>/</span>
+        <span>Classic Burger</span>
+      </div>
+    </div>
+
+    <!-- Product Detail Section -->
+    <section class="product-detail">
+      <div class="container">
+        <div class="product-container">
+          <div class="product-gallery">
+            <span class="product-badge">Bán chạy</span>
+            <img
+              src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38"
+              alt="Classic Burger"
+              class="main-image"
+              id="main-image"
+            />
+            <div class="image-thumbnails">
+              <img
+                src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38"
+                alt="Classic Burger"
+                class="thumbnail active"
+                onclick="changeImage(this)"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
+                alt="Classic Burger Side View"
+                class="thumbnail"
+                onclick="changeImage(this)"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90"
+                alt="Classic Burger Ingredients"
+                class="thumbnail"
+                onclick="changeImage(this)"
+              />
+              <img
+                src="https://images.unsplash.com/photo-1550547660-d9450f859349"
+                alt="Classic Burger Packaging"
+                class="thumbnail"
+                onclick="changeImage(this)"
+              />
+            </div>
+          </div>
+
+          <div class="product-info">
+            <h1>Classic Burger</h1>
+            <div class="product-meta">
+              <div class="product-rating">
+                ★★★★★ <span>(156 đánh giá)</span>
+              </div>
+              <div class="product-category">Burger</div>
+            </div>
+            <div class="product-price">69.000 ₫</div>
+            <div class="product-description">
+              Burger bò cổ điển với bánh mì mềm, thịt bò Úc 100% nguyên chất
+              nướng tới mức hoàn hảo, phô mai Cheddar tan chảy, rau xà lách tươi
+              giòn, cà chua mọng nước, hành tây và sốt đặc biệt của nhà RETASTE.
+              Đây là lựa chọn lý tưởng cho bữa trưa nhanh chóng hoặc bữa tối nhẹ
+              nhàng.
+            </div>
+
+            <div class="product-features">
+              <h3>Đặc điểm nổi bật</h3>
+              <div class="features-list">
+                <div class="feature-item">
+                  <span class="feature-icon">✓</span>
+                  <span>Thịt bò Úc 100% tự nhiên</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">✓</span>
+                  <span>Phô mai Cheddar thượng hạng</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">✓</span>
+                  <span>Không chất bảo quản</span>
+                </div>
+                <div class="feature-item">
+                  <span class="feature-icon">✓</span>
+                  <span>Sốt đặc biệt tự làm</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="customization">
+              <h3>Tùy chỉnh theo ý thích</h3>
+
+              <div class="options-group">
+                <h4>Mức độ chín</h4>
+                <div class="options">
+                  <div class="option-item">
+                    <input
+                      type="radio"
+                      name="doneness"
+                      id="medium-rare"
+                      class="option-input"
+                      checked
+                    />
+                    <label for="medium-rare" class="option-label"
+                      >Chín tái</label
+                    >
+                  </div>
+                  <div class="option-item">
+                    <input
+                      type="radio"
+                      name="doneness"
+                      id="medium"
+                      class="option-input"
+                    />
+                    <label for="medium" class="option-label">Chín vừa</label>
+                  </div>
+                  <div class="option-item">
+                    <input
+                      type="radio"
+                      name="doneness"
+                      id="well-done"
+                      class="option-input"
+                    />
+                    <label for="well-done" class="option-label">Chín kỹ</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="options-group">
+                <h4>Thêm topping (tuỳ chọn)</h4>
+                <div class="addon-item">
+                  <div class="addon-left">
+                    <input type="checkbox" id="extra-cheese" />
+                    <label for="extra-cheese">Phô mai thêm</label>
+                  </div>
+                  <div class="addon-price">+10.000 ₫</div>
+                </div>
+                <div class="addon-item">
+                  <div class="addon-left">
+                    <input type="checkbox" id="bacon" />
+                    <label for="bacon">Thịt xông khói</label>
+                  </div>
+                  <div class="addon-price">+15.000 ₫</div>
+                </div>
+                <div class="addon-item">
+                  <div class="addon-left">
+                    <input type="checkbox" id="egg" />
+                    <label for="egg">Trứng ốp la</label>
+                  </div>
+                  <div class="addon-price">+8.000 ₫</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="quantity-selector">
+              <label>Số lượng:</label>
+              <div class="quantity-controls">
+                <button class="quantity-btn" onclick="decreaseQuantity()">
+                  -
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  value="1"
+                  class="quantity-input"
+                  id="quantity"
+                />
+                <button class="quantity-btn" onclick="increaseQuantity()">
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div class="product-actions">
+              <button class="add-to-cart">
+                <span>🛒</span>
+                Thêm vào giỏ hàng
+              </button>
+              <button class="buy-now">Mua ngay</button>
+              <button class="favorite-btn">❤️</button>
+              <button class="share-btn">🔗</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs Section -->
+        <div class="product-tabs">
+          <div class="tabs-header">
+            <button
+              class="tab-button active"
+              onclick="changeTab('description')"
+            >
+              Mô tả chi tiết
+            </button>
+            <button class="tab-button" onclick="changeTab('nutrition')">
+              Thông tin dinh dưỡng
+            </button>
+            <button class="tab-button" onclick="changeTab('reviews')">
+              Đánh giá (156)
+            </button>
+            <button class="tab-button" onclick="changeTab('shipping')">
+              Thông tin giao hàng
+            </button>
+          </div>
+
+          <div id="description" class="tab-content active">
+            <h3>Giới thiệu về Classic Burger</h3>
+            <p>
+              Classic Burger là một trong những món ăn nổi tiếng nhất của
+              RETASTE, đã được phục vụ từ khi chúng tôi mở cửa hàng đầu tiên.
+              Món ăn này đã chinh phục hàng ngàn khách hàng với hương vị đậm đà
+              và chất lượng nguyên liệu tuyệt hảo.
+            </p>
+            <br />
+            <p>
+              Chúng tôi sử dụng thịt bò Úc 100% tự nhiên, được nhập khẩu trực
+              tiếp và bảo quản trong điều kiện lý tưởng. Thịt được xay trong
+              ngày để đảm bảo độ tươi ngon, sau đó được nêm nếm với công thức
+              gia vị đặc biệt và tạo hình thủ công.
+            </p>
+            <br />
+            <p>
+              Bánh mì được làm từ bột mì hữu cơ, nướng trong lò đặc biệt để có
+              được độ mềm xốp bên trong và lớp vỏ giòn tan bên ngoài. Phô mai
+              Cheddar được chúng tôi lựa chọn kỹ càng để đảm bảo hương vị đậm đà
+              và khả năng tan chảy hoàn hảo.
+            </p>
+            <br />
+            <p>
+              Sốt đặc biệt của chúng tôi là bí quyết được truyền lại qua nhiều
+              thế hệ đầu bếp, với hơn 15 loại gia vị và nguyên liệu khác nhau,
+              tạo nên hương vị khó quên cho mỗi chiếc burger.
+            </p>
+            <br />
+            <p>
+              Classic Burger đi kèm với khoai tây chiên giòn được chiên trong
+              dầu ô liu và rắc một chút muối biển, tạo nên sự kết hợp hoàn hảo
+              cho bữa ăn của bạn.
+            </p>
+          </div>
+
+          <div id="nutrition" class="tab-content">
+            <h3>Thông tin dinh dưỡng</h3>
+            <p>
+              Thông tin dinh dưỡng dưới đây được tính cho 1 phần ăn Classic
+              Burger (không bao gồm khoai tây chiên):
+            </p>
+
+            <table class="nutrition-table">
+              <tr>
+                <th>Thành phần</th>
+                <th>Lượng trên phần ăn</th>
+              </tr>
+              <tr>
+                <td>Calories</td>
+                <td>550 kcal</td>
+              </tr>
+              <tr>
+                <td>Protein</td>
+                <td>30g</td>
+              </tr>
+              <tr>
+                <td>Carbohydrates</td>
+                <td>40g</td>
+              </tr>
+              <tr>
+                <td>- Đường</td>
+                <td>8g</td>
+              </tr>
+              <tr>
+                <td>- Chất xơ</td>
+                <td>3g</td>
+              </tr>
+              <tr>
+                <td>Chất béo</td>
+                <td>28g</td>
+              </tr>
+              <tr>
+                <td>- Chất béo bão hòa</td>
+                <td>10g</td>
+              </tr>
+              <tr>
+                <td>Cholesterol</td>
+                <td>90mg</td>
+              </tr>
+              <tr>
+                <td>Natri</td>
+                <td>800mg</td>
+              </tr>
+              <tr>
+                <td>Kali</td>
+                <td>600mg</td>
+              </tr>
+            </table>
+
+            <p style="margin-top: 15px">
+              Lưu ý: Thông tin dinh dưỡng có thể thay đổi tùy thuộc vào các tùy
+              chọn và topping bổ sung.
+            </p>
+          </div>
+
+          <div id="reviews" class="tab-content">
+            <div class="review-stats">
+              <div class="overall-rating">
+                <div class="rating-number">4.8</div>
+                <div class="rating-stars">★★★★★</div>
+                <div class="rating-count">156 đánh giá</div>
+              </div>
+
+              <div class="rating-breakdown">
+                <div class="rating-bar">
+                  <div class="rating-label">5 ★</div>
+                  <div class="progress-bar">
+                    <div class="progress" style="width: 85%"></div>
+                  </div>
+                  <div class="rating-percent">85%</div>
+                </div>
+                <div class="rating-bar">
+                  <div class="rating-label">4 ★</div>
+                  <div class="progress-bar">
+                    <div class="progress" style="width: 10%"></div>
+                  </div>
+                  <div class="rating-percent">10%</div>
+                </div>
+                <div class="rating-bar">
+                  <div class="rating-label">3 ★</div>
+                  <div class="progress-bar">
+                    <div class="progress" style="width: 3%"></div>
+                  </div>
+                  <div class="rating-percent">3%</div>
+                </div>
+                <div class="rating-bar">
+                  <div class="rating-label">2 ★</div>
+                  <div class="progress-bar">
+                    <div class="progress" style="width: 1%"></div>
+                  </div>
+                  <div class="rating-percent">1%</div>
+                </div>
+                <div class="rating-bar">
+                  <div class="rating-label">1 ★</div>
+                  <div class="progress-bar">
+                    <div class="progress" style="width: 1%"></div>
+                  </div>
+                  <div class="rating-percent">1%</div>
+                </div>
+              </div>
+
+              <div class="write-review">
+                <button class="write-review-btn">Viết đánh giá</button>
+              </div>
+            </div>
+
+            <div class="review-list">
+              <div class="review-item">
+                <div class="review-header">
+                  <div class="reviewer">
+                    <img
+                      src="https://randomuser.me/api/portraits/men/32.jpg"
+                      alt="User"
+                      class="reviewer-avatar"
+                    />
+                    <div class="reviewer-info">
+                      <h4>Trần Văn Nam</h4>
+                      <div class="review-date">15/10/2025</div>
+                    </div>
+                  </div>
+                  <div class="review-rating">★★★★★</div>
+                </div>
+                <div class="review-content">
+                  Một trong những burger ngon nhất mà tôi từng ăn! Thịt bò tươi
+                  ngon, độ chín vừa phải, bánh mì mềm, phô mai tan chảy và sốt
+                  đặc biệt thật sự tuyệt vời. Giao hàng nhanh và đồ ăn vẫn còn
+                  nóng khi đến nơi. Sẽ đặt lại!
+                </div>
+                <div class="review-photos">
+                  <img
+                    src="https://images.unsplash.com/photo-1550547660-d9450f859349"
+                    alt="Review Photo"
+                    class="review-photo"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1561758033-d89a9ad46330"
+                    alt="Review Photo"
+                    class="review-photo"
+                  />
+                </div>
+                <div class="review-actions">
+                  <div class="review-action"><span>👍</span> Hữu ích (12)</div>
+                  <div class="review-action"><span>💬</span> Bình luận</div>
+                </div>
+              </div>
+
+              <div class="review-item">
+                <div class="review-header">
+                  <div class="reviewer">
+                    <img
+                      src="https://randomuser.me/api/portraits/women/42.jpg"
+                      alt="User"
+                      class="reviewer-avatar"
+                    />
+                    <div class="reviewer-info">
+                      <h4>Nguyễn Thị Hương</h4>
+                      <div class="review-date">10/10/2025</div>
+                    </div>
+                  </div>
+                  <div class="review-rating">★★★★★</div>
+                </div>
+                <div class="review-content">
+                  Classic Burger luôn là lựa chọn an toàn nhưng không kém phần
+                  ngon miệng. Tôi thích thêm phô mai và thịt xông khói, tạo nên
+                  hương vị tuyệt vời. Khoai tây chiên giòn rụm và đúng vị. Dịch
+                  vụ giao hàng rất nhanh và nhân viên rất lịch sự.
+                </div>
+                <div class="review-actions">
+                  <div class="review-action"><span>👍</span> Hữu ích (8)</div>
+                  <div class="review-action"><span>💬</span> Bình luận</div>
+                </div>
+              </div>
+
+              <div class="review-item">
+                <div class="review-header">
+                  <div class="reviewer">
+                    <img
+                      src="https://randomuser.me/api/portraits/men/71.jpg"
+                      alt="User"
+                      class="reviewer-avatar"
+                    />
+                    <div class="reviewer-info">
+                      <h4>Phạm Minh Tuấn</h4>
+                      <div class="review-date">05/10/2025</div>
+                    </div>
+                  </div>
+                  <div class="review-rating">★★★★☆</div>
+                </div>
+                <div class="review-content">
+                  Burger ngon, nhưng lần này bánh mì hơi khô. Thịt vẫn tươi và
+                  nhiều, phô mai đủ. Có lẽ do thời gian giao hàng hơi lâu, nhưng
+                  tổng thể vẫn rất ngon. Tôi sẽ tiếp tục đặt và hy vọng lần sau
+                  sẽ hoàn hảo.
+                </div>
+                <div class="review-actions">
+                  <div class="review-action"><span>👍</span> Hữu ích (3)</div>
+                  <div class="review-action"><span>💬</span> Bình luận</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="shipping" class="tab-content">
+            <h3>Thông tin giao hàng</h3>
+            <p>
+              RETASTE cam kết mang đến trải nghiệm giao hàng tốt nhất cho khách
+              hàng với các chính sách sau:
+            </p>
+            <br />
+            <ul style="padding-left: 20px">
+              <li>
+                Thời gian giao hàng: 20-30 phút trong khu vực nội thành, 30-45
+                phút cho khu vực ngoại thành
+              </li>
+              <li>
+                Phí giao hàng: Miễn phí cho đơn hàng từ 100.000đ trong bán kính
+                3km
+              </li>
+              <li>
+                Đồ ăn được đóng gói cẩn thận trong hộp giữ nhiệt đặc biệt để đảm
+                bảo món ăn vẫn còn nóng và giữ nguyên hương vị khi đến tay bạn
+              </li>
+              <li>
+                Theo dõi đơn hàng theo thời gian thực thông qua ứng dụng RETASTE
+              </li>
+              <li>Hỗ trợ giao hàng 24/7 cho các khu vực trung tâm thành phố</li>
+            </ul>
+            <br />
+            <p>
+              Lưu ý: Thời gian giao hàng có thể thay đổi tùy thuộc vào điều kiện
+              thời tiết và tình trạng giao thông. Trong trường hợp có sự chậm
+              trễ, nhân viên của chúng tôi sẽ liên hệ với bạn.
+            </p>
+          </div>
+        </div>
+
+        <!-- Similar Products -->
+        <section class="similar-products">
+          <div class="section-header">
+            <h2 class="section-title">Món ăn tương tự</h2>
+            <a href="#" class="view-all">Xem tất cả</a>
+          </div>
+          <div class="products-container">
+            <div class="product-card">
+              <img
+                src="https://images.unsplash.com/photo-1553979459-d2229ba7433b"
+                alt="Cheese Burger Deluxe"
+                class="product-img"
+              />
+              <div class="product-info">
+                <h3 class="product-title">Cheese Burger Deluxe</h3>
+                <div class="product-category">Burger</div>
+                <div class="product-details">
+                  <div class="product-price">79.000 ₫</div>
+                  <div class="product-rating">★★★★☆</div>
+                </div>
+                <div class="product-actions">
+                  <button class="add-to-cart">Thêm vào giỏ</button>
+                  <button class="favorite-btn">❤️</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <img
+                src="https://images.unsplash.com/photo-1572802419224-296b0aeee0d9"
+                alt="Burger Gà Cay"
+                class="product-img"
+              />
+              <div class="product-info">
+                <h3 class="product-title">Burger Gà Cay</h3>
+                <div class="product-category">Burger</div>
+                <div class="product-details">
+                  <div class="product-price">65.000 ₫</div>
+                  <div class="product-rating">★★★★★</div>
+                </div>
+                <div class="product-actions">
+                  <button class="add-to-cart">Thêm vào giỏ</button>
+                  <button class="favorite-btn">❤️</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <img
+                src="https://images.unsplash.com/photo-1585238342024-78d387f4a707"
+                alt="Double Beef Burger"
+                class="product-img"
+              />
+              <div class="product-info">
+                <h3 class="product-title">Double Beef Burger</h3>
+                <div class="product-category">Burger</div>
+                <div class="product-details">
+                  <div class="product-price">99.000 ₫</div>
+                  <div class="product-rating">★★★★★</div>
+                </div>
+                <div class="product-actions">
+                  <button class="add-to-cart">Thêm vào giỏ</button>
+                  <button class="favorite-btn">❤️</button>
+                </div>
+              </div>
+            </div>
+            <div class="product-card">
+              <img
+                src="https://images.unsplash.com/photo-1603064752734-4c48eff53d05"
+                alt="Burger Chay"
+                class="product-img"
+              />
+              <div class="product-info">
+                <h3 class="product-title">Burger Chay</h3>
+                <div class="product-category">Burger</div>
+                <div class="product-details">
+                  <div class="product-price">59.000 ₫</div>
+                  <div class="product-rating">★★★★☆</div>
+                </div>
+                <div class="product-actions">
+                  <button class="add-to-cart">Thêm vào giỏ</button>
+                  <button class="favorite-btn">❤️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-container">
+          <div class="footer-section">
+            <a href="#" class="footer-logo">RE<span>TASTE</span></a>
+            <p>
+              RETASTE - Khám phá hương vị yêu thích của bạn với công nghệ gợi ý
+              thông minh.
+            </p>
+            <div class="social-links">
+              <a href="#" class="social-icon">📘</a>
+              <a href="#" class="social-icon">🐦</a>
+              <a href="#" class="social-icon">📸</a>
+              <a href="#" class="social-icon">📹</a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Thông tin</h3>
+            <ul class="footer-links">
+              <li><a href="#">Về chúng tôi</a></li>
+              <li><a href="#">Điều khoản dịch vụ</a></li>
+              <li><a href="#">Chính sách bảo mật</a></li>
+              <li><a href="#">Chính sách giao hàng</a></li>
+              <li><a href="#">Câu hỏi thường gặp</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Danh mục</h3>
+            <ul class="footer-links">
+              <li><a href="#">Món mới</a></li>
+              <li><a href="#">Bán chạy nhất</a></li>
+              <li><a href="#">Khuyến mãi</a></li>
+              <li><a href="#">Combo tiết kiệm</a></li>
+              <li><a href="#">Tất cả sản phẩm</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Liên hệ</h3>
+            <ul class="footer-links">
+              <li>📍 123 Đường ABC, Quận XYZ, TP.HCM</li>
+              <li>📞 1900-1234</li>
+              <li>✉️ support@retaste.vn</li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Đăng ký nhận tin</h3>
+            <p>Nhận thông tin về ưu đãi và món mới</p>
+            <form class="subscribe-form">
+              <input type="email" placeholder="Email của bạn" />
+              <button type="submit">Đăng ký</button>
+            </form>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2025 RETASTE. Tất cả quyền được bảo lưu.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Image gallery functionality
+      function changeImage(element) {
+        document.getElementById("main-image").src = element.src;
+
+        // Update active thumbnail
+        const thumbnails = document.querySelectorAll(".thumbnail");
+        thumbnails.forEach((thumb) => {
+          thumb.classList.remove("active");
+        });
+
+        element.classList.add("active");
+      }
+
+      // Tab switching functionality
+      function changeTab(tabId) {
+        // Hide all tab contents
+        const tabContents = document.querySelectorAll(".tab-content");
+        tabContents.forEach((tab) => {
+          tab.classList.remove("active");
+        });
+
+        // Show the selected tab content
+        document.getElementById(tabId).classList.add("active");
+
+        // Update active tab button
+        const tabButtons = document.querySelectorAll(".tab-button");
+        tabButtons.forEach((button) => {
+          button.classList.remove("active");
+        });
+
+        event.currentTarget.classList.add("active");
+      }
+
+      // Quantity selector functionality
+      function increaseQuantity() {
+        const quantityInput = document.getElementById("quantity");
+        const currentValue = parseInt(quantityInput.value);
+        quantityInput.value = currentValue + 1;
+      }
+
+      function decreaseQuantity() {
+        const quantityInput = document.getElementById("quantity");
+        const currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+          quantityInput.value = currentValue - 1;
+        }
+      }
+
+      // Mobile menu toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileMenuButton = document.querySelector(".mobile-menu-button");
+        const navMenu = document.querySelector(".nav-menu");
+
+        mobileMenuButton.addEventListener("click", function () {
+          navMenu.classList.toggle("active");
+        });
+
+        // Close mobile menu when clicking on a menu item
+        const navLinks = document.querySelectorAll(".nav-list a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            navMenu.classList.remove("active");
+          });
+        });
+
+        // Favorite button toggle
+        const favoriteBtn = document.querySelector(".favorite-btn");
+        favoriteBtn.addEventListener("click", function () {
+          if (this.style.backgroundColor === "var(--primary)") {
+            this.style.backgroundColor = "var(--white)";
+            this.style.color = "var(--primary)";
+          } else {
+            this.style.backgroundColor = "var(--primary)";
+            this.style.color = "var(--white)";
+          }
+        });
+
+        // Add to cart functionality
+        const addToCartBtn = document.querySelector(".add-to-cart");
+        const cartCount = document.querySelector(".cart-count");
+        let count = 3;
+
+        addToCartBtn.addEventListener("click", function () {
+          const quantity = parseInt(document.getElementById("quantity").value);
+          count += quantity;
+          cartCount.textContent = count;
+
+          const originalText = this.innerHTML;
+          this.innerHTML = "<span>✓</span> Đã thêm vào giỏ";
+          this.style.backgroundColor = "var(--secondary)";
+
+          setTimeout(() => {
+            this.innerHTML = originalText;
+            this.style.backgroundColor = "var(--primary)";
+          }, 2000);
+        });
+      });
+    </script>
+  </body>
+</html>

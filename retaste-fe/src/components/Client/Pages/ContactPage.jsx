@@ -130,7 +130,6 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Breadcrumb */}
       <div className={styles.breadcrumb}>
         <div className={styles.container}>
           <ul className={styles.breadcrumbList}>

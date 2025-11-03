@@ -8,19 +8,23 @@ import SuggestedDishesPage from "./components/Client/Pages/SuggestedDishesPage";
 import AboutUsPage from "./components/Client/Pages/AboutUsPage";
 import ContactPage from "./components/Client/Pages/ContactPage";
 import AuthForm from "./components/Auth/AuthForm";
+import Layout from "./components/Client/Pages/Layout";
 
 function App() {
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/combo" element={<ComboPage />} />
-          <Route path="/suggest" element={<SuggestedDishesPage />} />
-          <Route path="/promotion" element={<PromotionPage />} />
-          <Route path="/about" element={<AboutUsPage />} />
-          <Route path="/contact" element={<ContactPage />} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/combo" element={<ComboPage />} />
+            <Route path="/suggest" element={<SuggestedDishesPage />} />
+            <Route path="/promotion" element={<PromotionPage />} />
+            <Route path="/about" element={<AboutUsPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+          </Route>
+
           <Route path="/auth" element={<AuthForm />} />
         </Routes>
       </Router>

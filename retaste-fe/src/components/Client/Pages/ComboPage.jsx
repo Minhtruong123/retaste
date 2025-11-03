@@ -43,7 +43,6 @@ export default function ComboPage() {
       });
     });
 
-    // Pagination functionality
     const paginationButtons = document.querySelectorAll(
       `.${styles.paginationButton}`
     );
