@@ -20,6 +20,8 @@ class CategoryService {
     imageUrl?: string;
     isAvailable?: boolean;
     isFeatured?: boolean;
+    bestSeller: boolean;
+    special?: string[];
     sizes: {
       sizeName: string;
       sizeValue?: string;
@@ -59,7 +61,9 @@ class CategoryService {
       preparationTime: data.preparationTime,
       imageUrl: data.imageUrl,
       isAvailable: data.isAvailable,
-      isFeatured: data.isFeatured
+      isFeatured: data.isFeatured,
+      ratingCount: 0,
+      bestSeller: data.bestSeller
     };
     const createdProduct = await productRepo.createNew(newProduct);
     if (!createdProduct) throw new BAD_REQUEST("Cann't create new product !");

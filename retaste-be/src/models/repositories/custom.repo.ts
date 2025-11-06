@@ -124,12 +124,20 @@ const getValidCustomizationsWithOptions = async (
       $project: {
         _id: 1,
         groupName: 1,
+        isRequired: 1,
         options: 1
       }
     }
   ]);
 
   return result;
+};
+const getCustomReuiredByProductId = async (productId: string) => {
+  return await CustomizationGroup.find({
+    productId: createObjectId(productId),
+    isRequired: true,
+    isDeleted: false
+  });
 };
 
 export const customRepo = {
@@ -141,5 +149,6 @@ export const customRepo = {
   deleteById,
   findOneById,
   findByProductId,
-  getValidCustomizationsWithOptions
+  getValidCustomizationsWithOptions,
+  getCustomReuiredByProductId
 };

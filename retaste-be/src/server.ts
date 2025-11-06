@@ -9,7 +9,7 @@ import corsOptions from './configs/cors';
 import './configs/database';
 import { errorHandling } from './middlewares/errorsHandle.middleware';
 import { indexRoute } from './routers';
-import { connectRedis } from './configs/redis';
+// import { connectRedis } from './configs/redis';
 const API_V1 = '/api/v1';
 const app = express();
 
@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
   });
 });
 // database
-connectRedis();
+// connectRedis();
 
 app.listen(env.APP_PORT, env.APP_HOST, () => {
   console.log(`App is running on http://${env.APP_HOST}:${env.APP_PORT} !`);

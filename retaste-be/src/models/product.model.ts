@@ -8,6 +8,9 @@ export interface IProduct {
   categoryId: Types.ObjectId;
   productName: string;
   productSlug: string;
+  ratingCount: number;
+  special?: string[];
+  bestSeller: boolean;
   description?: string;
   basePrice: number;
   preparationTime: number;
@@ -29,6 +32,13 @@ const productSchema = new Schema<IProduct>(
     preparationTime: { type: Number, required: true },
     imageUrl: String,
     isAvailable: { type: Boolean, default: true },
+    ratingCount: { type: Number, required: true, min: 0, default: 0 },
+    special: [
+      {
+        type: String
+      }
+    ],
+    bestSeller: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false }
   },
