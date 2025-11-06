@@ -14,6 +14,7 @@ export interface IProduct {
   imageUrl?: string;
   isAvailable?: boolean;
   isFeatured?: boolean;
+  isDeleted?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,6 +29,7 @@ const productSchema = new Schema<IProduct>(
     preparationTime: { type: Number, required: true },
     imageUrl: String,
     isAvailable: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
     isFeatured: { type: Boolean, default: false }
   },
   {
@@ -37,9 +39,12 @@ const productSchema = new Schema<IProduct>(
 );
 
 productSchema.index({ categoryId: 1 });
-productSchema.index({ productSlug: 1 });
+productSchema.index({ isDeleted: 1 });
 productSchema.index({ isAvailable: 1, isFeatured: -1 });
-
 const Product = model(DOCUMENT_PRODUCT, productSchema);
 
+export const productModel = {
+  COLLECTION_NAME,
+  DOCUMENT_PRODUCT
+};
 export default Product;

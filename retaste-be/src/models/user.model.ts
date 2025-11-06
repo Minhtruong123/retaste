@@ -30,6 +30,7 @@ export interface IUser {
   verifyToken: string | null;
   emailVerified: boolean;
   phoneVerified: boolean;
+
   addresses: IAddress[];
   createdAt?: Date;
   updatedAt?: Date;
@@ -82,4 +83,8 @@ userSchema.index({ 'addresses.location': '2dsphere' });
 
 const User = model<IUser>(DOCUMENT_USER, userSchema);
 
+export const userModel = {
+  COLLECTION_NAME,
+  DOCUMENT_USER
+};
 export default User;

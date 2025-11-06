@@ -12,7 +12,8 @@ class AccessValidate {
   static register = async (req: Request, res: Response, next: NextFunction) => {
     const data = z.object({
       email: z.email({ error: EMAIL_RULE_MESSAGE, pattern: new RegExp(EMAIL_RULE) }),
-      phone: z.string().optional(),
+      phoneNumber: z.string().optional(),
+      fullName: z.string(),
       gender: z.enum([...Object.values(GENDER)]).default(GENDER.MALE),
       password: z.string({ error: PASSWORD_RULE_MESSAGE }).regex(PASSWORD_RULE)
     });

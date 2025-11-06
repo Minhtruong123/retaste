@@ -26,5 +26,11 @@ const keyStoreSchema = new Schema<IKeyStore>(
   }
 );
 
+keyStoreSchema.index({ userId: 1 });
+
 const KeyStore = model<IKeyStore>(DOCUMENT_KEY_STORE, keyStoreSchema);
+export const keyStoreModel = {
+  DOCUMENT_KEY_STORE,
+  COLLECTION_NAME
+};
 export default KeyStore;

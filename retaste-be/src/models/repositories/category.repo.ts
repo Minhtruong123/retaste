@@ -3,7 +3,10 @@ import Category, { ICategory } from '../category.model';
 import slugify from 'slugify';
 
 const findOneById = async (id: string) => {
-  return await Category.findById(id);
+  return await Category.findOne({
+    _id: createObjectId(id),
+    isDeleted: false
+  });
 };
 
 const createNew = async (data: ICategory) => {
@@ -21,7 +24,17 @@ const update = async (data: Partial<ICategory>, id: string) => {
   );
 };
 const deleteById = async (id: string) => {
-  return await Category.findOneAndDelete({ _id: createObjectId(id), isDeleted: false });
+  return await Category.updateOne(
+    {
+      _id: createObjectId(id),
+      isDeleted: false
+    },
+    {
+      $set: {
+        isDeleted: true
+      }
+    }
+  );
 };
 const getListCategory = async (option: {
   limit: number;

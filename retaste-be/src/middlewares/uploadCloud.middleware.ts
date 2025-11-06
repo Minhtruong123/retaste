@@ -8,7 +8,7 @@ const uploadToCloudinary = async (req: Request, res: Response, next: NextFunctio
     const upload = (await CloudinaryProvider.streamUpload(req.file.buffer, 'category')) as {
       secure_url: string;
     };
-    req.body.imageUrl = upload.secure_url;
+    req.body[req.file.fieldname] = upload.secure_url;
     return next();
   }
 };
