@@ -13,11 +13,7 @@ export const register = async (values) => {
 
 export const login = async (values) => {
   try {
-<<<<<<< HEAD
     const { data } = await api.post("/access/login", {
-=======
-    const { data } = await axios.post("http://localhost:8017/api/v1/access/login", {
->>>>>>> 838868daf6cdfdb731ba044e9491ea38c06cd892
       ...values,
     });
 
