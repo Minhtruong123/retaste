@@ -9,6 +9,7 @@ class AccessController {
         message: await AccessService.register(req.body)
       }).send(res);
     } catch (error) {
+      console.error('REGISTER ERROR:', error);
       next(error);
     }
   };
@@ -18,6 +19,8 @@ class AccessController {
         metadata: await AccessService.login(req.body)
       }).send(res);
     } catch (error) {
+      console.log(error);
+      
       next(error);
     }
   };

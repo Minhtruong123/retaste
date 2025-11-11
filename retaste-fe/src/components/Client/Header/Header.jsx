@@ -1,9 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Header.module.css";
 import { NavLink } from "react-router-dom";
 
 export default function Header() {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  useEffect(() => {
+    // Kiểm tra thông tin người dùng từ localStorage khi component được mount
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      setUser(JSON.parse(userInfo));
+    }
+  }, []);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuActive(!isMobileMenuActive);
@@ -12,6 +22,17 @@ export default function Header() {
   const handleNavLinkClick = () => {
     setIsMobileMenuActive(false);
   };
+
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    setUser(null);
+    setShowDropdown(false);
+  };
+
   return (
     <>
       <header className={styles.header}>
@@ -37,9 +58,42 @@ export default function Header() {
               <a href="#" className={styles.cartIcon}>
                 🛒 <span className={styles.cartCount}>3</span>
               </a>
-              <NavLink to="/auth" className={styles.userIcon}>
-                👤
-              </NavLink>
+
+              {user ? (
+                <div className={styles.userProfile}>
+                  <div className={styles.userName} onClick={toggleDropdown}>
+                    {user.name}
+                  </div>
+                  {showDropdown && (
+                    <div className={styles.dropdown}>
+                      <NavLink
+                        to="/profile"
+                        className={styles.dropdownItem}
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        Thông tin cá nhân
+                      </NavLink>
+                      <NavLink
+                        to="/orders"
+                        className={styles.dropdownItem}
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        Đơn hàng của tôi
+                      </NavLink>
+                      <button
+                        onClick={handleLogout}
+                        className={styles.dropdownItem}
+                      >
+                        Đăng xuất
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <NavLink to="/auth" className={styles.userIcon}>
+                  👤
+                </NavLink>
+              )}
             </div>
           </div>
         </div>

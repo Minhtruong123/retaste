@@ -2,7 +2,7 @@ export const whitelist = ['http://example1.com', 'http://example2.com'];
 export const GENDER = {
   MALE: 'male',
   FEMALE: 'female',
-  OTHER: 'ofther'
+  OTHER: 'other'
 };
 export const STATUS = {
   BAN: 'ban',

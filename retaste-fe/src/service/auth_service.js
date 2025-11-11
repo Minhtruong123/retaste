@@ -3,17 +3,17 @@ import api from "./api";
 
 export const register = async (values) => {
   try {
-    await api.post("/auth/register", {
+    await api.post("/access/register", {
       ...values,
     });
   } catch (error) {
-    console.log(error);
+    throw error.response?.data?.message || "Đăng ký thất bại";
   }
 };
 
 export const login = async (values) => {
   try {
-    const { data } = await api.post("/auth/login", {
+    const { data } = await api.post("/access/login", {
       ...values,
     });
 
@@ -24,12 +24,12 @@ export const login = async (values) => {
 
     return data;
   } catch (error) {
-    console.log(error);
+    throw error.response?.data?.message || "Đăng nhập thất bại";
   }
 };
 
 export const logout = async () => {
   await api.post("/auth/logout");
   localStorage.clear();
-  window.location.href = "/login";
+  window.location.href = "/auth";
 };

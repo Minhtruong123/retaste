@@ -1,30 +1,42 @@
+/* ComboPage.module.css */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Banner Section */
 .pageBanner {
   background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
     url("https://images.unsplash.com/photo-1504674900247-0877df9cc836");
   background-size: cover;
   background-position: center;
-  color: var(--white);
+  color: #ffffff;
   padding: 60px 0;
   text-align: center;
 }
 
-.pageBanner h1 {
+.bannerTitle {
   font-size: 2.5rem;
   margin-bottom: 15px;
+  font-weight: 700;
 }
 
-.pageBanner p {
+.bannerDescription {
   font-size: 1.2rem;
   max-width: 700px;
   margin: 0 auto;
+  line-height: 1.6;
 }
 
+/* Filter Section */
 .filterSection {
   padding: 20px 0;
-  background-color: var(--white);
+  background-color: #ffffff;
   margin: 20px 0;
   border-radius: 10px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .filterContainer {
@@ -38,6 +50,7 @@
 .filterLabel {
   font-weight: bold;
   min-width: 100px;
+  color: #333333;
 }
 
 .filterOptions {
@@ -49,16 +62,21 @@
 
 .filterOption {
   padding: 8px 15px;
-  background-color: var(--light-gray);
+  background-color: #eeeeee;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.3s;
+  font-weight: 500;
 }
 
-.filterOption:hover,
+.filterOption:hover {
+  background-color: #ff6b35;
+  color: #ffffff;
+}
+
 .filterOption.active {
-  background-color: var(--primary);
-  color: var(--white);
+  background-color: #ff6b35;
+  color: #ffffff;
 }
 
 .sortOptions {
@@ -68,14 +86,26 @@
   margin-left: auto;
 }
 
+.sortLabel {
+  font-weight: 500;
+  color: #333333;
+}
+
 .sortSelect {
   padding: 8px 15px;
   border-radius: 5px;
-  border: 1px solid var(--gray);
+  border: 1px solid #dddddd;
   outline: none;
   cursor: pointer;
+  background-color: #ffffff;
+  transition: border-color 0.3s;
 }
 
+.sortSelect:focus {
+  border-color: #ff6b35;
+}
+
+/* Combo Section */
 .comboSection {
   padding: 40px 0;
 }
@@ -84,32 +114,47 @@
   text-align: center;
   font-size: 2rem;
   margin-bottom: 40px;
-  color: var(--text);
+  color: #333333;
+  font-weight: 700;
+  position: relative;
+}
+
+.sectionTitle::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background-color: #ff6b35;
 }
 
 .combosContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
 }
 
 .comboCard {
-  background-color: var(--white);
+  background-color: #ffffff;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: transform 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .comboCard:hover {
   transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
 .comboImgContainer {
   position: relative;
-  height: 200px;
+  height: 220px;
   overflow: hidden;
 }
 
@@ -128,11 +173,12 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: var(--primary);
-  color: var(--white);
+  background-color: #ff6b35;
+  color: #ffffff;
   font-weight: bold;
   padding: 5px 10px;
   border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .comboInfo {
@@ -145,28 +191,32 @@
 .comboTitle {
   font-size: 1.3rem;
   margin-bottom: 10px;
-  color: var(--text);
+  color: #333333;
+  font-weight: 600;
 }
 
 .comboDescription {
-  color: var(--text-light);
+  color: #666666;
   margin-bottom: 15px;
-  flex-grow: 1;
+  line-height: 1.5;
 }
 
 .comboItems {
   margin-bottom: 15px;
+  flex-grow: 1;
 }
 
 .comboItemsTitle {
   font-weight: bold;
-  margin-bottom: 5px;
-  color: var(--secondary);
+  margin-bottom: 8px;
+  color: #2a9d8f;
 }
 
 .comboItem {
-  padding: 5px 0;
-  border-bottom: 1px dashed var(--gray);
+  padding: 6px 0;
+  border-bottom: 1px dashed #dddddd;
+  font-size: 0.95rem;
+  color: #333333;
 }
 
 .comboItem:last-child {
@@ -183,13 +233,13 @@
 .comboPrice {
   font-size: 1.5rem;
   font-weight: bold;
-  color: var(--primary);
+  color: #ff6b35;
 }
 
 .comboOriginalPrice {
   font-size: 1.1rem;
   text-decoration: line-through;
-  color: var(--text-light);
+  color: #666666;
 }
 
 .comboActions {
@@ -199,35 +249,50 @@
 
 .orderButton {
   flex: 1;
-  background-color: var(--primary);
-  color: var(--white);
+  background-color: #ff6b35;
+  color: #ffffff;
   border: none;
-  padding: 10px 15px;
+  padding: 12px 15px;
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .orderButton:hover {
-  background-color: var(--primary-dark);
+  background-color: #e85a2a;
+  transform: translateY(-2px);
+}
+
+.orderButton.ordered {
+  background-color: #2a9d8f;
 }
 
 .favoriteBtn {
-  background-color: var(--white);
-  color: var(--primary);
-  border: 1px solid var(--primary);
+  background-color: #ffffff;
+  color: #ff6b35;
+  border: 1px solid #ff6b35;
   border-radius: 5px;
   padding: 10px;
   cursor: pointer;
   transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .favoriteBtn:hover {
-  background-color: var(--primary);
-  color: var(--white);
+  background-color: #ff6b35;
+  color: #ffffff;
+  transform: scale(1.05);
 }
 
+.favoriteBtn.favorited {
+  background-color: #ff6b35;
+  color: #ffffff;
+}
+
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -242,24 +307,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--white);
-  border: 1px solid var(--gray);
-  color: var(--text);
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  color: #333333;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s;
 }
 
-.paginationButton:hover,
-.paginationButton.active {
-  background-color: var(--primary);
-  color: var(--white);
-  border-color: var(--primary);
+.paginationButton:hover {
+  background-color: #eeeeee;
+  border-color: #cccccc;
 }
 
+.paginationButton.active {
+  background-color: #ff6b35;
+  color: #ffffff;
+  border-color: #ff6b35;
+}
+
+/* Special Offers */
 .specialOffers {
   padding: 50px 0;
-  background-color: var(--light-gray);
+  background-color: #eeeeee;
 }
 
 .offerBanner {
@@ -267,51 +337,98 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 40px;
+  padding: 50px;
   background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
     url("https://images.unsplash.com/photo-1544148103-0773bf10d330");
   background-size: cover;
   background-position: center;
   border-radius: 10px;
-  color: var(--white);
+  color: #ffffff;
   text-align: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .offerTitle {
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-bottom: 15px;
+  font-weight: 700;
 }
 
 .offerSubtitle {
   font-size: 1.2rem;
-  margin-bottom: 20px;
-  max-width: 600px;
+  margin-bottom: 25px;
+  max-width: 700px;
+  line-height: 1.6;
 }
 
 .offerCode {
-  background-color: var(--white);
-  color: var(--text);
-  padding: 10px 20px;
-  font-size: 1.5rem;
+  background-color: #ffffff;
+  color: #333333;
+  padding: 12px 30px;
+  font-size: 1.8rem;
   font-weight: bold;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  letter-spacing: 2px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  letter-spacing: 3px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .offerButton {
-  background-color: var(--primary);
-  color: var(--white);
+  background-color: #ff6b35;
+  color: #ffffff;
   border: none;
-  padding: 12px 25px;
-  border-radius: 25px;
-  font-weight: bold;
+  padding: 14px 28px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .offerButton:hover {
-  background-color: var(--primary-dark);
+  background-color: #e85a2a;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.offerButton:active {
+  transform: translateY(-1px);
+}
+
+/* Cart Count */
+.cartCountContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #ff6b35;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.cartCountContainer:hover {
+  transform: scale(1.1);
+}
+
+.cartCount {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .combosContainer {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -319,7 +436,7 @@
     padding: 40px 0;
   }
 
-  .pageBanner h1 {
+  .bannerTitle {
     font-size: 2rem;
   }
 
@@ -337,5 +454,38 @@
 
   .combosContainer {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  .offerTitle {
+    font-size: 1.8rem;
+  }
+
+  .offerSubtitle {
+    font-size: 1rem;
+  }
+
+  .offerCode {
+    font-size: 1.5rem;
+    padding: 10px 25px;
+  }
+}
+
+@media (max-width: 576px) {
+  .combosContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .filterOptions {
+    overflow-x: auto;
+    padding-bottom: 10px;
+    flex-wrap: nowrap;
+  }
+
+  .filterOption {
+    white-space: nowrap;
+  }
+
+  .comboImgContainer {
+    height: 180px;
   }
 }
