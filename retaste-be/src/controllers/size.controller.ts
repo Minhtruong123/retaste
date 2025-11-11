@@ -6,7 +6,7 @@ class SizeController {
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
       new OK({
-        metadata: await SizeService.create(req.body)
+        message: await SizeService.create(req.body)
       }).send(res);
     } catch (error) {
       next(error);

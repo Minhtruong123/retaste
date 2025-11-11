@@ -4,7 +4,7 @@ export const DOCUMENT_ADDRESS = 'Address';
 const COLLECTION_NAME = 'addresses';
 
 export interface IAddress {
-  user: Schema.Types.ObjectId;
+  userId: Schema.Types.ObjectId;
   addressType?: 'home' | 'work' | 'other';
   streetAddress: string;
   city: string;
@@ -22,7 +22,7 @@ export interface IAddress {
 }
 const addressSchema = new Schema<IAddress>(
   {
-    user: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: DOCUMENT_USER,
       required: true
