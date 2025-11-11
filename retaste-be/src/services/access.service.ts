@@ -7,9 +7,7 @@ import { BrevoProvider } from '~/providers/brevo.provider';
 import { JwtProvider } from '~/providers/jwt.provider';
 import { createObjectId, pickUser } from '~/utils/format';
 import { generateKeyPairSync } from '~/utils/generate';
-import { userRedis } from '~/redis/user.redis';
 import { jwtDecode } from 'jwt-decode';
-import ms from 'ms';
 import { IUser } from '~/models/user.model';
 import { IKeyStore } from '~/models/keyStore.model';
 class AccessService {
@@ -67,14 +65,14 @@ class AccessService {
       userId: createObjectId(getUser._id.toString()),
       refreshTokenUses: []
     } as IKeyStore);
-    await userRedis.setRfToken(
-      getUser._id.toString(),
-      {
-        refreshToken,
-        publicKey
-      },
-      ms('7 days') / 1000
-    );
+    // await userRedis.setRfToken(
+    //   getUser._id.toString(),
+    //   {
+    //     refreshToken,
+    //     publicKey
+    //   },
+    //   ms('7 days') / 1000
+    // );
     return {
       accessToken,
       refreshToken,
@@ -100,27 +98,26 @@ class AccessService {
     clientId: string;
   }) => {
     if (!clientId || !refreshTokenClient) throw new UNAUTHORIZED();
-    let getKeyRedis = await userRedis.getKeyStore(clientId);
-    let payload;
-    if (getKeyRedis) {
-      const { refreshToken } = getKeyRedis;
-      if (refreshToken !== refreshTokenClient) {
-        await userRedis.delKeyStore(clientId);
-        await keyStoreRepo.deleteByUserId(clientId);
-        throw new UNAUTHORIZED('Refresh token is not valid !');
-      }
-      payload = jwtDecode(refreshTokenClient);
-    } else {
-      getKeyRedis = (await keyStoreRepo.findOneByUserId(clientId)) as IKeyStore;
-      if (!getKeyRedis) {
-        throw new UNAUTHORIZED();
-      }
-      if (getKeyRedis.refreshToken !== refreshTokenClient) {
-        await keyStoreRepo.deleteByUserId(clientId);
-        throw new UNAUTHORIZED('Refresh token is not valid !');
-      }
-      payload = jwtDecode(refreshTokenClient);
+
+    // if (getKeyRedis) {
+    //   const { refreshToken } = getKeyRedis;
+    //   if (refreshToken !== refreshTokenClient) {
+    //     await userRedis.delKeyStore(clientId);
+    //     await keyStoreRepo.deleteByUserId(clientId);
+    //     throw new UNAUTHORIZED('Refresh token is not valid !');
+    //   }
+    //   payload = jwtDecode(refreshTokenClient);
+    // } else {
+    const getKeyRedis = (await keyStoreRepo.findOneByUserId(clientId)) as IKeyStore;
+    if (!getKeyRedis) {
+      throw new UNAUTHORIZED();
     }
+    if (getKeyRedis.refreshToken !== refreshTokenClient) {
+      await keyStoreRepo.deleteByUserId(clientId);
+      throw new UNAUTHORIZED('Refresh token is not valid !');
+    }
+    const payload = jwtDecode(refreshTokenClient);
+    // }
     delete payload.iat;
     delete payload.exp;
     const { privateKey, publicKey } = generateKeyPairSync();
@@ -136,14 +133,14 @@ class AccessService {
       },
       refreshTokenClient
     );
-    await userRedis.setRfToken(
-      clientId,
-      {
-        publicKey,
-        refreshToken: pairToken.refreshToken
-      },
-      ms('7 days') / 1000
-    );
+    // await userRedis.setRfToken(
+    //   clientId,
+    //   {
+    //     publicKey,
+    //     refreshToken: pairToken.refreshToken
+    //   },
+    //   ms('7 days') / 1000
+    // );
     return {
       accessToken: pairToken.accessToken,
       refreshToken: pairToken.refreshToken

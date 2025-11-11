@@ -9,8 +9,12 @@ import corsOptions from './configs/cors';
 import './configs/database';
 import { errorHandling } from './middlewares/errorsHandle.middleware';
 import { indexRoute } from './routers';
+<<<<<<< HEAD
 import { connectRedis } from './configs/redis';
 import 'dotenv/config';
+=======
+// import { connectRedis } from './configs/redis';
+>>>>>>> 838868daf6cdfdb731ba044e9491ea38c06cd892
 const API_V1 = '/api/v1';
 const app = express();
 
@@ -30,7 +34,7 @@ app.get('/', (req, res) => {
   });
 });
 // database
-connectRedis();
+// connectRedis();
 
 app.listen(env.APP_PORT, env.APP_HOST, () => {
   console.log(`App is running on http://${env.APP_HOST}:${env.APP_PORT} !`);

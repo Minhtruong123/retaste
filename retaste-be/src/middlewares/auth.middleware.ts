@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { REFRESH_TOKEN, UNAUTHORIZED } from '~/core/errors.response';
 import { keyStoreRepo } from '~/models/repositories/keyStore.repo';
 import { JwtProvider } from '~/providers/jwt.provider';
-import { userRedis } from '~/redis/user.redis';
 import { HEADERS } from '~/utils/constant';
 
 /**
@@ -11,27 +10,23 @@ import { HEADERS } from '~/utils/constant';
  */
 const authentication = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const start = Date.now();
     const clientId = req.headers[HEADERS.CLIENT_ID]?.toString();
     const accessToken = req.headers[HEADERS.ACCESS_TOKEN]?.toString();
     if (!clientId || !accessToken) {
       throw new UNAUTHORIZED();
     }
-    const getKeyRedis = await userRedis.getKeyStore(`rfToken:${clientId}`);
-    if (getKeyRedis) {
-      const decodedToken = JwtProvider.verifyToken(accessToken, getKeyRedis.publicKey) as User;
-      req.user = decodedToken;
-    } else {
-      console.log('-----------------------casa 2=----------------------');
-      const getKeyUser = await keyStoreRepo.findOneByUserId(clientId);
-      if (!getKeyUser) {
-        throw new UNAUTHORIZED();
-      }
-      const decodedToken = JwtProvider.verifyToken(accessToken, getKeyUser.publicKey) as User;
-      req.user = decodedToken;
+    // const getKeyRedis = await userRedis.getKeyStore(`rfToken:${clientId}`);
+    // if (getKeyRedis) {
+    //   const decodedToken = JwtProvider.verifyToken(accessToken, getKeyRedis.publicKey) as User;
+    //   req.user = decodedToken;
+    // } else {
+    const getKeyUser = await keyStoreRepo.findOneByUserId(clientId);
+    if (!getKeyUser) {
+      throw new UNAUTHORIZED();
     }
-    const end = Date.now();
-    console.log(`function authen ${end - start} ms`);
+    const decodedToken = JwtProvider.verifyToken(accessToken, getKeyUser.publicKey) as User;
+    req.user = decodedToken;
+    // }
     return next();
   } catch (error) {
     if (error instanceof Error) {

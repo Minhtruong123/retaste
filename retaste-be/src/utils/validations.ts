@@ -59,3 +59,10 @@ export const paramApiValidate = (param: string) => {
     throw new BAD_REQUEST('Params is not valid !');
   }
 };
+export function checkSubset(a: string[], b: string[]) {
+  const setB = new Set(b);
+  for (const item of a) {
+    if (!setB.has(item)) return false; // dừng ngay nếu không tìm thấy
+  }
+  return true;
+}
