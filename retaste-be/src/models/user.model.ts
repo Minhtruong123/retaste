@@ -3,21 +3,21 @@ import { Schema, model } from 'mongoose';
 export const DOCUMENT_USER = 'User';
 const COLLECTION_NAME = 'users';
 
-export interface IAddress {
-  addressType?: 'home' | 'work' | 'other';
-  streetAddress: string;
-  city: string;
-  state?: string;
-  postalCode?: string;
-  country: string;
-  location?: {
-    type?: 'Point';
-    coordinates: [number, number];
-  };
-  isDefault?: boolean;
-  deliveryInstructions?: string;
-  createdAt?: Date;
-}
+// export interface IAddress {
+//   addressType?: 'home' | 'work' | 'other';
+//   streetAddress: string;
+//   city: string;
+//   state?: string;
+//   postalCode?: string;
+//   country: string;
+//   location?: {
+//     type?: 'Point';
+//     coordinates: [number, number];
+//   };
+//   isDefault?: boolean;
+//   deliveryInstructions?: string;
+//   createdAt?: Date;
+// }
 
 export interface IUser {
   email: string;
@@ -31,7 +31,7 @@ export interface IUser {
   emailVerified: boolean;
   phoneVerified: boolean;
 
-  addresses: IAddress[];
+  // addresses: IAddress[];
   createdAt?: Date;
   updatedAt?: Date;
   isDeleted?: boolean;
@@ -49,23 +49,23 @@ const userSchema = new Schema<IUser>(
     emailVerified: { type: Boolean, default: false },
     phoneVerified: { type: Boolean, default: false },
     verifyToken: { type: String, required: true },
-    addresses: [
-      {
-        addressType: { type: String, enum: ['home', 'work', 'other'] },
-        streetAddress: { type: String, required: true },
-        city: { type: String, required: true },
-        state: { type: String },
-        postalCode: { type: String },
-        country: { type: String, required: true },
-        location: {
-          type: { type: String, enum: ['Point'], default: 'Point' },
-          coordinates: { type: [Number], index: '2dsphere' }
-        },
-        isDefault: { type: Boolean, default: false },
-        deliveryInstructions: { type: String },
-        createdAt: { type: Date, default: Date.now }
-      }
-    ],
+    // addresses: [
+    //   {
+    //     addressType: { type: String, enum: ['home', 'work', 'other'] },
+    //     streetAddress: { type: String, required: true },
+    //     city: { type: String, required: true },
+    //     state: { type: String },
+    //     postalCode: { type: String },
+    //     country: { type: String, required: true },
+    //     location: {
+    //       type: { type: String, enum: ['Point'], default: 'Point' },
+    //       coordinates: { type: [Number], index: '2dsphere' }
+    //     },
+    //     isDefault: { type: Boolean, default: false },
+    //     deliveryInstructions: { type: String },
+    //     createdAt: { type: Date, default: Date.now }
+    //   }
+    // ],
     isDeleted: {
       type: Boolean,
       default: false
