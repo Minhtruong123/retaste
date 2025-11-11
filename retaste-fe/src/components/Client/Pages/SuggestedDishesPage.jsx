@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "./RecommendedPage.module.css";
+import styles from "./SuggestedDishesPage.module.css";
 
 export default function SuggestedDishesPage() {
   const [viewMode, setViewMode] = useState("grid");

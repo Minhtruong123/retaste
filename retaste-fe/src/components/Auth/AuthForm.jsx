@@ -73,7 +73,8 @@ export default function AuthForm() {
         fullName: signUpForm.fullName,
         email: signUpForm.email,
         phoneNumber: signUpForm.phoneNumber,
-        gender: signUpForm.gender,
+        // gender: signUpForm.gender,
+        // gender: ""
         password: signUpForm.password,
       });
 

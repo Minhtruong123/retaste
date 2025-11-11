@@ -3,7 +3,7 @@ import api from "./api";
 
 export const register = async (values) => {
   try {
-    await api.post("/auth/register", {
+    await api.post("/access/register", {
       ...values,
     });
   } catch (error) {
@@ -13,7 +13,7 @@ export const register = async (values) => {
 
 export const login = async (values) => {
   try {
-    const { data } = await api.post("/auth/login", {
+    const { data } = await axios.post("http://localhost:8017/api/v1/access/login", {
       ...values,
     });
 
