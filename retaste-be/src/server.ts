@@ -9,7 +9,8 @@ import corsOptions from './configs/cors';
 import './configs/database';
 import { errorHandling } from './middlewares/errorsHandle.middleware';
 import { indexRoute } from './routers';
-// import { connectRedis } from './configs/redis';
+import { connectRedis } from './configs/redis';
+import 'dotenv/config';
 const API_V1 = '/api/v1';
 const app = express();
 

@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RETASTE - Giỏ hàng của bạn</title>
+    <style>
+      :root {
+        --primary: #ff6b35;
+        --primary-dark: #e85a2a;
+        --secondary: #2a9d8f;
+        --text: #333333;
+        --text-light: #666666;
+        --background: #f9f9f9;
+        --white: #ffffff;
+        --light-gray: #eeeeee;
+        --gray: #dddddd;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+
+      /* Header */
+      header {
+        background-color: var(--white);
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo span {
+        color: var(--secondary);
+      }
+
+      .search-bar {
+        flex: 1;
+        max-width: 500px;
+        margin: 0 20px;
+        position: relative;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 10px 15px;
+        border-radius: 25px;
+        border: 1px solid var(--gray);
+        outline: none;
+        font-size: 1rem;
+      }
+
+      .search-bar button {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+      }
+
+      .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .cart-icon,
+      .user-icon {
+        font-size: 1.5rem;
+        color: var(--text);
+        text-decoration: none;
+        position: relative;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--primary);
+        color: var(--white);
+        font-size: 0.7rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-menu {
+        background-color: var(--secondary);
+        padding: 10px 0;
+      }
+
+      .nav-list {
+        display: flex;
+        list-style: none;
+        justify-content: center;
+        gap: 30px;
+      }
+
+      .nav-list a {
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .nav-list a:hover {
+        color: var(--light-gray);
+      }
+
+      /* Mobile menu */
+      .mobile-menu-button {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      @media (max-width: 992px) {
+        .mobile-menu-button {
+          display: block;
+        }
+
+        .nav-menu {
+          display: none;
+          position: absolute;
+          width: 100%;
+          left: 0;
+          top: 100%;
+          background-color: var(--secondary);
+        }
+
+        .nav-menu.active {
+          display: block;
+        }
+
+        .nav-list {
+          flex-direction: column;
+          padding: 20px;
+          gap: 15px;
+        }
+
+        .user-actions {
+          margin-left: auto;
+        }
+      }
+
+      /* Page title */
+      .page-title {
+        background-color: var(--white);
+        padding: 30px 0;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .page-title h1 {
+        font-size: 2rem;
+        color: var(--text);
+        text-align: center;
+      }
+
+      /* Cart section */
+      .cart-section {
+        padding: 30px 0 60px;
+      }
+
+      .cart-container {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        gap: 30px;
+      }
+
+      .cart-items {
+        background-color: var(--white);
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        padding: 20px;
+      }
+
+      .cart-header {
+        display: grid;
+        grid-template-columns: 100px 3fr 1fr 1fr 50px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--light-gray);
+        font-weight: 600;
+      }
+
+      .cart-header div {
+        color: var(--text-light);
+        font-size: 0.9rem;
+      }
+
+      .cart-item {
+        display: grid;
+        grid-template-columns: 100px 3fr 1fr 1fr 50px;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .cart-item-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      .cart-item-details h3 {
+        margin-bottom: 5px;
+        font-size: 1.1rem;
+      }
+
+      .cart-item-details .item-category {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+      }
+
+      .cart-item-details .item-options {
+        display: flex;
+        gap: 10px;
+        color: var(--text-light);
+        font-size: 0.85rem;
+      }
+
+      .cart-quantity {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .quantity-btn {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--gray);
+        background-color: var(--white);
+        color: var(--text);
+        font-size: 1rem;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s;
+      }
+
+      .quantity-btn:hover {
+        background-color: var(--light-gray);
+      }
+
+      .quantity-input {
+        width: 40px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid var(--gray);
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      .cart-price {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .remove-item {
+        background: none;
+        border: none;
+        color: #e74c3c;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: color 0.3s;
+      }
+
+      .remove-item:hover {
+        color: #c0392b;
+      }
+
+      .empty-cart {
+        text-align: center;
+        padding: 40px 0;
+      }
+
+      .empty-cart-icon {
+        font-size: 4rem;
+        color: var(--gray);
+        margin-bottom: 20px;
+      }
+
+      .empty-cart h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: var(--text-light);
+      }
+
+      .continue-shopping {
+        background-color: var(--secondary);
+        color: var(--white);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: background-color 0.3s;
+      }
+
+      .continue-shopping:hover {
+        background-color: #218579;
+      }
+
+      /* Cart Summary */
+      .cart-summary {
+        background-color: var(--white);
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        padding: 20px;
+        position: sticky;
+        top: 100px;
+      }
+
+      .summary-title {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        color: var(--text-light);
+      }
+
+      .summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+        padding-top: 15px;
+        border-top: 1px solid var(--light-gray);
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--text);
+      }
+
+      .checkout-button {
+        width: 100%;
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 12px 15px;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-bottom: 15px;
+      }
+
+      .checkout-button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .continue-button {
+        width: 100%;
+        background-color: var(--white);
+        color: var(--text);
+        border: 1px solid var(--gray);
+        padding: 12px 15px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .continue-button:hover {
+        background-color: var(--light-gray);
+      }
+
+      .promo-code {
+        margin: 25px 0;
+      }
+
+      .promo-code h3 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+
+      .promo-input {
+        display: flex;
+        margin-top: 10px;
+      }
+
+      .promo-input input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid var(--gray);
+        border-right: none;
+        border-radius: 5px 0 0 5px;
+        font-size: 1rem;
+      }
+
+      .promo-input button {
+        background-color: var(--secondary);
+        color: var(--white);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      .promo-input button:hover {
+        background-color: #218579;
+      }
+
+      /* You might also like */
+      .recommendations {
+        margin-top: 40px;
+        padding: 30px 0;
+        background-color: var(--white);
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+      }
+
+      .recommendations h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        padding: 0 20px;
+      }
+
+      .recommended-products {
+        display: flex;
+        overflow-x: auto;
+        gap: 20px;
+        padding: 0 20px 20px;
+        scroll-snap-type: x mandatory;
+      }
+
+      .recommended-product {
+        min-width: 220px;
+        background-color: var(--white);
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: transform 0.3s;
+        scroll-snap-align: start;
+      }
+
+      .recommended-product:hover {
+        transform: translateY(-5px);
+      }
+
+      .recommended-img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+      }
+
+      .recommended-info {
+        padding: 15px;
+      }
+
+      .recommended-title {
+        font-size: 1rem;
+        margin-bottom: 5px;
+      }
+
+      .recommended-price {
+        color: var(--secondary);
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .add-recommended {
+        width: 100%;
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 8px 0;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .add-recommended:hover {
+        background-color: var(--primary-dark);
+      }
+
+      /* Footer */
+      footer {
+        background-color: #264653;
+        color: var(--white);
+        padding: 50px 0 20px;
+        margin-top: 50px;
+      }
+
+      .footer-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+
+      .footer-logo {
+        color: var(--white);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .footer-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .footer-section h3::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 50px;
+        height: 2px;
+        background-color: var(--primary);
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 10px;
+      }
+
+      .footer-links a {
+        color: var(--light-gray);
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+
+      .footer-links a:hover {
+        color: var(--primary);
+      }
+
+      .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .social-icon {
+        color: var(--white);
+        font-size: 1.5rem;
+        transition: color 0.3s;
+      }
+
+      .social-icon:hover {
+        color: var(--primary);
+      }
+
+      .subscribe-form {
+        display: flex;
+        margin-top: 15px;
+      }
+
+      .subscribe-form input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        outline: none;
+      }
+
+      .subscribe-form button {
+        background-color: var(--primary);
+        color: var(--white);
+        border: none;
+        padding: 10px 15px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .subscribe-form button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--gray);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 992px) {
+        .cart-container {
+          grid-template-columns: 1fr;
+        }
+
+        .cart-header div:nth-child(1),
+        .cart-item-img {
+          display: none;
+        }
+
+        .cart-header {
+          grid-template-columns: 3fr 1fr 1fr 50px;
+        }
+
+        .cart-item {
+          grid-template-columns: 3fr 1fr 1fr 50px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header-top {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .search-bar {
+          max-width: 100%;
+          margin: 15px 0;
+        }
+
+        .cart-header div:nth-child(3),
+        .cart-price {
+          display: none;
+        }
+
+        .cart-header {
+          grid-template-columns: 3fr 1fr 50px;
+        }
+
+        .cart-item {
+          grid-template-columns: 3fr 1fr 50px;
+        }
+
+        .cart-item-details h3 {
+          font-size: 1rem;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .cart-header {
+          display: none;
+        }
+
+        .cart-item {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .cart-item-img {
+          display: block;
+          grid-column: span 1;
+          justify-self: center;
+          width: 120px;
+          height: 120px;
+        }
+
+        .cart-quantity,
+        .cart-price,
+        .remove-item {
+          justify-self: flex-end;
+        }
+
+        .cart-item {
+          position: relative;
+          padding: 15px;
+        }
+
+        .remove-item {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+        }
+
+        .recommendations {
+          margin-top: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <a href="#" class="logo">RE<span>TASTE</span></a>
+
+          <button class="mobile-menu-button">☰</button>
+
+          <div class="search-bar">
+            <input type="text" placeholder="Tìm kiếm món ăn, thức uống..." />
+            <button>🔍</button>
+          </div>
+
+          <div class="user-actions">
+            <a href="#" class="cart-icon"
+              >🛒 <span class="cart-count">3</span></a
+            >
+            <a href="#" class="user-icon">👤</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <div class="container">
+          <ul class="nav-list">
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Thực đơn</a></li>
+            <li><a href="#">Món được gợi ý</a></li>
+            <li><a href="#">Combo</a></li>
+            <li><a href="#">Khuyến mãi</a></li>
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#">Liên hệ</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Title -->
+    <section class="page-title">
+      <div class="container">
+        <h1>Giỏ hàng của bạn</h1>
+      </div>
+    </section>
+
+    <!-- Cart Section -->
+    <section class="cart-section">
+      <div class="container">
+        <div class="cart-container">
+          <div class="cart-items">
+            <div class="cart-header">
+              <div>Sản phẩm</div>
+              <div>Thông tin</div>
+              <div>Số lượng</div>
+              <div>Giá</div>
+              <div></div>
+            </div>
+
+            <!-- Cart Item 1 -->
+            <div class="cart-item">
+              <img
+                src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38"
+                alt="Pizza Margherita"
+                class="cart-item-img"
+              />
+              <div class="cart-item-details">
+                <h3>Pizza Margherita</h3>
+                <div class="item-category">Pizza</div>
+                <div class="item-options">
+                  <span>Size: Lớn</span>
+                  <span>Đế: Mỏng giòn</span>
+                </div>
+              </div>
+              <div class="cart-quantity">
+                <button class="quantity-btn">-</button>
+                <input type="text" value="1" class="quantity-input" />
+                <button class="quantity-btn">+</button>
+              </div>
+              <div class="cart-price">109.000 ₫</div>
+              <button class="remove-item">✖</button>
+            </div>
+
+            <!-- Cart Item 2 -->
+            <div class="cart-item">
+              <img
+                src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
+                alt="Classic Burger"
+                class="cart-item-img"
+              />
+              <div class="cart-item-details">
+                <h3>Classic Burger</h3>
+                <div class="item-category">Burger</div>
+                <div class="item-options">
+                  <span>Loại: Bò Angus</span>
+                  <span>Thêm: Phô mai</span>
+                </div>
+              </div>
+              <div class="cart-quantity">
+                <button class="quantity-btn">-</button>
+                <input type="text" value="1" class="quantity-input" />
+                <button class="quantity-btn">+</button>
+              </div>
+              <div class="cart-price">69.000 ₫</div>
+              <button class="remove-item">✖</button>
+            </div>
+
+            <!-- Cart Item 3 -->
+            <div class="cart-item">
+              <img
+                src="https://images.unsplash.com/photo-1534353436294-0dbd4bdac845"
+                alt="Trà Sữa Trân Châu"
+                class="cart-item-img"
+              />
+              <div class="cart-item-details">
+                <h3>Trà Sữa Trân Châu</h3>
+                <div class="item-category">Đồ uống</div>
+                <div class="item-options">
+                  <span>Đá: 50%</span>
+                  <span>Đường: 30%</span>
+                </div>
+              </div>
+              <div class="cart-quantity">
+                <button class="quantity-btn">-</button>
+                <input type="text" value="1" class="quantity-input" />
+                <button class="quantity-btn">+</button>
+              </div>
+              <div class="cart-price">39.000 ₫</div>
+              <button class="remove-item">✖</button>
+            </div>
+
+            <!-- Empty cart state (hidden by default, shown when cart is empty) -->
+            <div class="empty-cart" style="display: none">
+              <div class="empty-cart-icon">🛒</div>
+              <h3>Giỏ hàng của bạn đang trống</h3>
+              <p>Thêm món ăn vào giỏ hàng để tiếp tục đặt món</p>
+              <button class="continue-shopping">Tiếp tục mua sắm</button>
+            </div>
+          </div>
+
+          <div class="cart-summary">
+            <h2 class="summary-title">Tóm tắt đơn hàng</h2>
+            <div class="summary-row">
+              <span>Tạm tính (3 món)</span>
+              <span>217.000 ₫</span>
+            </div>
+            <div class="summary-row">
+              <span>Phí giao hàng</span>
+              <span>15.000 ₫</span>
+            </div>
+            <div class="summary-row">
+              <span>Giảm giá</span>
+              <span>-25.000 ₫</span>
+            </div>
+
+            <div class="promo-code">
+              <h3>Nhập mã khuyến mãi</h3>
+              <div class="promo-input">
+                <input type="text" placeholder="Nhập mã" />
+                <button>Áp dụng</button>
+              </div>
+            </div>
+
+            <div class="summary-total">
+              <span>Tổng cộng</span>
+              <span>207.000 ₫</span>
+            </div>
+
+            <button class="checkout-button">Tiến hành thanh toán</button>
+            <button class="continue-button">Tiếp tục mua sắm</button>
+          </div>
+        </div>
+
+        <!-- Recommended Products -->
+        <div class="recommendations">
+          <h2>Có thể bạn cũng thích</h2>
+          <div class="recommended-products">
+            <div class="recommended-product">
+              <img
+                src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8"
+                alt="Trà đào"
+                class="recommended-img"
+              />
+              <div class="recommended-info">
+                <h3 class="recommended-title">Trà Đào Cam Sả</h3>
+                <div class="recommended-price">45.000 ₫</div>
+                <button class="add-recommended">Thêm vào giỏ</button>
+              </div>
+            </div>
+            <div class="recommended-product">
+              <img
+                src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd"
+                alt="Salad"
+                class="recommended-img"
+              />
+              <div class="recommended-info">
+                <h3 class="recommended-title">Salad Gà</h3>
+                <div class="recommended-price">59.000 ₫</div>
+                <button class="add-recommended">Thêm vào giỏ</button>
+              </div>
+            </div>
+            <div class="recommended-product">
+              <img
+                src="https://images.unsplash.com/photo-1514326640560-7d063ef2aed5"
+                alt="Khoai tây chiên"
+                class="recommended-img"
+              />
+              <div class="recommended-info">
+                <h3 class="recommended-title">Khoai Tây Chiên</h3>
+                <div class="recommended-price">35.000 ₫</div>
+                <button class="add-recommended">Thêm vào giỏ</button>
+              </div>
+            </div>
+            <div class="recommended-product">
+              <img
+                src="https://images.unsplash.com/photo-1608855238293-a8853e7f7c98"
+                alt="Gà rán"
+                class="recommended-img"
+              />
+              <div class="recommended-info">
+                <h3 class="recommended-title">Gà Rán Giòn</h3>
+                <div class="recommended-price">79.000 ₫</div>
+                <button class="add-recommended">Thêm vào giỏ</button>
+              </div>
+            </div>
+            <div class="recommended-product">
+              <img
+                src="https://images.unsplash.com/photo-1534308983496-4fabb1a015ee"
+                alt="Pasta"
+                class="recommended-img"
+              />
+              <div class="recommended-info">
+                <h3 class="recommended-title">Pasta Sốt Kem Nấm</h3>
+                <div class="recommended-price">89.000 ₫</div>
+                <button class="add-recommended">Thêm vào giỏ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-container">
+          <div class="footer-section">
+            <a href="#" class="footer-logo">RE<span>TASTE</span></a>
+            <p>
+              RETASTE - Khám phá hương vị yêu thích của bạn với công nghệ gợi ý
+              thông minh.
+            </p>
+            <div class="social-links">
+              <a href="#" class="social-icon">📘</a>
+              <a href="#" class="social-icon">🐦</a>
+              <a href="#" class="social-icon">📸</a>
+              <a href="#" class="social-icon">📹</a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Thông tin</h3>
+            <ul class="footer-links">
+              <li><a href="#">Về chúng tôi</a></li>
+              <li><a href="#">Điều khoản dịch vụ</a></li>
+              <li><a href="#">Chính sách bảo mật</a></li>
+              <li><a href="#">Chính sách giao hàng</a></li>
+              <li><a href="#">Câu hỏi thường gặp</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Danh mục</h3>
+            <ul class="footer-links">
+              <li><a href="#">Món mới</a></li>
+              <li><a href="#">Bán chạy nhất</a></li>
+              <li><a href="#">Khuyến mãi</a></li>
+              <li><a href="#">Combo tiết kiệm</a></li>
+              <li><a href="#">Tất cả sản phẩm</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Liên hệ</h3>
+            <ul class="footer-links">
+              <li>📍 123 Đường ABC, Quận XYZ, TP.HCM</li>
+              <li>📞 1900-1234</li>
+              <li>✉️ support@retaste.vn</li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Đăng ký nhận tin</h3>
+            <p>Nhận thông tin về ưu đãi và món mới</p>
+            <form class="subscribe-form">
+              <input type="email" placeholder="Email của bạn" />
+              <button type="submit">Đăng ký</button>
+            </form>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2025 RETASTE. Tất cả quyền được bảo lưu.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const mobileMenuButton = document.querySelector(".mobile-menu-button");
+        const navMenu = document.querySelector(".nav-menu");
+
+        mobileMenuButton.addEventListener("click", function () {
+          navMenu.classList.toggle("active");
+        });
+
+        // Close mobile menu when clicking on a menu item
+        const navLinks = document.querySelectorAll(".nav-list a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            navMenu.classList.remove("active");
+          });
+        });
+
+        // Quantity controls
+        const quantityBtns = document.querySelectorAll(".quantity-btn");
+        const removeItemBtns = document.querySelectorAll(".remove-item");
+        const emptyCart = document.querySelector(".empty-cart");
+        const cartItems = document.querySelectorAll(".cart-item");
+
+        // Cart total variables
+        let subtotal = 217000;
+        let shipping = 15000;
+        let discount = 25000;
+        let total = subtotal + shipping - discount;
+
+        // Update cart totals
+        function updateCartTotals() {
+          const subtotalElement = document.querySelector(
+            ".summary-row:nth-child(1) span:last-child"
+          );
+          const totalElement = document.querySelector(
+            ".summary-total span:last-child"
+          );
+
+          subtotalElement.textContent = `${subtotal.toLocaleString()} ₫`;
+          totalElement.textContent = `${total.toLocaleString()} ₫`;
+
+          // Update cart count
+          const cartCount = document.querySelector(".cart-count");
+          const itemsCount = document.querySelectorAll(".cart-item").length;
+          cartCount.textContent = itemsCount;
+
+          // Show empty cart message if no items
+          if (itemsCount === 0) {
+            emptyCart.style.display = "block";
+          } else {
+            emptyCart.style.display = "none";
+          }
+        }
+
+        // Quantity buttons functionality
+        quantityBtns.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const input = this.parentElement.querySelector(".quantity-input");
+            let value = parseInt(input.value);
+
+            if (this.textContent === "+") {
+              value++;
+            } else if (this.textContent === "-" && value > 1) {
+              value--;
+            }
+
+            input.value = value;
+
+            // In a real implementation, we would update price calculations here
+          });
+        });
+
+        // Remove item functionality
+        removeItemBtns.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const item = this.closest(".cart-item");
+            const priceText = item.querySelector(".cart-price").textContent;
+            const price = parseInt(priceText.replace(/\D/g, ""));
+
+            // Update subtotal and total
+            subtotal -= price;
+            total = subtotal + shipping - discount;
+
+            // Remove item from DOM
+            item.remove();
+
+            // Update displayed totals
+            updateCartTotals();
+          });
+        });
+
+        // Continue shopping button
+        const continueButtons = document.querySelectorAll(
+          ".continue-button, .continue-shopping"
+        );
+        continueButtons.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            window.location.href = "index.html"; // Navigate to home page
+          });
+        });
+
+        // Checkout button
+        const checkoutButton = document.querySelector(".checkout-button");
+        checkoutButton.addEventListener("click", function () {
+          // In a real implementation, this would navigate to checkout page
+          alert("Chuyển đến trang thanh toán...");
+        });
+
+        // Add recommended items to cart
+        const addRecommendedBtns =
+          document.querySelectorAll(".add-recommended");
+        addRecommendedBtns.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const product = this.closest(".recommended-product");
+            const title =
+              product.querySelector(".recommended-title").textContent;
+            const priceText =
+              product.querySelector(".recommended-price").textContent;
+            const price = parseInt(priceText.replace(/\D/g, ""));
+
+            // Update button text temporarily
+            const originalText = this.textContent;
+            this.textContent = "Đã thêm ✓";
+            this.style.backgroundColor = "#2a9d8f";
+
+            // Reset button after delay
+            setTimeout(() => {
+              this.textContent = originalText;
+              this.style.backgroundColor = "";
+            }, 2000);
+
+            // In a real implementation, this would add the item to cart
+            // and update the cart UI
+            alert(`Đã thêm ${title} vào giỏ hàng!`);
+          });
+        });
+
+        // Promo code application
+        const promoButton = document.querySelector(".promo-input button");
+        promoButton.addEventListener("click", function () {
+          const promoInput = document.querySelector(".promo-input input");
+          const promoCode = promoInput.value.trim();
+
+          if (promoCode) {
+            // In a real implementation, we would validate the promo code
+            // For demo purposes, just show a confirmation
+            alert(`Đã áp dụng mã khuyến mãi: ${promoCode}`);
+            promoInput.value = "";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

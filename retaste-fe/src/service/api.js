@@ -16,12 +16,20 @@ api.interceptors.response.use(
   async (err) => {
     if (err.response?.status === 401) {
       const refreshToken = localStorage.getItem("refreshToken");
-      if (!refreshToken) return Promise.reject(err);
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+      if (!refreshToken || !user?._id) return Promise.reject(err);
 
       try {
         const { data } = await axios.post(
-          "http://localhost:8080/api/auth/refresh-token",
-          { refreshToken }
+          "http://localhost:8017/api/v1/access/refresh-token",
+          {},
+          {
+            headers: {
+              "x-rt": refreshToken,
+              "x-client-id": user._id,
+            },
+          }
         );
 
         localStorage.setItem("accessToken", data.metadata.accessToken);
@@ -29,7 +37,7 @@ api.interceptors.response.use(
 
         err.config.headers.Authorization = `Bearer ${data.metadata.accessToken}`;
         return api(err.config);
-      } catch {
+      } catch (e) {
         localStorage.clear();
         window.location.href = "/login";
       }

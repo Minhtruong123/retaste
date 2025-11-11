@@ -1,0 +1,132 @@
+/* src/components/Sidebar/Sidebar.module.css */
+.sidebar {
+  width: 260px;
+  background-color: var(--accent);
+  color: var(--white);
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  overflow-y: auto;
+  transition: all 0.3s;
+  z-index: 100;
+}
+
+.sidebarBrand {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebarBrand h2 {
+  color: var(--primary);
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.sidebarBrand h2 span {
+  color: var(--white);
+}
+
+.sidebarToggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.sidebarUser {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.userAvatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 10px;
+  border: 3px solid var(--secondary);
+}
+
+.userName {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.userRole {
+  font-size: 0.85rem;
+  color: var(--light-gray);
+}
+
+.sidebarMenu {
+  padding: 10px 0;
+}
+
+.menuHeading {
+  padding: 10px 20px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--gray);
+  letter-spacing: 1px;
+}
+
+.menuItem {
+  list-style: none;
+}
+
+.menuLink {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: var(--light-gray);
+  text-decoration: none;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.menuLink:hover,
+.menuLink.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  border-left: 4px solid var(--primary);
+}
+
+.menuIcon {
+  margin-right: 10px;
+  font-size: 1.2rem;
+  width: 20px;
+  text-align: center;
+}
+
+.menuBadge {
+  background-color: var(--primary);
+  color: var(--white);
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .sidebar.active {
+    width: 260px;
+    padding: initial;
+  }
+
+  .sidebarToggle {
+    display: block;
+  }
+}

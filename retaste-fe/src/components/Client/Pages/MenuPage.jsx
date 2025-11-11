@@ -5,7 +5,7 @@ export default function MenuPage() {
   return (
     <>
       <section className={styles.menuPage}>
-        <div className="container">
+        <div className={styles.container}>
           <div className={styles.pageTitle}>
             <h1>Thực đơn RETASTE</h1>
             <p>
@@ -14,7 +14,6 @@ export default function MenuPage() {
             </p>
           </div>
 
-          {/* Special Offers */}
           <div className={styles.specialOffers}>
             <h2 className={styles.offerTitle}>Ưu đãi đặc biệt</h2>
             <div className={styles.offersContainer}>
@@ -152,9 +151,7 @@ export default function MenuPage() {
             <button className={styles.tabButton}>Tráng miệng</button>
           </div>
 
-          {/* Menu Items Grid */}
           <div className={styles.menuGrid}>
-            {/* Item 1 */}
             <div className={styles.menuItem}>
               <div className={styles.imageContainer}>
                 <img
@@ -175,12 +172,15 @@ export default function MenuPage() {
                 </p>
                 <div className={styles.itemMeta}>
                   <div className={styles.itemRating}>
-                    ★★★★★ <span className={styles.ratingCount}>(124)</span>
+                    <span className={styles.stars}>★★★★★</span>{" "}
+                    <span className={styles.ratingCount}>(124)</span>
                   </div>
                   <div className={styles.itemPrice}>149.000 ₫</div>
                 </div>
                 <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>Thêm vào giỏ</button>
+                  <button className={styles.addToCart}>
+                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
+                  </button>
                   <button className={styles.favoriteBtn}>❤️</button>
                 </div>
               </div>
@@ -194,7 +194,9 @@ export default function MenuPage() {
                   alt="Burger Bò Phô Mai"
                   className={styles.itemImage}
                 />
-                <div className={styles.itemBadge}>Hot</div>
+                <div className={`${styles.itemBadge} ${styles.hotBadge}`}>
+                  Hot
+                </div>
               </div>
               <div className={styles.itemInfo}>
                 <div className={styles.itemHeader}>
@@ -207,12 +209,15 @@ export default function MenuPage() {
                 </p>
                 <div className={styles.itemMeta}>
                   <div className={styles.itemRating}>
-                    ★★★★☆ <span className={styles.ratingCount}>(89)</span>
+                    <span className={styles.stars}>★★★★☆</span>{" "}
+                    <span className={styles.ratingCount}>(89)</span>
                   </div>
                   <div className={styles.itemPrice}>79.000 ₫</div>
                 </div>
                 <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>Thêm vào giỏ</button>
+                  <button className={styles.addToCart}>
+                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
+                  </button>
                   <button className={styles.favoriteBtn}>❤️</button>
                 </div>
               </div>
@@ -238,12 +243,15 @@ export default function MenuPage() {
                 </p>
                 <div className={styles.itemMeta}>
                   <div className={styles.itemRating}>
-                    ★★★★★ <span className={styles.ratingCount}>(156)</span>
+                    <span className={styles.stars}>★★★★★</span>{" "}
+                    <span className={styles.ratingCount}>(156)</span>
                   </div>
                   <div className={styles.itemPrice}>39.000 ₫</div>
                 </div>
                 <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>Thêm vào giỏ</button>
+                  <button className={styles.addToCart}>
+                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
+                  </button>
                   <button className={styles.favoriteBtn}>❤️</button>
                 </div>
               </div>
@@ -268,12 +276,15 @@ export default function MenuPage() {
                 </p>
                 <div className={styles.itemMeta}>
                   <div className={styles.itemRating}>
-                    ★★★★☆ <span className={styles.ratingCount}>(72)</span>
+                    <span className={styles.stars}>★★★★☆</span>{" "}
+                    <span className={styles.ratingCount}>(72)</span>
                   </div>
                   <div className={styles.itemPrice}>89.000 ₫</div>
                 </div>
                 <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>Thêm vào giỏ</button>
+                  <button className={styles.addToCart}>
+                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
+                  </button>
                   <button className={styles.favoriteBtn}>❤️</button>
                 </div>
               </div>
@@ -287,7 +298,9 @@ export default function MenuPage() {
                   alt="Smoothie Trái Cây"
                   className={styles.itemImage}
                 />
-                <div className={styles.itemBadge}>Mới</div>
+                <div className={`${styles.itemBadge} ${styles.newBadge}`}>
+                  Mới
+                </div>
               </div>
               <div className={styles.itemInfo}>
                 <div className={styles.itemHeader}>
@@ -300,12 +313,15 @@ export default function MenuPage() {
                 </p>
                 <div className={styles.itemMeta}>
                   <div className={styles.itemRating}>
-                    ★★★★★ <span className={styles.ratingCount}>(48)</span>
+                    <span className={styles.stars}>★★★★★</span>{" "}
+                    <span className={styles.ratingCount}>(48)</span>
                   </div>
                   <div className={styles.itemPrice}>45.000 ₫</div>
                 </div>
                 <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>Thêm vào giỏ</button>
+                  <button className={styles.addToCart}>
+                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
+                  </button>
                   <button className={styles.favoriteBtn}>❤️</button>
                 </div>
               </div>
@@ -331,12 +347,15 @@ export default function MenuPage() {
                 </p>
                 <div className={styles.itemMeta}>
                   <div className={styles.itemRating}>
-                    ★★★★☆ <span className={styles.ratingCount}>(63)</span>
+                    <span className={styles.stars}>★★★★☆</span>{" "}
+                    <span className={styles.ratingCount}>(63)</span>
                   </div>
                   <div className={styles.itemPrice}>69.000 ₫</div>
                 </div>
                 <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>Thêm vào giỏ</button>
+                  <button className={styles.addToCart}>
+                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
+                  </button>
                   <button className={styles.favoriteBtn}>❤️</button>
                 </div>
               </div>
@@ -350,7 +369,9 @@ export default function MenuPage() {
                   alt="Mì Xào Hải Sản"
                   className={styles.itemImage}
                 />
-                <div className={styles.itemBadge}>Đặc biệt</div>
+                <div className={`${styles.itemBadge} ${styles.specialBadge}`}>
+                  Đặc biệt
+                </div>
               </div>
               <div className={styles.itemInfo}>
                 <div className={styles.itemHeader}>
@@ -362,12 +383,15 @@ export default function MenuPage() {
                 </p>
                 <div className={styles.itemMeta}>
                   <div className={styles.itemRating}>
-                    ★★★★★ <span className={styles.ratingCount}>(91)</span>
+                    <span className={styles.stars}>★★★★★</span>{" "}
+                    <span className={styles.ratingCount}>(91)</span>
                   </div>
                   <div className={styles.itemPrice}>95.000 ₫</div>
                 </div>
                 <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>Thêm vào giỏ</button>
+                  <button className={styles.addToCart}>
+                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
+                  </button>
                   <button className={styles.favoriteBtn}>❤️</button>
                 </div>
               </div>
@@ -393,12 +417,15 @@ export default function MenuPage() {
                 </p>
                 <div className={styles.itemMeta}>
                   <div className={styles.itemRating}>
-                    ★★★★★ <span className={styles.ratingCount}>(82)</span>
+                    <span className={styles.stars}>★★★★★</span>{" "}
+                    <span className={styles.ratingCount}>(82)</span>
                   </div>
                   <div className={styles.itemPrice}>55.000 ₫</div>
                 </div>
                 <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>Thêm vào giỏ</button>
+                  <button className={styles.addToCart}>
+                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
+                  </button>
                   <button className={styles.favoriteBtn}>❤️</button>
                 </div>
               </div>
@@ -409,8 +436,7 @@ export default function MenuPage() {
           <div className={styles.pagination}>
             <div className={`${styles.pageItem} ${styles.disabled}`}>
               <a className={styles.pageLink} href="#" aria-label="Previous">
-                {" "}
-                «{" "}
+                «
               </a>
             </div>
             <div className={`${styles.pageItem} ${styles.active}`}>
@@ -440,8 +466,7 @@ export default function MenuPage() {
             </div>
             <div className={styles.pageItem}>
               <a className={styles.pageLink} href="#" aria-label="Next">
-                {" "}
-                »{" "}
+                »
               </a>
             </div>
           </div>

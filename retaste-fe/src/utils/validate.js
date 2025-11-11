@@ -1,9 +1,10 @@
+const EMAIL_RULE = /^[\w.-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+const PASSWORD_RULE =
+  /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\[\]{};':"\\|,.<>\/?`~\-]).{6,}$/;
+
 export const validateAuth = {
-  email(email) {
-    if (!email) return "Vui lòng nhập email";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Email không hợp lệ";
-    return null;
-  },
+  email: (value) =>
+    EMAIL_RULE.test(value) ? "" : "Email không đúng định dạng",
 
   phone(phone) {
     if (!phone) return null;
@@ -11,16 +12,11 @@ export const validateAuth = {
     return null;
   },
 
-  password(password) {
-    if (!password) return "Vui lòng nhập mật khẩu";
-    if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{6,}$/.test(password))
-      return "Mật khẩu phải gồm chữ hoa, chữ thường và số, tối thiểu 6 ký tự";
-    return null;
-  },
+  password: (value) =>
+    PASSWORD_RULE.test(value)
+      ? ""
+      : "Mật khẩu phải có chữ in hoa và ký tự đặc biệt, tối thiểu 6 ký tự",
 
-  confirm(pw, confirmPw) {
-    if (!confirmPw) return "Vui lòng nhập xác nhận mật khẩu";
-    if (pw !== confirmPw) return "Mật khẩu xác nhận không khớp";
-    return null;
-  },
+  confirm: (password, confirm) =>
+    password === confirm ? "" : "Mật khẩu nhập lại không khớp",
 };
