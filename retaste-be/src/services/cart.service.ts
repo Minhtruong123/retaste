@@ -123,7 +123,6 @@ class CartService {
     } else {
       if (cartUser.products[idxProduct].sizeId.equals(product.sizeId)) {
         const productInCart = cartUser.products[idxProduct];
-
         const isExist = areCustomsEqual(
           {
             productId: productInCart.productId.toString(),
