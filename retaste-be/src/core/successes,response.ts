@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import _ from 'lodash';
+// import _ from 'lodash';
 
 class SuccessResponse {
   message: string;
@@ -17,9 +17,9 @@ class SuccessResponse {
     this.metadata = metadata;
   }
   send(res: Response) {
-    if (_.isEmpty(this.metadata)) {
-      delete this.metadata;
-    }
+    // if (_.isEmpty(this.metadata)) {
+    //   delete this.metadata;
+    // }
     return res.status(this.status).json(this);
   }
 }

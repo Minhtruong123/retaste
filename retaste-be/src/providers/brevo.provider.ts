@@ -1,5 +1,6 @@
 import pug from 'pug';
 import path from 'path';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const brevo = require('@getbrevo/brevo');
 const apiInstance = new brevo.TransactionalEmailsApi();
 import env from '~/configs/environments';

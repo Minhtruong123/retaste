@@ -127,6 +127,9 @@ const getValidCustomizationsWithOptions = async (
         isRequired: 1,
         options: 1
       }
+    },
+    {
+      $unwind: '$options'
     }
   ]);
 

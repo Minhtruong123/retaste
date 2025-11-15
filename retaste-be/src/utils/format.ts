@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import lodash from 'lodash';
 import slugify from 'slugify';
+import { Types } from 'mongoose';
 
 export const createObjectId = (id: string) => {
   return new mongoose.Types.ObjectId(id);
@@ -22,4 +23,34 @@ export const customSlug = (slug: string = '') => {
     '-' +
     Date.now()
   );
+};
+
+type CustomItem = {
+  customId: string;
+  optionId: string;
+  quantity?: number;
+};
+
+type Product = {
+  productId: string;
+  customs: CustomItem[];
+  quantity: number;
+};
+
+export const areCustomsEqual = (data: Product, customs: CustomItem[]): boolean => {
+  const dataCustoms = data?.customs ?? [];
+
+  if (dataCustoms.length !== customs.length) return false;
+
+  const normalize = (arr: CustomItem[]): string =>
+    arr
+      .map((item) =>
+        JSON.stringify(
+          Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b)))
+        )
+      )
+      .sort()
+      .join('|');
+
+  return normalize(dataCustoms) === normalize(customs);
 };
