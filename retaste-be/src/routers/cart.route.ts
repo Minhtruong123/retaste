@@ -4,4 +4,7 @@ import { authMiddleware } from '~/middlewares/auth.middleware';
 const { authentication } = authMiddleware;
 const router = Router();
 router.post('/add-to-cart', authentication, cartController.addToCart);
+router.put('/update-quantity', authentication, cartController.updateQuantity);
+router.delete('/remove-product', authentication, cartController.removeProduct);
+router.get('/get-detail', authentication, cartController.getDetail);
 export const cartRouter = router;

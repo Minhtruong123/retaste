@@ -15,7 +15,6 @@ class Database {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private connect(type: string = 'mongodb'): void {
     // Bật chế độ debug cho Mongoose
-    console.log('connect...');
     mongoose.set('debug', true);
     mongoose.set('debug', { color: true });
 

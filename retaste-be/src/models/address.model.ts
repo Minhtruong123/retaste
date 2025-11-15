@@ -5,7 +5,6 @@ const COLLECTION_NAME = 'addresses';
 
 export interface IAddress {
   userId: Schema.Types.ObjectId;
-  addressType?: 'home' | 'work' | 'other';
   streetAddress: string;
   city: string;
   state?: string;
@@ -27,7 +26,6 @@ const addressSchema = new Schema<IAddress>(
       ref: DOCUMENT_USER,
       required: true
     },
-    addressType: { type: String, enum: ['home', 'work', 'other'] },
     streetAddress: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String },
@@ -55,10 +53,10 @@ addressSchema.index({ email: 1 });
 addressSchema.index({ phoneNumber: 1 });
 addressSchema.index({ 'addresses.location': '2dsphere' });
 
-const Address = model<IAddress>(DOCUMENT_USER, addressSchema);
+const Address = model<IAddress>(DOCUMENT_ADDRESS, addressSchema);
 
-export const userModel = {
+export const addressModel = {
   COLLECTION_NAME,
-  DOCUMENT_USER
+  DOCUMENT_ADDRESS
 };
 export default Address;

@@ -12,7 +12,12 @@ export interface ICart {
   products: {
     productId: Types.ObjectId;
     sizeId: Types.ObjectId;
-    customs: { customId: Types.ObjectId; optionId: Types.ObjectId; quantity?: number }[];
+    customs: {
+      customId: Types.ObjectId;
+      optionId: Types.ObjectId;
+      quantity?: number;
+    }[];
+    createdAt: Date;
     quantity: number;
   }[];
 }
@@ -28,10 +33,11 @@ const cartSchema = new Schema<ICart>(
           {
             customId: { type: Schema.Types.ObjectId, ref: DOCUMENT_CUSTOM_GROUP },
             optionId: { type: Schema.Types.ObjectId, ref: DOCUMENT_OPTIONS },
-            quantity: { type: Number, default: 1 }
+            quantity: { type: Number }
           }
         ],
-        quantity: { type: Number, default: 1, min: 1 }
+        quantity: { type: Number, default: 1, min: 1 },
+        createdAt: { type: Date }
       }
     ]
   },
