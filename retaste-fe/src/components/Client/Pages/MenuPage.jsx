@@ -1,7 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./MenuPage.module.css";
+import * as productsService from "../../../service/products_service";
 
 export default function MenuPage() {
+  const [products, setProducts] = useState([]);
+
+  const loadProducts = async () => {
+    try {
+      const data = await productsService.getListProduct();
+      setProducts(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
   return (
     <>
       <section className={styles.menuPage}>
@@ -152,284 +168,56 @@ export default function MenuPage() {
           </div>
 
           <div className={styles.menuGrid}>
-            <div className={styles.menuItem}>
-              <div className={styles.imageContainer}>
-                <img
-                  src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38"
-                  alt="Pizza Hải Sản"
-                  className={styles.itemImage}
-                />
-                <div className={styles.itemBadge}>Bán chạy</div>
-              </div>
-              <div className={styles.itemInfo}>
-                <div className={styles.itemHeader}>
-                  <h3 className={styles.itemTitle}>Pizza Hải Sản</h3>
-                  <div className={styles.itemCategory}>Pizza</div>
-                </div>
-                <p className={styles.itemDescription}>
-                  Pizza với hải sản tươi ngon, sốt cà chua đặc biệt và phô mai
-                  Mozzarella.
-                </p>
-                <div className={styles.itemMeta}>
-                  <div className={styles.itemRating}>
-                    <span className={styles.stars}>★★★★★</span>{" "}
-                    <span className={styles.ratingCount}>(124)</span>
-                  </div>
-                  <div className={styles.itemPrice}>149.000 ₫</div>
-                </div>
-                <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>
-                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
-                  </button>
-                  <button className={styles.favoriteBtn}>❤️</button>
-                </div>
-              </div>
-            </div>
+            {products.map((item) => (
+              <div key={item._id} className={styles.menuItem}>
+                <div className={styles.imageContainer}>
+                  <img
+                    src={item.thumbnail || "https://via.placeholder.com/300"}
+                    alt={item.name}
+                    className={styles.itemImage}
+                  />
 
-            {/* Item 2 */}
-            <div className={styles.menuItem}>
-              <div className={styles.imageContainer}>
-                <img
-                  src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
-                  alt="Burger Bò Phô Mai"
-                  className={styles.itemImage}
-                />
-                <div className={`${styles.itemBadge} ${styles.hotBadge}`}>
-                  Hot
+                  {item.isBestSeller && (
+                    <div className={styles.itemBadge}>Bán chạy</div>
+                  )}
+                  {item.isNew && (
+                    <div className={`${styles.itemBadge} ${styles.newBadge}`}>
+                      Mới
+                    </div>
+                  )}
                 </div>
-              </div>
-              <div className={styles.itemInfo}>
-                <div className={styles.itemHeader}>
-                  <h3 className={styles.itemTitle}>Burger Bò Phô Mai</h3>
-                  <div className={styles.itemCategory}>Burger</div>
-                </div>
-                <p className={styles.itemDescription}>
-                  Burger bò 100% tươi ngon với lớp phô mai tan chảy, rau xà lách
-                  và sốt đặc biệt.
-                </p>
-                <div className={styles.itemMeta}>
-                  <div className={styles.itemRating}>
-                    <span className={styles.stars}>★★★★☆</span>{" "}
-                    <span className={styles.ratingCount}>(89)</span>
-                  </div>
-                  <div className={styles.itemPrice}>79.000 ₫</div>
-                </div>
-                <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>
-                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
-                  </button>
-                  <button className={styles.favoriteBtn}>❤️</button>
-                </div>
-              </div>
-            </div>
 
-            {/* Item 3 */}
-            <div className={styles.menuItem}>
-              <div className={styles.imageContainer}>
-                <img
-                  src="https://images.unsplash.com/photo-1534353436294-0dbd4bdac845"
-                  alt="Trà Sữa Trân Châu"
-                  className={styles.itemImage}
-                />
-              </div>
-              <div className={styles.itemInfo}>
-                <div className={styles.itemHeader}>
-                  <h3 className={styles.itemTitle}>Trà Sữa Trân Châu</h3>
-                  <div className={styles.itemCategory}>Đồ uống</div>
-                </div>
-                <p className={styles.itemDescription}>
-                  Trà sữa thơm ngon với trân châu đường đen mềm dẻo và topping
-                  tùy chọn.
-                </p>
-                <div className={styles.itemMeta}>
-                  <div className={styles.itemRating}>
-                    <span className={styles.stars}>★★★★★</span>{" "}
-                    <span className={styles.ratingCount}>(156)</span>
+                <div className={styles.itemInfo}>
+                  <div className={styles.itemHeader}>
+                    <h3 className={styles.itemTitle}>{item.name}</h3>
+                    <div className={styles.itemCategory}>
+                      {item.category || "Không có danh mục"}
+                    </div>
                   </div>
-                  <div className={styles.itemPrice}>39.000 ₫</div>
-                </div>
-                <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>
-                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
-                  </button>
-                  <button className={styles.favoriteBtn}>❤️</button>
-                </div>
-              </div>
-            </div>
 
-            {/* Item 4 */}
-            <div className={styles.menuItem}>
-              <div className={styles.imageContainer}>
-                <img
-                  src="https://images.unsplash.com/photo-1559847844-5315695dadae"
-                  alt="Cơm Chiên Hải Sản"
-                  className={styles.itemImage}
-                />
-              </div>
-              <div className={styles.itemInfo}>
-                <div className={styles.itemHeader}>
-                  <h3 className={styles.itemTitle}>Cơm Chiên Hải Sản</h3>
-                  <div className={styles.itemCategory}>Món Á</div>
-                </div>
-                <p className={styles.itemDescription}>
-                  Cơm chiên với hải sản tươi, trứng, rau củ và gia vị đặc biệt.
-                </p>
-                <div className={styles.itemMeta}>
-                  <div className={styles.itemRating}>
-                    <span className={styles.stars}>★★★★☆</span>{" "}
-                    <span className={styles.ratingCount}>(72)</span>
-                  </div>
-                  <div className={styles.itemPrice}>89.000 ₫</div>
-                </div>
-                <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>
-                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
-                  </button>
-                  <button className={styles.favoriteBtn}>❤️</button>
-                </div>
-              </div>
-            </div>
+                  <p className={styles.itemDescription}>
+                    {item.description || "Chưa có mô tả"}
+                  </p>
 
-            {/* Item 5 */}
-            <div className={styles.menuItem}>
-              <div className={styles.imageContainer}>
-                <img
-                  src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8"
-                  alt="Smoothie Trái Cây"
-                  className={styles.itemImage}
-                />
-                <div className={`${styles.itemBadge} ${styles.newBadge}`}>
-                  Mới
-                </div>
-              </div>
-              <div className={styles.itemInfo}>
-                <div className={styles.itemHeader}>
-                  <h3 className={styles.itemTitle}>Smoothie Trái Cây</h3>
-                  <div className={styles.itemCategory}>Đồ uống</div>
-                </div>
-                <p className={styles.itemDescription}>
-                  Smoothie mát lạnh với hỗn hợp trái cây tươi, sữa chua và mật
-                  ong.
-                </p>
-                <div className={styles.itemMeta}>
-                  <div className={styles.itemRating}>
-                    <span className={styles.stars}>★★★★★</span>{" "}
-                    <span className={styles.ratingCount}>(48)</span>
+                  <div className={styles.itemMeta}>
+                    <div className={styles.itemRating}>
+                      <span className={styles.stars}>★★★★★</span>
+                      <span className={styles.ratingCount}>(100+)</span>
+                    </div>
+                    <div className={styles.itemPrice}>
+                      {item.price?.toLocaleString("vi-VN")} ₫
+                    </div>
                   </div>
-                  <div className={styles.itemPrice}>45.000 ₫</div>
-                </div>
-                <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>
-                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
-                  </button>
-                  <button className={styles.favoriteBtn}>❤️</button>
-                </div>
-              </div>
-            </div>
 
-            {/* Item 6 */}
-            <div className={styles.menuItem}>
-              <div className={styles.imageContainer}>
-                <img
-                  src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd"
-                  alt="Salad Gà Nướng"
-                  className={styles.itemImage}
-                />
-              </div>
-              <div className={styles.itemInfo}>
-                <div className={styles.itemHeader}>
-                  <h3 className={styles.itemTitle}>Salad Gà Nướng</h3>
-                  <div className={styles.itemCategory}>Salad</div>
-                </div>
-                <p className={styles.itemDescription}>
-                  Salad tươi với gà nướng, rau xanh, sốt Caesar và bánh mì nướng
-                  giòn.
-                </p>
-                <div className={styles.itemMeta}>
-                  <div className={styles.itemRating}>
-                    <span className={styles.stars}>★★★★☆</span>{" "}
-                    <span className={styles.ratingCount}>(63)</span>
+                  <div className={styles.itemActions}>
+                    <button className={styles.addToCart}>
+                      <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
+                    </button>
+                    <button className={styles.favoriteBtn}>❤️</button>
                   </div>
-                  <div className={styles.itemPrice}>69.000 ₫</div>
-                </div>
-                <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>
-                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
-                  </button>
-                  <button className={styles.favoriteBtn}>❤️</button>
                 </div>
               </div>
-            </div>
-
-            {/* Item 7 */}
-            <div className={styles.menuItem}>
-              <div className={styles.imageContainer}>
-                <img
-                  src="https://images.unsplash.com/photo-1551024709-8f23befc6f87"
-                  alt="Mì Xào Hải Sản"
-                  className={styles.itemImage}
-                />
-                <div className={`${styles.itemBadge} ${styles.specialBadge}`}>
-                  Đặc biệt
-                </div>
-              </div>
-              <div className={styles.itemInfo}>
-                <div className={styles.itemHeader}>
-                  <h3 className={styles.itemTitle}>Mì Xào Hải Sản</h3>
-                  <div className={styles.itemCategory}>Món Á</div>
-                </div>
-                <p className={styles.itemDescription}>
-                  Mì xào với hải sản, rau củ tươi và nước sốt đậm đà.
-                </p>
-                <div className={styles.itemMeta}>
-                  <div className={styles.itemRating}>
-                    <span className={styles.stars}>★★★★★</span>{" "}
-                    <span className={styles.ratingCount}>(91)</span>
-                  </div>
-                  <div className={styles.itemPrice}>95.000 ₫</div>
-                </div>
-                <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>
-                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
-                  </button>
-                  <button className={styles.favoriteBtn}>❤️</button>
-                </div>
-              </div>
-            </div>
-
-            {/* Item 8 */}
-            <div className={styles.menuItem}>
-              <div className={styles.imageContainer}>
-                <img
-                  src="https://images.unsplash.com/photo-1551782450-17144efb9c50"
-                  alt="Bánh Tiramisu"
-                  className={styles.itemImage}
-                />
-              </div>
-              <div className={styles.itemInfo}>
-                <div className={styles.itemHeader}>
-                  <h3 className={styles.itemTitle}>Bánh Tiramisu</h3>
-                  <div className={styles.itemCategory}>Tráng miệng</div>
-                </div>
-                <p className={styles.itemDescription}>
-                  Bánh tiramisu mềm mịn với lớp kem phô mai mascarpone và cà
-                  phê.
-                </p>
-                <div className={styles.itemMeta}>
-                  <div className={styles.itemRating}>
-                    <span className={styles.stars}>★★★★★</span>{" "}
-                    <span className={styles.ratingCount}>(82)</span>
-                  </div>
-                  <div className={styles.itemPrice}>55.000 ₫</div>
-                </div>
-                <div className={styles.itemActions}>
-                  <button className={styles.addToCart}>
-                    <i className={styles.cartIcon}>🛒</i> Thêm vào giỏ
-                  </button>
-                  <button className={styles.favoriteBtn}>❤️</button>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* Pagination */}

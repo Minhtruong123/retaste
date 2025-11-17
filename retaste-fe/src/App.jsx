@@ -9,6 +9,7 @@ import AboutUsPage from "./components/Client/Pages/AboutUsPage";
 import ContactPage from "./components/Client/Pages/ContactPage";
 import AuthForm from "./components/Auth/AuthForm";
 import Layout from "./components/Client/Pages/Layout";
+import VerifyAccount from "./components/Auth/VerifyAccount";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           </Route>
 
           <Route path="/auth" element={<AuthForm />} />
+          <Route path="/verify" element={<VerifyAccount />} />
         </Routes>
       </Router>
     </>

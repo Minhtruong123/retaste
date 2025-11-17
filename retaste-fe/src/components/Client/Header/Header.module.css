@@ -65,8 +65,7 @@
   gap: 15px;
 }
 
-.cartIcon,
-.userIcon {
+.cartIcon {
   font-size: 1.5rem;
   color: var(--text);
   text-decoration: none;
@@ -88,7 +87,7 @@
   justify-content: center;
 }
 
-/* Thêm CSS mới cho phần user profile và dropdown */
+/* Cải thiện CSS cho phần user profile và dropdown */
 .userProfile {
   position: relative;
 }
@@ -96,55 +95,160 @@
 .userName {
   cursor: pointer;
   font-weight: 500;
-  color: var(--primary);
+  color: var(--text);
   display: flex;
   align-items: center;
-  padding: 5px 10px;
-  border-radius: 4px;
-  border: 1px solid var(--light-gray);
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--gray);
+  background-color: var(--white);
+  transition: all 0.2s ease;
+  gap: 8px;
 }
 
 .userName:hover {
   background-color: var(--light-gray);
+  border-color: var(--primary);
 }
 
-.userName::after {
-  content: "▼";
-  font-size: 0.7rem;
-  margin-left: 5px;
+.userIcon {
+  font-size: 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrowIcon {
+  margin-left: 2px;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--text-light);
+  border-bottom: 2px solid var(--text-light);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.userName:hover .arrowIcon {
+  transform: rotate(225deg);
 }
 
 .dropdown {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 10px);
   right: 0;
   background-color: var(--white);
-  border-radius: 4px;
-  box-shadow: var(--shadow);
-  width: 200px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  width: 240px;
   z-index: 101;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownHeader {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background-color: var(--light-gray);
+  gap: 10px;
+}
+
+.userAvatarLarge {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--secondary);
+  color: var(--white);
+  border-radius: 50%;
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.userFullName {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.userEmail {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.dropdownDivider {
+  height: 1px;
+  background-color: var(--light-gray);
+  margin: 0;
 }
 
 .dropdownItem {
-  display: block;
-  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
   color: var(--text);
   text-decoration: none;
   font-size: 0.9rem;
-  border-bottom: 1px solid var(--light-gray);
   width: 100%;
   text-align: left;
   background: none;
+  border: none;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .dropdownItem:last-child {
-  border-bottom: none;
+  margin-bottom: 5px;
 }
 
 .dropdownItem:hover {
   background-color: var(--light-gray);
   color: var(--primary);
+}
+
+.itemIcon {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+  display: inline-block;
+}
+
+/* Nút đăng nhập đẹp hơn */
+.authButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 8px 15px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.authButton:hover {
+  background-color: var(--primary-dark);
+}
+
+.authButton .userIcon {
+  font-size: 1.1rem;
 }
 
 .navMenu {
@@ -201,6 +305,12 @@
     justify-content: flex-start;
     gap: 15px;
     padding: 0 15px;
+  }
+
+  .dropdown {
+    width: 100%;
+    left: 0;
+    right: auto;
   }
 }
 
