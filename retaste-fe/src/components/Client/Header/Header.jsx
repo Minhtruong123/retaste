@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Header.module.css";
 import { NavLink } from "react-router-dom";
+import * as authService from "../../../service/auth_service";
 
 export default function Header() {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
@@ -8,8 +9,7 @@ export default function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    // Kiểm tra thông tin người dùng từ localStorage khi component được mount
-    const userInfo = localStorage.getItem("userInfo");
+    const userInfo = localStorage.getItem("user");
     if (userInfo) {
       setUser(JSON.parse(userInfo));
     }
@@ -27,10 +27,15 @@ export default function Header() {
     setShowDropdown(!showDropdown);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("userInfo");
-    setUser(null);
-    setShowDropdown(false);
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setUser(null);
+      setShowDropdown(false);
+    }
   };
 
   return (
@@ -62,36 +67,47 @@ export default function Header() {
               {user ? (
                 <div className={styles.userProfile}>
                   <div className={styles.userName} onClick={toggleDropdown}>
-                    {user.name}
+                    <span className={styles.userIcon}>👤</span>
+                    {user.fullName}
+                    <span className={styles.arrowIcon}></span>
                   </div>
                   {showDropdown && (
                     <div className={styles.dropdown}>
+                      <div className={styles.dropdownHeader}>
+                        <span className={styles.userAvatarLarge}>👤</span>
+                        <div className={styles.userInfo}>
+                          <div className={styles.userFullName}>
+                            {user.fullName}
+                          </div>
+                          <div className={styles.userEmail}>
+                            {user.email || "Chưa có email"}
+                          </div>
+                        </div>
+                      </div>
+                      <div className={styles.dropdownDivider}></div>
                       <NavLink
                         to="/profile"
                         className={styles.dropdownItem}
                         onClick={() => setShowDropdown(false)}
                       >
+                        <span className={styles.itemIcon}>👤</span>
                         Thông tin cá nhân
                       </NavLink>
-                      <NavLink
-                        to="/orders"
-                        className={styles.dropdownItem}
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        Đơn hàng của tôi
-                      </NavLink>
+                      <div className={styles.dropdownDivider}></div>
                       <button
                         onClick={handleLogout}
                         className={styles.dropdownItem}
                       >
+                        <span className={styles.itemIcon}>🚪</span>
                         Đăng xuất
                       </button>
                     </div>
                   )}
                 </div>
               ) : (
-                <NavLink to="/auth" className={styles.userIcon}>
-                  👤
+                <NavLink to="/auth" className={styles.authButton}>
+                  <span className={styles.userIcon}>👤</span>
+                  Đăng nhập
                 </NavLink>
               )}
             </div>

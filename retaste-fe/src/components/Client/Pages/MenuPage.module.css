@@ -1,10 +1,8 @@
-/* Menu Page */
 .menuPage {
   padding: 60px 0;
   background-color: var(--background);
 }
 
-/* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;

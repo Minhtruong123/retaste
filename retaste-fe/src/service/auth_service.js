@@ -29,7 +29,25 @@ export const login = async (values) => {
 };
 
 export const logout = async () => {
-  await api.post("/auth/logout");
-  localStorage.clear();
-  window.location.href = "/auth";
+  try {
+    await api.post("/auth/logout");
+  } catch (error) {
+    console.error("Logout API error:", error);
+  } finally {
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    window.location.href = "/auth";
+  }
+};
+
+export const verifyAccount = async (token) => {
+  try {
+    const { data } = await api.put("/access/verify-account", {
+      verifyToken: token,
+    });
+    return data;
+  } catch (error) {
+    throw error.response?.data?.message || "Xác minh thất bại";
+  }
 };
