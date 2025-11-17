@@ -15,18 +15,13 @@ const authentication = async (req: Request, res: Response, next: NextFunction) =
     if (!clientId || !accessToken) {
       throw new UNAUTHORIZED();
     }
-    // const getKeyRedis = await userRedis.getKeyStore(`rfToken:${clientId}`);
-    // if (getKeyRedis) {
-    //   const decodedToken = JwtProvider.verifyToken(accessToken, getKeyRedis.publicKey) as User;
-    //   req.user = decodedToken;
-    // } else {
+
     const getKeyUser = await keyStoreRepo.findOneByUserId(clientId);
     if (!getKeyUser) {
       throw new UNAUTHORIZED();
     }
     const decodedToken = JwtProvider.verifyToken(accessToken, getKeyUser.publicKey) as User;
     req.user = decodedToken;
-    // }
     return next();
   } catch (error) {
     if (error instanceof Error) {

@@ -88,10 +88,115 @@ const getDetail = async (userId: string) => {
     })
     .lean();
 };
+const getCorrespondingProduct = async (items: string[], userId: string) => {
+  const objectIds = items.map((id) => createObjectId(id));
+
+  const cartDetails = await Cart.aggregate([
+    {
+      $match: {
+        userId: createObjectId(userId)
+      }
+    },
+    { $unwind: '$products' },
+    {
+      $match: {
+        'products._id': { $in: objectIds }
+      }
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'products.productId',
+        foreignField: '_id',
+        as: 'product'
+      }
+    },
+    { $unwind: { path: '$product', preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: 'sizes',
+        localField: 'products.sizeId',
+        foreignField: '_id',
+        as: 'size'
+      }
+    },
+    {
+      $unwind: '$size'
+    },
+    {
+      $lookup: {
+        from: 'customization_groups',
+        localField: 'products.customs.customId',
+        foreignField: '_id',
+        as: 'customsData'
+      }
+    },
+    {
+      $lookup: {
+        from: 'options',
+        localField: 'products.customs.optionId',
+        foreignField: '_id',
+        as: 'optionsData'
+      }
+    },
+    {
+      $addFields: {
+        customsWithOptions: {
+          $map: {
+            input: '$products.customs',
+            as: 'custom',
+            in: {
+              customId: '$$custom.customId',
+              optionId: '$$custom.optionId',
+              customData: {
+                $arrayElemAt: [
+                  {
+                    $filter: {
+                      input: '$customsData',
+                      cond: { $eq: ['$$this._id', '$$custom.customId'] }
+                    }
+                  },
+                  0
+                ]
+              },
+              optionData: {
+                $arrayElemAt: [
+                  {
+                    $filter: {
+                      input: '$optionsData',
+                      cond: { $eq: ['$$this._id', '$$custom.optionId'] }
+                    }
+                  },
+                  0
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      $addFields: {
+        quantity: '$products.quantity',
+        itemId: '$products._id'
+      }
+    },
+    {
+      $project: {
+        customsData: 0,
+        optionsData: 0,
+        products: 0
+      }
+    }
+  ]);
+  return cartDetails;
+};
+
 export const cartRepo = {
   createNew,
   findCartByUserId,
   addProduct,
   removeProduct,
-  getDetail
+  getDetail,
+  getCorrespondingProduct
 };
