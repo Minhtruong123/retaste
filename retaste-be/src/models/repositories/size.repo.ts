@@ -44,7 +44,7 @@ const deleteById = async (id: string) => {
     },
     {
       $set: {
-        isDefault: true
+        isDeleted: true
       }
     }
   );
