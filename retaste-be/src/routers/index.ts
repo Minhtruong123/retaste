@@ -6,6 +6,8 @@ import { sizeRouter } from './size.route';
 import { customRouter } from './custom.route';
 import { optionRouter } from './option.route';
 import { cartRouter } from './cart.route';
+import { orderRouter } from './order.route';
+import { addressRouter } from './address.route';
 
 const router = Router();
 
@@ -16,5 +18,7 @@ router.use('/size', sizeRouter);
 router.use('/custom', customRouter);
 router.use('/option', optionRouter);
 router.use('/cart', cartRouter);
+router.use('/order', orderRouter);
+router.use('/address', addressRouter);
 
 export const indexRoute = router;

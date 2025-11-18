@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import lodash from 'lodash';
 import slugify from 'slugify';
-import { Types } from 'mongoose';
 
 export const createObjectId = (id: string) => {
   return new mongoose.Types.ObjectId(id);

@@ -7,7 +7,6 @@ declare interface Shop {
   shopName: string;
   shopId: string;
 }
-
 declare namespace Express {
   export interface Request {
     user: User;

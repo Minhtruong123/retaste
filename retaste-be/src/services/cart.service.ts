@@ -1,66 +1,28 @@
 /**
  * create new cart
- * update quantity product to cart
+ * update quantity product in cart
  * delete product in cart
  * getCart user
  */
 
-import { ObjectId, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { BAD_REQUEST } from '~/core/errors.response';
 import { cartRepo } from '~/models/repositories/cart.repo';
-import { customRepo } from '~/models/repositories/custom.repo';
+import { customRepo, ICustomValid } from '~/models/repositories/custom.repo';
 import { productRepo } from '~/models/repositories/product.repo';
 import { sizeRepo } from '~/models/repositories/size.repo';
 import { areCustomsEqual, createObjectId } from '~/utils/format';
 import { checkSubset } from '~/utils/validations';
 
 class CartService {
-  static createNew = async (userId: string) => {
-    const getCart = await cartRepo.findCartByUserId(userId);
-    if (getCart) return getCart;
-    const createdCart = await cartRepo.createNew(userId);
-    if (!createdCart) throw new BAD_REQUEST("Cann't create cart user !");
-    return createdCart;
-  };
-  static addToCart = async (
-    data: {
-      productId: string;
-      sizeId: string;
-      customs: { customId: string; optionId: string; quantity?: number }[];
-      quantity: number;
-    },
-    userId: string
+  static customIsValid = async (
+    customAndOptionValid: ICustomValid[],
+    customs: { customId: string; optionId: string; quantity?: number }[],
+    productId: string
   ) => {
-    const cartUser = await this.createNew(userId);
-    const { productId, customs, sizeId, quantity } = data;
-    const getProduct = await productRepo.findOneById(productId);
-    if (!getProduct) throw new BAD_REQUEST('Product is not exist !');
-    if (!getProduct.isAvailable) throw new BAD_REQUEST('Product is not available !');
-    // kiem tra size tuong ung
-    const getSize = await sizeRepo.findOneById(sizeId);
-    if (!getSize) throw new BAD_REQUEST('Product is not valid !');
-    if (!getSize.productId.equals(getProduct._id)) throw new BAD_REQUEST('Product is not valid !');
-    // kiểm tra các customId required nhưng không tồn tại
-    const customAndOptionValid: {
-      _id: ObjectId;
-      groupName: string;
-      isRequired: boolean;
-      options: {
-        _id: string;
-        optionName: string;
-        basePrice: number;
-        unitType: string;
-        minQuantity?: number;
-        maxQuantity?: number;
-        defaultQuantity: number;
-        pricePerUnit: number;
-        isAvailable: boolean;
-      };
-    }[] = await customRepo.getValidCustomizationsWithOptions(customs);
-    // kiem tra custom co hop le hay khong
-    // this.customIsValid(productId, customAndOptionValid, customs);
-    if (customAndOptionValid.length !== customs.length)
+    if (customAndOptionValid.length !== customs.length) {
       throw new BAD_REQUEST('Option is not valid !');
+    }
     const getCustomIdsRequire = (await customRepo.getCustomReuiredByProductId(productId)).map((i) =>
       i._id.toString()
     );
@@ -87,6 +49,37 @@ class CartService {
         }
       }
     }
+  };
+  static createNew = async (userId: string) => {
+    const getCart = await cartRepo.findCartByUserId(userId);
+    if (getCart) return getCart;
+    const createdCart = await cartRepo.createNew(userId);
+    if (!createdCart) throw new BAD_REQUEST("Cann't create cart user !");
+    return createdCart;
+  };
+  static addToCart = async (
+    data: {
+      productId: string;
+      sizeId: string;
+      customs: { customId: string; optionId: string; quantity?: number }[];
+      quantity: number;
+    },
+    userId: string
+  ) => {
+    const cartUser = await this.createNew(userId);
+    const { productId, customs, sizeId, quantity } = data;
+    const getProduct = await productRepo.findOneById(productId);
+    if (!getProduct) throw new BAD_REQUEST('Product is not exist !');
+    if (!getProduct.isAvailable) throw new BAD_REQUEST('Product is not available !');
+    // kiem tra size tuong ung
+    const getSize = await sizeRepo.findOneById(sizeId);
+    if (!getSize) throw new BAD_REQUEST('Product is not valid !');
+    if (!getSize.productId.equals(getProduct._id)) throw new BAD_REQUEST('Product is not valid !');
+    // kiểm tra các customId required nhưng không tồn tại
+    const customAndOptionValid: ICustomValid[] =
+      await customRepo.getValidCustomizationsWithOptions(customs);
+    // kiem tra custom co hop le hay khong
+    await this.customIsValid(customAndOptionValid, customs, productId);
 
     // kiem tra xem san pham co trong gio hang hay chua
     const idxProduct = cartUser.products.findIndex((p) => p.productId.toString() === productId);

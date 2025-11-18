@@ -23,6 +23,8 @@ const env: {
   CLOUD_NAME: string;
   CLOUD_API_KEY: string;
   CLOUD_API_SECRET: string;
+  SEPAY_SECRET_KEY: string;
+  SEPAY_MERCHANT_ID: string;
 } = {
   APP_PORT: parseInt(process.env.APP_PORT || '3000', 10),
   APP_HOST: process.env.APP_HOST || 'localhost',
@@ -45,6 +47,8 @@ const env: {
   AWS_CLOUDFRONT_PRIVATE_KEY: process.env.AWS_CLOUDFRONT_PRIVATE_KEY || '',
   CLOUD_NAME: process.env.CLOUD_NAME || '',
   CLOUD_API_KEY: process.env.CLOUD_API_KEY || '',
-  CLOUD_API_SECRET: process.env.CLOUD_API_SECRET || ''
+  CLOUD_API_SECRET: process.env.CLOUD_API_SECRET || '',
+  SEPAY_SECRET_KEY: process.env.SEPAY_SECRET_KEY || '',
+  SEPAY_MERCHANT_ID: process.env.SEPAY_MERCHANT_ID || ''
 };
 export default env;

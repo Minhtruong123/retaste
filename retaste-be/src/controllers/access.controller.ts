@@ -19,8 +19,6 @@ class AccessController {
         metadata: await AccessService.login(req.body)
       }).send(res);
     } catch (error) {
-      console.log(error);
-      
       next(error);
     }
   };
