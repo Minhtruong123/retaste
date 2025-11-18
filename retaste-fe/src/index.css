@@ -1,7 +1,10 @@
 :root {
   --primary: #ff6b35;
   --primary-dark: #e85a2a;
+  --primary-light: #ffdacc;
   --secondary: #2a9d8f;
+  --secondary-dark: #218577;
+  --secondary-light: #c5eae7;
   --text: #333333;
   --text-light: #666666;
   --background: #f9f9f9;
@@ -9,6 +12,8 @@
   --light-gray: #eeeeee;
   --gray: #dddddd;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 * {
