@@ -11,8 +11,9 @@ import { HEADERS } from '~/utils/constant';
 const authentication = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const clientId = req.headers[HEADERS.CLIENT_ID]?.toString();
-    const accessToken = req.headers[HEADERS.ACCESS_TOKEN]?.toString();
-    if (!clientId || !accessToken) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!clientId || !token) {
       throw new UNAUTHORIZED();
     }
 
@@ -20,7 +21,7 @@ const authentication = async (req: Request, res: Response, next: NextFunction) =
     if (!getKeyUser) {
       throw new UNAUTHORIZED();
     }
-    const decodedToken = JwtProvider.verifyToken(accessToken, getKeyUser.publicKey) as User;
+    const decodedToken = JwtProvider.verifyToken(token, getKeyUser.publicKey) as User;
     req.user = decodedToken;
     return next();
   } catch (error) {
