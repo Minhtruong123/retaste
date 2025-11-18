@@ -46,7 +46,7 @@ const getListCategory = async (option: {
   const { limit, page, keyWord, sortKey, sortValue } = option;
   const query: Record<string, string | object> = {};
   if (keyWord) {
-    query.slug = {
+    query.categorySlug = {
       $regex: slugify(keyWord, {
         lower: true,
         trim: true,

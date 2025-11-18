@@ -6,8 +6,8 @@ import { uploadMiddleware } from '~/middlewares/uploadCloud.middleware';
 const { authentication } = authMiddleware;
 const router = Router();
 
-router.get('/detail/:id', authentication, categoryController.getDetail);
-router.get('/list-category', authentication, categoryController.getListCategory);
+router.get('/detail/:id', categoryController.getDetail);
+router.get('/list-category', categoryController.getListCategory);
 
 router.post(
   '/create',

@@ -37,7 +37,7 @@ const getListProduct = async (option: {
   const { limit, page, keyWord, sortKey, sortValue } = option;
   const query: Record<string, string | object> = {};
   if (keyWord) {
-    query.slug = {
+    query.productSlug = {
       $regex: slugify(keyWord, {
         lower: true,
         trim: true,
@@ -76,7 +76,6 @@ const deleteProduct = async (id: string) => {
   );
 };
 const getDetail = async (id: string) => {
-  const start = Date.now();
   const result = await Product.aggregate([
     {
       $match: {
@@ -148,8 +147,6 @@ const getDetail = async (id: string) => {
       $unwind: '$categorie'
     }
   ]);
-  const end = Date.now();
-  console.log(`Query time: ${end - start} ms`);
   return result;
 };
 export const productRepo = {

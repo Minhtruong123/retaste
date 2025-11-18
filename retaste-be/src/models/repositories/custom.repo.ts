@@ -1,6 +1,24 @@
 import { createObjectId } from '~/utils/format';
 import CustomizationGroup, { ICustomizationGroup } from '../customGroup.model';
 import { optionModel } from '../option.model';
+import { ObjectId } from 'mongoose';
+
+export interface ICustomValid {
+  _id: ObjectId;
+  groupName: string;
+  isRequired: boolean;
+  options: {
+    _id: string;
+    optionName: string;
+    basePrice: number;
+    unitType: string;
+    minQuantity?: number;
+    maxQuantity?: number;
+    defaultQuantity: number;
+    pricePerUnit: number;
+    isAvailable: boolean;
+  };
+}
 
 const findOneById = async (id: string) => {
   return await CustomizationGroup.findOne({

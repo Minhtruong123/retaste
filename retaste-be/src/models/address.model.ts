@@ -1,19 +1,16 @@
-import { Schema, model } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 import { DOCUMENT_USER } from './user.model';
 export const DOCUMENT_ADDRESS = 'Address';
 const COLLECTION_NAME = 'addresses';
 
 export interface IAddress {
-  userId: Schema.Types.ObjectId;
+  userId: Types.ObjectId;
   streetAddress: string;
+  streetAddressSlug: string;
   city: string;
-  state?: string;
-  postalCode?: string;
+  detail: string;
   country: string;
-  location?: {
-    type?: 'Point';
-    coordinates: [number, number];
-  };
+
   isDefault?: boolean;
   deliveryInstructions?: string;
   createdAt?: Date;
@@ -27,18 +24,14 @@ const addressSchema = new Schema<IAddress>(
       required: true
     },
     streetAddress: { type: String, required: true },
+    streetAddressSlug: { type: String, required: true },
     city: { type: String, required: true },
-    state: { type: String },
-    postalCode: { type: String },
+    detail: { type: String, required: true },
     country: { type: String, required: true },
-    location: {
-      type: { type: String, enum: ['Point'], default: 'Point' },
-      coordinates: { type: [Number], index: '2dsphere' }
-    },
+
     isDefault: { type: Boolean, default: false },
     deliveryInstructions: { type: String },
     createdAt: { type: Date, default: Date.now },
-
     isDeleted: {
       type: Boolean,
       default: false
@@ -49,9 +42,6 @@ const addressSchema = new Schema<IAddress>(
     timestamps: true
   }
 );
-addressSchema.index({ email: 1 });
-addressSchema.index({ phoneNumber: 1 });
-addressSchema.index({ 'addresses.location': '2dsphere' });
 
 const Address = model<IAddress>(DOCUMENT_ADDRESS, addressSchema);
 

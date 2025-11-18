@@ -96,7 +96,6 @@ class CategoryService {
       });
       ++idx;
     });
-    console.log(option);
     const createdOption = await optionRepo.createMany(option);
     if (!createdOption) throw new BAD_REQUEST("Cann't create new product !");
     return 'Create new product sucescfully !';
