@@ -1,5 +1,6 @@
 import axios from "axios";
 import api from "./api";
+import { jwtDecode } from "jwt-decode";
 
 export const register = async (values) => {
   try {
@@ -18,9 +19,20 @@ export const login = async (values) => {
     });
 
     const { accessToken, refreshToken, user } = data.metadata;
+
+    let userWithId = { ...user };
+
+    if (!userWithId._id) {
+      try {
+        const decodedToken = jwtDecode(accessToken);
+        userWithId._id = decodedToken.userId;
+      } catch (e) {
+        console.warn("Không decode được token để lấy _id");
+      }
+    }
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(userWithId));
 
     return data;
   } catch (error) {
