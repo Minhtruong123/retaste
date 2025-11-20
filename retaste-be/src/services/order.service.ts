@@ -143,7 +143,7 @@ class OrderService {
         }
       ]
     };
-    await lalaMoveProvider.quotationsDetail(quotationPayload);
+    // await lalaMoveProvider.createOrder(quotationPayload);
     return {
       address: getAddres,
       order: viewOrder

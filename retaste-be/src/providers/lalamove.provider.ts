@@ -1,33 +1,46 @@
 import SDKClient from '@lalamove/lalamove-js';
+import env from '~/configs/environments';
+import { Stop } from '@lalamove/lalamove-js/dist/models/stop';
+import { IQuotation } from '@lalamove/lalamove-js';
+const REGION = 'VN';
+const LANGUAGE = 'vi_VN';
 
 export const sdkClient = new SDKClient.ClientModule(
-  new SDKClient.Config('public_key', 'secret_key', 'sandbox')
+  new SDKClient.Config(env.LALAMOVE_API_KEY, env.LALAMOVE_API_SECRET, 'sandbox')
 );
 
-const co = {
-  lat: '22.3353139',
-  lng: '114.1758402'
-};
-
-const co2 = {
-  lat: '22.3203648',
-  lng: '114.169773'
-};
-
-const stop1 = {
-  coordinates: co,
-  address: 'Wu Kai Sha Road'
-};
-
-const stop2 = {
-  coordinates: co2,
-  address: 'Wu Kai Sha Road'
-};
-
-const quotationDetail = () => {
-  const quotationPayload = SDKClient.QuotationPayloadBuilder.quotationPayload()
-    .withLanguage('en_HK')
-    .withServiceType('COURIER')
+const quotationDetail = async (stop1: Stop, stop2: Stop) => {
+  const payload = SDKClient.QuotationPayloadBuilder.quotationPayload()
+    .withLanguage(LANGUAGE)
+    .withServiceType('')
     .withStops([stop1, stop2])
     .build();
+  return await sdkClient.Quotation.create(REGION, payload);
+};
+
+const createOrder = async (quotation: IQuotation) => {
+  // const orderPayload = SDKClient.OrderPayloadBuilder.orderPayload()
+  //   .withIsPODEnabled(true)
+  //   .withQuotationID(quotation.id)
+  //   .withSender({
+  //     stopId: quotation.stops[0].id,
+  //     name: 'Michal',
+  //     phone: '+85256847123'
+  //   })
+  //   .withRecipients([
+  //     {
+  //       stopId: quotation.stops[1].id,
+  //       name: 'Rustam',
+  //       phone: '+85256847456'
+  //     }
+  //   ])
+  //   .withMetadata({
+  //     internalId: '123123'
+  //   })
+  //   .build();
+  // return await sdkClient.Order.create(REGION, orderPayload);
+};
+export const lalaMoveProvider = {
+  quotationDetail,
+  createOrder
 };

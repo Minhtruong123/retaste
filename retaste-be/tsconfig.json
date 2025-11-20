@@ -9,11 +9,11 @@
     "strict": true,
     "noImplicitAny": false,
     "baseUrl": ".",
-    "skipLibCheck": true,
+    "skipLibCheck": true, // bật lại dòng này
     "paths": {
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src"],
   "files": ["src/types/global.d.ts"]
 }
