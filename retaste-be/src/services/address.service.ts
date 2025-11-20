@@ -6,9 +6,9 @@ import { createObjectId, customSlug } from '~/utils/format';
 
 class AddressService {
   static addressIsValid = async (address: string) => {
-    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+    const response = (await axios.get('https://nominatim.openstreetmap.org/search', {
       params: {
-        q: `${address} , Đà Nẵng, Vietnam`,
+        q: `${address} , Hồ Chí Minh, Vietnam`,
         format: 'json',
         limit: 1,
         countrycodes: 'vn'
@@ -16,7 +16,7 @@ class AddressService {
       headers: {
         'User-Agent': 'YourAppName/1.0'
       }
-    }) as { data: any[] };
+    })) as { data: any[] };
     if (response.data.length > 0) {
       const result = response.data[0];
       const lat = parseFloat(result.lat);

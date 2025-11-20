@@ -1,6 +1,6 @@
 import SDKClient from '@lalamove/lalamove-js';
 
-const sdkClient = new SDKClient.ClientModule(
+export const sdkClient = new SDKClient.ClientModule(
   new SDKClient.Config('public_key', 'secret_key', 'sandbox')
 );
 
@@ -24,8 +24,10 @@ const stop2 = {
   address: 'Wu Kai Sha Road'
 };
 
-const quotationPayload = SDKClient.QuotationPayloadBuilder.quotationPayload()
-  .withLanguage('en_HK')
-  .withServiceType('COURIER')
-  .withStops([stop1, stop2])
-  .build();
+const quotationDetail = () => {
+  const quotationPayload = SDKClient.QuotationPayloadBuilder.quotationPayload()
+    .withLanguage('en_HK')
+    .withServiceType('COURIER')
+    .withStops([stop1, stop2])
+    .build();
+};
