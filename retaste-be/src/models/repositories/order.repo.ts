@@ -9,8 +9,9 @@ const findOneById = async (id: string) => {
 const createNew = async (data: IOrder) => {
   return await Order.insertOne(data);
 };
+// const
 
-export const orderModel = {
+export const orderRepo = {
   findOneById,
   createNew
 };

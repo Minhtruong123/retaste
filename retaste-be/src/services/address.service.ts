@@ -21,15 +21,15 @@ class AddressService {
       const result = response.data[0];
       const lat = parseFloat(result.lat);
       const lon = parseFloat(result.lon);
-      const isDaNang = lat >= 15.9 && lat <= 16.3 && lon >= 107.9 && lon <= 108.3;
-      if (!isDaNang) throw new BAD_REQUEST('Address is not exist in Da Nang !');
+      const isSaiGon = lat >= 10.3 && lat <= 11.2 && lon >= 106.3 && lon <= 107.1;
+      if (!isSaiGon) throw new BAD_REQUEST('Address is not exist in Ho Chi Minh !');
       return {
-        exists: isDaNang,
+        exists: isSaiGon,
         displayName: result.display_name,
         coordinates: { lat: result.lat, lon: result.lon }
       };
     } else {
-      throw new BAD_REQUEST('Address is not exist in Da Nang !');
+      throw new BAD_REQUEST('Address is not exist in Ho Chi Minh !');
     }
   };
   static createNew = async (

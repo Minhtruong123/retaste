@@ -7,13 +7,12 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "strict": true,
-    "noImplicitAny": false,
     "baseUrl": ".",
-    "skipLibCheck": true, // bật lại dòng này
     "paths": {
       "~/*": ["./src/*"]
-    }
+    },
+    "outDir": "./dist"
   },
-  "include": ["src"],
+  "include": ["src/**/*"],
   "files": ["src/types/global.d.ts"]
 }

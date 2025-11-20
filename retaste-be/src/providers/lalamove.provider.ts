@@ -1,4 +1,5 @@
-import SDKClient from '@lalamove/lalamove-js';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const SDKClient = require('@lalamove/lalamove-js');
 import env from '~/configs/environments';
 import { Stop } from '@lalamove/lalamove-js/dist/models/stop';
 import { IQuotation } from '@lalamove/lalamove-js';
@@ -12,33 +13,34 @@ export const sdkClient = new SDKClient.ClientModule(
 const quotationDetail = async (stop1: Stop, stop2: Stop) => {
   const payload = SDKClient.QuotationPayloadBuilder.quotationPayload()
     .withLanguage(LANGUAGE)
-    .withServiceType('')
+    .withServiceType('MOTORCYCLE')
     .withStops([stop1, stop2])
     .build();
   return await sdkClient.Quotation.create(REGION, payload);
 };
 
 const createOrder = async (quotation: IQuotation) => {
-  // const orderPayload = SDKClient.OrderPayloadBuilder.orderPayload()
-  //   .withIsPODEnabled(true)
-  //   .withQuotationID(quotation.id)
-  //   .withSender({
-  //     stopId: quotation.stops[0].id,
-  //     name: 'Michal',
-  //     phone: '+85256847123'
-  //   })
-  //   .withRecipients([
-  //     {
-  //       stopId: quotation.stops[1].id,
-  //       name: 'Rustam',
-  //       phone: '+85256847456'
-  //     }
-  //   ])
-  //   .withMetadata({
-  //     internalId: '123123'
-  //   })
-  //   .build();
-  // return await sdkClient.Order.create(REGION, orderPayload);
+  const orderPayload = SDKClient.OrderPayloadBuilder.orderPayload()
+    .withIsPODEnabled(true)
+    .withQuotationID(quotation.id)
+    .withSender({
+      stopId: quotation.stops[0].id,
+      name: 'Michal',
+      phone: '+84912345678'
+    })
+    .withRecipients([
+      {
+        stopId: quotation.stops[1].id,
+        name: 'Rustam',
+        phone: '+84987654321'
+      }
+    ])
+    .withMetadata({
+      restaurantOrderId: '1234',
+      restaurantName: "Rustam's Kebab"
+    })
+    .build();
+  return await sdkClient.Order.create(REGION, orderPayload);
 };
 export const lalaMoveProvider = {
   quotationDetail,
