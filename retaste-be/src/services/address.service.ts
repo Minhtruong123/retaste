@@ -14,9 +14,9 @@ class AddressService {
         countrycodes: 'vn'
       },
       headers: {
-        'User-Ag0ent': 'YourAppName/1.0'
+        'User-Agent': 'YourAppName/1.0'
       }
-    });
+    }) as { data: any[] };
     if (response.data.length > 0) {
       const result = response.data[0];
       const lat = parseFloat(result.lat);
