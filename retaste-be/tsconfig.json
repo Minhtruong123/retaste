@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "strict": true,
     "baseUrl": ".",
+    "skipLibCheck": true,
     "paths": {
       "~/*": ["./src/*"]
     }

@@ -26,7 +26,7 @@ class AddressService {
       return {
         exists: isDaNang,
         displayName: result.display_name,
-        coordinates: { lat, lon }
+        coordinates: { lat: result.lat, lon: result.lon }
       };
     } else {
       throw new BAD_REQUEST('Address is not exist in Da Nang !');
@@ -49,7 +49,9 @@ class AddressService {
       detail: result.displayName,
       country: 'Viet Nam',
       streetAddressSlug: customSlug(streetAddress),
-      streetAddress
+      streetAddress,
+      lat: result.coordinates.lat,
+      lng: result.coordinates.lon
     };
     if (isDefault) {
       newAddres.isDefault = true;
@@ -114,7 +116,9 @@ class AddressService {
       detail: result.displayName,
       country: 'Viet Nam',
       streetAddressSlug: customSlug(streetAddress),
-      streetAddress
+      streetAddress,
+      lat: result.coordinates.lat,
+      lng: result.coordinates.lon
     };
     if (isDefault) {
       newAddres.isDefault = true;

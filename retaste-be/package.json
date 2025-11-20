@@ -11,6 +11,7 @@
     "@aws-sdk/cloudfront-signer": "^3.862.0",
     "@babel/runtime": "^7.27.3",
     "@getbrevo/brevo": "^2.2.0",
+    "@lalamove/lalamove-js": "^1.1.0",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/lodash": "^4.17.17",
     "@types/multer": "^2.0.0",

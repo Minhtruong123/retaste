@@ -30,11 +30,10 @@ export interface IUser {
   verifyToken: string | null;
   emailVerified: boolean;
   phoneVerified: boolean;
-
-  // addresses: IAddress[];
   createdAt?: Date;
   updatedAt?: Date;
   isDeleted?: boolean;
+  role?: 'admin' | 'user' | 'employer';
 }
 
 const userSchema = new Schema<IUser>(
@@ -69,7 +68,8 @@ const userSchema = new Schema<IUser>(
     isDeleted: {
       type: Boolean,
       default: false
-    }
+    },
+    role: { type: String, enum: ['admin', 'user', 'employer'], default: 'user' }
   },
   {
     collection: COLLECTION_NAME,

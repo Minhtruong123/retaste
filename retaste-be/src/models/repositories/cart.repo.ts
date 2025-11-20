@@ -148,6 +148,7 @@ const getCorrespondingProduct = async (items: string[], userId: string) => {
             in: {
               customId: '$$custom.customId',
               optionId: '$$custom.optionId',
+              quantity: '$$custom.quantity',
               customData: {
                 $arrayElemAt: [
                   {

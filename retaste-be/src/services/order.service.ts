@@ -10,6 +10,7 @@ import { createObjectId } from '~/utils/format';
 import { v4 as uuidv4 } from 'uuid';
 import { addressRepo } from '~/models/repositories/address.repo';
 import { Types } from 'mongoose';
+import { lalaMoveProvider } from '~/providers/lalamove.provider';
 class OrderService {
   static viewOrder = async (
     data: {
@@ -73,6 +74,7 @@ class OrderService {
     if (!cartDetail.length) return [];
     const getAddres = await addressRepo.getAddressById(deliveryAddress, userId);
     if (!getAddres) throw new BAD_REQUEST('Address is not valid !');
+    let totalCostOrder = 0;
     const viewOrder: Partial<IOrder> = {
       userId: createObjectId(userId),
       orderNumber: uuidv4(),
@@ -116,10 +118,36 @@ class OrderService {
           basePrice: c.product.basePrice,
           totalPrice: c.product.basePrice * c.quantity
         };
+        totalCostOrder += item.totalPrice;
         return item;
       })
     };
-    return viewOrder;
+    const quotationPayload = {
+      serviceType: 'MOTORCYCLE',
+      specialRequests: [],
+      language: 'vi_VN',
+      stops: [
+        {
+          coordinates: {
+            lat: '16.0637251',
+            lng: '108.1857232'
+          },
+          address: 'Cù Chính Lan, Phường Thanh Khê, Thành phố Đà Nẵng, 84236, Việt Nam'
+        },
+        {
+          coordinates: {
+            lat: '16.0669747',
+            lng: '108.1997848'
+          },
+          address: 'Wu Kai Sha Road'
+        }
+      ]
+    };
+    await lalaMoveProvider.quotationsDetail(quotationPayload);
+    return {
+      address: getAddres,
+      order: viewOrder
+    };
   };
   static create = async () => {
     return {};
