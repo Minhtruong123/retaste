@@ -7,11 +7,11 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "strict": true,
-    "noImplicitAny": false,
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
-    }
+    },
+    "outDir": "./dist"
   },
   "include": ["src/**/*"],
   "files": ["src/types/global.d.ts"]

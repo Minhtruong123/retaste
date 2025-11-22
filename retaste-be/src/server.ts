@@ -9,6 +9,10 @@ import corsOptions from './configs/cors';
 import './configs/database';
 import { errorHandling } from './middlewares/errorsHandle.middleware';
 import { indexRoute } from './routers';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
+
 // import { connectRedis } from './configs/redis';
 import 'dotenv/config';
 const API_V1 = '/api/v1';
@@ -26,12 +30,13 @@ app.use(API_V1, indexRoute);
 
 app.use(errorHandling);
 
-app.get(`${API_V1}`, (req, res) => {
-  res.json({
-    ok: 'ok'
-  });
-});
+const certPath = path.join(__dirname, '..', 'mkcert-pem');
 
-app.listen(env.APP_PORT, env.APP_HOST, () => {
-  console.log(`App is running on http://${env.APP_HOST}:${env.APP_PORT} !`);
+const httpsOptions = {
+  key: fs.readFileSync(path.join(certPath, 'localhost+2-key.pem')),
+  cert: fs.readFileSync(path.join(certPath, 'localhost+2.pem'))
+};
+
+https.createServer(httpsOptions, app).listen(env.APP_PORT, env.APP_HOST, () => {
+  console.log(`App is running on https://${env.APP_HOST}:${env.APP_PORT} !`);
 });

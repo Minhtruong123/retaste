@@ -54,7 +54,8 @@ class AccessService {
     const { privateKey, publicKey } = generateKeyPairSync();
     const payload = {
       userId: getUser._id.toString(),
-      email: getUser.email
+      email: getUser.email,
+      role: getUser.role
     };
     const pairToken = JwtProvider.generatePairToken(payload, privateKey);
     if (!pairToken) throw new UNAUTHORIZED('Login failed !');
@@ -65,14 +66,6 @@ class AccessService {
       userId: createObjectId(getUser._id.toString()),
       refreshTokenUses: []
     } as IKeyStore);
-    // await userRedis.setRfToken(
-    //   getUser._id.toString(),
-    //   {
-    //     refreshToken,
-    //     publicKey
-    //   },
-    //   ms('7 days') / 1000
-    // );
     return {
       accessToken,
       refreshToken,

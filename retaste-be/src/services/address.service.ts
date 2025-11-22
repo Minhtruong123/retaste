@@ -6,9 +6,9 @@ import { createObjectId, customSlug } from '~/utils/format';
 
 class AddressService {
   static addressIsValid = async (address: string) => {
-    const response = await axios.get('https://nominatim.openstreetmap.org/search', {
+    const response = (await axios.get('https://nominatim.openstreetmap.org/search', {
       params: {
-        q: `${address} , Đà Nẵng, Vietnam`,
+        q: `${address} , Hồ Chí Minh, Vietnam`,
         format: 'json',
         limit: 1,
         countrycodes: 'vn'
@@ -16,20 +16,20 @@ class AddressService {
       headers: {
         'User-Agent': 'YourAppName/1.0'
       }
-    }) as { data: any[] };
+    })) as { data: any[] };
     if (response.data.length > 0) {
       const result = response.data[0];
       const lat = parseFloat(result.lat);
       const lon = parseFloat(result.lon);
-      const isDaNang = lat >= 15.9 && lat <= 16.3 && lon >= 107.9 && lon <= 108.3;
-      if (!isDaNang) throw new BAD_REQUEST('Address is not exist in Da Nang !');
+      const isSaiGon = lat >= 10.3 && lat <= 11.2 && lon >= 106.3 && lon <= 107.1;
+      if (!isSaiGon) throw new BAD_REQUEST('Address is not exist in Ho Chi Minh !');
       return {
-        exists: isDaNang,
+        exists: isSaiGon,
         displayName: result.display_name,
-        coordinates: { lat, lon }
+        coordinates: { lat: result.lat, lon: result.lon }
       };
     } else {
-      throw new BAD_REQUEST('Address is not exist in Da Nang !');
+      throw new BAD_REQUEST('Address is not exist in Ho Chi Minh !');
     }
   };
   static createNew = async (
@@ -49,7 +49,9 @@ class AddressService {
       detail: result.displayName,
       country: 'Viet Nam',
       streetAddressSlug: customSlug(streetAddress),
-      streetAddress
+      streetAddress,
+      lat: result.coordinates.lat,
+      lng: result.coordinates.lon
     };
     if (isDefault) {
       newAddres.isDefault = true;
@@ -114,7 +116,9 @@ class AddressService {
       detail: result.displayName,
       country: 'Viet Nam',
       streetAddressSlug: customSlug(streetAddress),
-      streetAddress
+      streetAddress,
+      lat: result.coordinates.lat,
+      lng: result.coordinates.lon
     };
     if (isDefault) {
       newAddres.isDefault = true;

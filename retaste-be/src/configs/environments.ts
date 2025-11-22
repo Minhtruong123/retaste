@@ -25,6 +25,9 @@ const env: {
   CLOUD_API_SECRET: string;
   SEPAY_SECRET_KEY: string;
   SEPAY_MERCHANT_ID: string;
+  LALAMOVE_API_KEY: string;
+  LALAMOVE_BASE_URL: string;
+  LALAMOVE_API_SECRET: string;
 } = {
   APP_PORT: parseInt(process.env.APP_PORT || '3000', 10),
   APP_HOST: process.env.APP_HOST || 'localhost',
@@ -49,6 +52,9 @@ const env: {
   CLOUD_API_KEY: process.env.CLOUD_API_KEY || '',
   CLOUD_API_SECRET: process.env.CLOUD_API_SECRET || '',
   SEPAY_SECRET_KEY: process.env.SEPAY_SECRET_KEY || '',
-  SEPAY_MERCHANT_ID: process.env.SEPAY_MERCHANT_ID || ''
+  SEPAY_MERCHANT_ID: process.env.SEPAY_MERCHANT_ID || '',
+  LALAMOVE_API_KEY: process.env.LALAMOVE_API_KEY || '',
+  LALAMOVE_BASE_URL: process.env.LALAMOVE_BASE_URL || '',
+  LALAMOVE_API_SECRET: process.env.LALAMOVE_API_SECRET || ''
 };
 export default env;
