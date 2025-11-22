@@ -4,7 +4,6 @@ import env from './environments';
 
 const connectString = `${env.MONGO_URI}/${env.DATABASE_NAME}`;
 
-console.log(connectString);
 class Database {
   private static instance: Database;
 
