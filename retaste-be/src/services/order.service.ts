@@ -11,8 +11,10 @@ import { IOrder } from '~/models/order.model';
 import { addressRepo } from '~/models/repositories/address.repo';
 import { Types } from 'mongoose';
 import { lalaMoveProvider } from '~/providers/lalamove.provider';
-import Address from '~/models/address.model';
 import { orderRepo } from '~/models/repositories/order.repo';
+import { clientSepay } from '~/providers/sepay.provider';
+import { deliveryRepo } from '~/models/repositories/delivery.repo';
+import { userRepo } from '~/models/repositories/user.repo';
 class OrderService {
   static viewOrder = async (
     data: {
@@ -77,27 +79,25 @@ class OrderService {
       throw new BAD_REQUEST('Products are not valid !');
     }
     const getAddres = await addressRepo.getAddressById(deliveryAddress, userId);
-    if (!getAddres) throw new BAD_REQUEST('Address is not valid !');
+    if (!getAddres) throw new BAD_REQUEST('Address recipient is not exist !');
     let totalCostOrder = 0;
 
-    const stopSender = await Address.findOne({
-      streetAddressSlug: '400-dien-bien-phu-1763627299126'
-    });
-    if (!stopSender) throw new BAD_REQUEST('400-dien-bien-phu-1763627299126');
+    const stopSender = await addressRepo.getAddressAdmin();
+    if (!stopSender) throw new BAD_REQUEST('Address sender is not exist !');
     const quotation = await lalaMoveProvider.quotationDetail(
       {
-        address: stopSender?.streetAddress,
         coordinates: {
           lat: stopSender.lat,
           lng: stopSender.lng
-        }
+        },
+        address: stopSender.streetAddress
       },
       {
-        address: getAddres.streetAddress,
         coordinates: {
           lat: getAddres.lat,
           lng: getAddres.lng
-        }
+        },
+        address: getAddres.streetAddress
       }
     );
     const orderNumber = uuidv4();
@@ -135,8 +135,8 @@ class OrderService {
         return item;
       }),
       subtotal: totalCostOrder,
-      deliveryFee: quotation.priceBreakdown.total,
-      totalAmount: totalCostOrder + quotation.priceBreakdown.total
+      deliveryFee: parseFloat(quotation.priceBreakdown.total),
+      totalAmount: totalCostOrder + parseFloat(quotation.priceBreakdown.total)
     };
     return {
       address: getAddres,
@@ -153,30 +153,181 @@ class OrderService {
     userId: string
   ) => {
     const { items, deliveryAddress, paymentMethod } = data;
-    const { quotation, order } = await this.viewOrder(
+
+    const { order } = await this.viewOrder(
       {
         deliveryAddress,
         items
       },
       userId
     );
-    if (paymentMethod === 'cash') {
-      //
-    } else {
-      const newOrder = {
-        ...order,
-        deliveryAddress: createObjectId(deliveryAddress),
-        paymentMethod,
-        paymentStatus: 'pending',
-        userId: createObjectId(userId)
-      } as IOrder;
-      const created = await orderRepo.createNew(newOrder);
-      const deliveryOrder = await lalaMoveProvider.createOrder(quotation);
+    const newOrder = {
+      ...order,
+      deliveryAddress: createObjectId(deliveryAddress),
+      paymentMethod,
+      paymentStatus: 'pending',
+      userId: createObjectId(userId)
+    } as IOrder;
+    const created = await orderRepo.createNew(newOrder);
+    if (paymentMethod === 'bank_transfer') {
+      const checkoutUrk = clientSepay.checkout.initCheckoutUrl();
+      const checkoutFormfields = clientSepay.checkout.initOneTimePaymentFields({
+        operation: 'PURCHASE',
+        payment_method: 'BANK_TRANSFER',
+        order_invoice_number: newOrder.orderNumber,
+        order_amount: newOrder.totalAmount,
+        currency: 'VND',
+        order_description: `Thanh toan don hang ${newOrder.orderNumber}`
+        // success_url: 'https://example.com/order/DH123?payment=success',
+        // error_url: 'https://example.com/order/DH123?payment=error',
+        // cancel_url: 'https://example.com/order/DH123?payment=cancel'
+      });
       return {
-        order: created,
-        deliveryOrder
+        checkoutUrk,
+        checkoutFormfields
+      };
+    } else {
+      return {
+        order: created
       };
     }
+  };
+  static changeStatus = async (
+    data: {
+      orderStatus: 'pending' | 'confirmed' | 'cancelled';
+    },
+    orderId: string
+  ) => {
+    const getOrder = await orderRepo.findOneById(orderId);
+    if (!getOrder) throw new BAD_REQUEST('Order is not exist !');
+    const { orderStatus } = data;
+    if (orderStatus === 'cancelled') {
+      const getDelivery = await deliveryRepo.getDeliveryByOrderId(getOrder._id.toString());
+      if (!getDelivery) {
+        throw new BAD_REQUEST('Cancel order failed !');
+      }
+      const updated = await orderRepo.changeStatus(orderStatus, orderId);
+      if (!updated.matchedCount) throw new BAD_REQUEST('Cannot update order status !');
+      const lalaMoveCancel = await lalaMoveProvider.cancelOrder(getDelivery.orderDeliveryId);
+      return {
+        updated,
+        lalaMoveCancel
+      };
+    } else if (orderStatus === 'confirmed') {
+      const updated = await orderRepo.changeStatus(orderStatus, orderId);
+      if (!updated.matchedCount) throw new BAD_REQUEST('Cannot update order status !');
+      const getRecipientAddress = await addressRepo.getAddressById(
+        getOrder.deliveryAddress.toString(),
+        getOrder.userId.toString()
+      );
+      if (!getRecipientAddress) throw new BAD_REQUEST('Address is not exist !');
+      const getSenderAddress = await addressRepo.getAddressAdmin();
+      if (!getSenderAddress) throw new BAD_REQUEST('Sender address is not exist !');
+
+      const quotation = await lalaMoveProvider.quotationDetail(
+        {
+          address: getSenderAddress.streetAddress,
+          coordinates: {
+            lat: getSenderAddress.lat,
+            lng: getSenderAddress.lng
+          }
+        },
+        {
+          address: getRecipientAddress.streetAddress,
+          coordinates: {
+            lat: getRecipientAddress.lat,
+            lng: getRecipientAddress.lng
+          }
+        }
+      );
+      const sender = await userRepo.getAdminUser();
+      if (!sender) throw new BAD_REQUEST('Sender is not exist !');
+      const recipient = await userRepo.findOneById(getOrder.userId.toString());
+      if (!recipient) throw new BAD_REQUEST('Recipient is not exist !');
+      const orderDelivery = await lalaMoveProvider.createOrder(
+        quotation,
+        {
+          name: sender.fullName,
+          phone: sender.phoneNumber?.replace(/^0/, '+84') || ''
+        },
+        {
+          name: recipient.fullName,
+          phone: recipient.phoneNumber?.replace(/^0/, '+84') || ''
+        },
+        getOrder._id.toString()
+      );
+      const createOrderDelivery = await deliveryRepo.craeteNew({
+        orderId: getOrder._id,
+        orderDeliveryId: orderDelivery.orderId
+      });
+      return {
+        createOrderDelivery,
+        orderDelivery
+      };
+    }
+  };
+  static cancel = async (orderId: string, userId: string) => {
+    const getOrder = await orderRepo.getOrderByUserId(orderId, userId);
+    if (!getOrder) throw new BAD_REQUEST('Order is not exist !');
+    if (getOrder.orderStatus === 'success')
+      throw new BAD_REQUEST('Cannot cancel delivered order !');
+    if (getOrder.orderStatus === 'confirmed') {
+      const getDelivery = await deliveryRepo.getDeliveryByOrderId(orderId);
+      if (!getDelivery) throw new BAD_REQUEST('Delivery info is not exist !');
+
+      const updated = await orderRepo.changeStatus('cancelled', orderId);
+      const cancelDelivery = await lalaMoveProvider.cancelOrder(
+        getDelivery.orderDeliveryId.toString()
+      );
+      return {
+        updated,
+        cancelDelivery
+      };
+    }
+    const updated = await orderRepo.changeStatus('cancelled', orderId);
+    return updated;
+  };
+  static getListOrder = async (query: {
+    limit: number;
+    page: number;
+    sortKey?: string | undefined;
+    sortValue?: 1 | -1 | undefined;
+  }) => {
+    const { limit, page, sortKey, sortValue } = query;
+    return await orderRepo.getListOrder({
+      limit,
+      page,
+      sortKey,
+      sortValue
+    });
+  };
+  static getListOrderByUser = async (
+    query: {
+      limit: number;
+      page: number;
+      sortKey?: string | undefined;
+      sortValue?: 1 | -1 | undefined;
+    },
+    userId: string
+  ) => {
+    const { limit, page, sortKey, sortValue } = query;
+    return await orderRepo.getListOrderUser(
+      {
+        limit,
+        page,
+        sortKey,
+        sortValue
+      },
+      userId
+    );
+  };
+  static getDetail = async (orderId: string) => {
+    return await orderRepo.getDetail(orderId);
+  };
+  static getDetailByUser = async (orderId: string, userId: string) => {
+    return await orderRepo.getDetail(orderId, {
+      userId: createObjectId(userId)
+    });
   };
 }
 export default OrderService;

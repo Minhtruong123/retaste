@@ -1,13 +1,18 @@
 import { createObjectId } from '~/utils/format';
 import User, { IUser } from '../user.model';
 
-const findOneById = async (id: string) => {
+const findOneById = async (id: string, option: Partial<IUser> = {}) => {
   return await User.findOne({
     _id: createObjectId(id),
-    isDeleted: false
+    isDeleted: false,
+    ...option
   });
 };
-
+const getAdminUser = async () => {
+  return await User.findOne({
+    role: 'admin'
+  });
+};
 const findOneByEmail = async (email: string, filter?: object) => {
   return await User.findOne({
     email: email,
@@ -41,5 +46,6 @@ export const userRepo = {
   findOneById,
   findOneByVerifyToken,
   createNew,
-  update
+  update,
+  getAdminUser
 };

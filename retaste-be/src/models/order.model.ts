@@ -12,14 +12,7 @@ export interface IOrder {
   userId: Types.ObjectId;
   orderNumber: string;
   deliveryAddress: Types.ObjectId;
-  orderStatus:
-    | 'pending'
-    | 'confirmed'
-    | 'preparing'
-    | 'ready'
-    | 'out_for_delivery'
-    | 'delivered'
-    | 'cancelled';
+  orderStatus: 'pending' | 'confirmed' | 'success' | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   paymentMethod: 'cash' | 'bank_transfer';
   items: {
@@ -51,15 +44,7 @@ const orderSchema = new Schema<IOrder>(
     deliveryAddress: { type: Schema.Types.ObjectId, ref: DOCUMENT_ADDRESS, required: true },
     orderStatus: {
       type: String,
-      enum: [
-        'pending',
-        'confirmed',
-        'preparing',
-        'ready',
-        'out_for_delivery',
-        'delivered',
-        'cancelled'
-      ],
+      enum: ['pending', 'confirmed', 'success', 'cancelled'],
       default: 'pending',
       required: true
     },
