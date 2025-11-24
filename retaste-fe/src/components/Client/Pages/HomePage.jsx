@@ -1,12 +1,30 @@
 import React, { useState, useEffect } from "react";
 import styles from "./HomePage.module.css";
 import * as categoriesService from "../../../service/categories_service";
+import * as productsService from "../../../service/products_service";
 
 export default function HomePage() {
   const [cartCount, setCartCount] = useState(3);
   const [categories, setCategories] = useState([]);
+  const [recommendedProducts, setRecommendedProducts] = useState([]);
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await productsService.getListProduct({
+          limit: "4",
+          page: "1",
+          keyWord: "",
+          sortKey: "",
+          sortValue: undefined,
+        });
+
+        setRecommendedProducts(res || []);
+      } catch (error) {
+        console.error("Lỗi lấy sản phẩm:", error);
+      }
+    };
+
     const fetchCategories = async () => {
       try {
         const res = await categoriesService.getListCategory({
@@ -21,7 +39,7 @@ export default function HomePage() {
         console.error("Lỗi lấy danh mục:", error);
       }
     };
-
+    fetchProducts();
     fetchCategories();
   }, []);
 
@@ -131,7 +149,7 @@ export default function HomePage() {
               </a>
             </div>
             <div className={styles.productsContainer}>
-              <div className={styles.productCard}>
+              {/* <div className={styles.productCard}>
                 <img
                   src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47"
                   alt="Classic Burger"
@@ -159,94 +177,44 @@ export default function HomePage() {
                     </button>
                   </div>
                 </div>
-              </div>
-              <div className={styles.productCard}>
-                <img
-                  src="https://images.unsplash.com/photo-1513104890138-7c749659a591"
-                  alt="Pizza Margherita"
-                  className={styles.productImg}
-                />
-                <div className={styles.productInfo}>
-                  <h3 className={styles.productTitle}>Pizza Margherita</h3>
-                  <div className={styles.productCategory}>Pizza</div>
-                  <div className={styles.productDetails}>
-                    <div className={styles.productPrice}>109.000 ₫</div>
-                    <div className={styles.productRating}>★★★★☆</div>
+              </div> */}
+              {recommendedProducts.length === 0 ? (
+                <p>Đang tải...</p>
+              ) : (
+                recommendedProducts.map((p) => (
+                  <div key={p._id} className={styles.productCard}>
+                    <img
+                      src={p.imageUrl}
+                      alt={p.productName}
+                      className={styles.productImg}
+                    />
+                    <div className={styles.productInfo}>
+                      <h3 className={styles.productTitle}>{p.productName}</h3>
+                      <div className={styles.productCategory}>
+                        {p.category?.categoryName || "Không có danh mục"}
+                      </div>
+                      <div className={styles.productDetails}>
+                        <div className={styles.productPrice}>{p.price} ₫</div>
+                        <div className={styles.productRating}>★★★★★</div>
+                      </div>
+                      <div className={styles.productActions}>
+                        <button
+                          className={styles.addToCart}
+                          onClick={handleAddToCart}
+                        >
+                          Thêm vào giỏ
+                        </button>
+                        <button
+                          className={styles.favoriteBtn}
+                          onClick={handleFavoriteClick}
+                        >
+                          ❤️
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className={styles.productActions}>
-                    <button
-                      className={styles.addToCart}
-                      onClick={handleAddToCart}
-                    >
-                      Thêm vào giỏ
-                    </button>
-                    <button
-                      className={styles.favoriteBtn}
-                      onClick={handleFavoriteClick}
-                    >
-                      ❤️
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.productCard}>
-                <img
-                  src="https://images.unsplash.com/photo-1534353436294-0dbd4bdac845"
-                  alt="Trà Sữa Trân Châu"
-                  className={styles.productImg}
-                />
-                <div className={styles.productInfo}>
-                  <h3 className={styles.productTitle}>Trà Sữa Trân Châu</h3>
-                  <div className={styles.productCategory}>Đồ uống</div>
-                  <div className={styles.productDetails}>
-                    <div className={styles.productPrice}>39.000 ₫</div>
-                    <div className={styles.productRating}>★★★★★</div>
-                  </div>
-                  <div className={styles.productActions}>
-                    <button
-                      className={styles.addToCart}
-                      onClick={handleAddToCart}
-                    >
-                      Thêm vào giỏ
-                    </button>
-                    <button
-                      className={styles.favoriteBtn}
-                      onClick={handleFavoriteClick}
-                    >
-                      ❤️
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.productCard}>
-                <img
-                  src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8"
-                  alt="Salad Gà"
-                  className={styles.productImg}
-                />
-                <div className={styles.productInfo}>
-                  <h3 className={styles.productTitle}>Salad Gà</h3>
-                  <div className={styles.productCategory}>Salad</div>
-                  <div className={styles.productDetails}>
-                    <div className={styles.productPrice}>59.000 ₫</div>
-                    <div className={styles.productRating}>★★★★☆</div>
-                  </div>
-                  <div className={styles.productActions}>
-                    <button
-                      className={styles.addToCart}
-                      onClick={handleAddToCart}
-                    >
-                      Thêm vào giỏ
-                    </button>
-                    <button
-                      className={styles.favoriteBtn}
-                      onClick={handleFavoriteClick}
-                    >
-                      ❤️
-                    </button>
-                  </div>
-                </div>
-              </div>
+                ))
+              )}
             </div>
           </div>
         </section>
