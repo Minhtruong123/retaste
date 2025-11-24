@@ -23,5 +23,6 @@ router.put(
 router.get('/list-product', authentication, productController.getListProduct);
 router.get('/detail/:id', authentication, productController.getDetail);
 router.delete('/delete/:id', authentication, productController.delete);
+router.get('/retaste', authentication, productController.retaste);
 
 export const productRouter = router;

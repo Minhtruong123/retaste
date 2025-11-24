@@ -5,6 +5,7 @@ import { sizeModel } from '../size.model';
 import { customGroupModel } from '../customGroup.model';
 import { optionModel } from '../option.model';
 import { categoryModel } from '../category.model';
+import { ObjectId } from 'mongoose';
 
 const findOneById = async (id: string) => {
   return await Product.findOne({
@@ -149,11 +150,19 @@ const getDetail = async (id: string) => {
   ]);
   return result;
 };
+const getRelated = async (categories: ObjectId[], lastestProduct: ObjectId[]) => {
+  return await Product.find({
+    categoryId: { $in: categories },
+    isDeleted: false,
+    _id: { $nin: lastestProduct }
+  });
+};
 export const productRepo = {
   createNew,
   update,
   getListProduct,
   deleteProduct,
   getDetail,
-  findOneById
+  findOneById,
+  getRelated
 };
