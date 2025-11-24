@@ -151,6 +151,19 @@ const getDetail = async (orderId: string, option: Partial<IOrder> = {}) => {
     })
     .lean();
 };
+const getLatestOrder = async (userId: string) => {
+  return await Order.findOne({
+    userId: createObjectId(userId),
+    isDeleted: false
+  })
+    .sort({
+      createdAt: -1
+    })
+    .populate({
+      path: 'items.productId',
+      select: 'productName categoryId'
+    });
+};
 export const orderRepo = {
   findOneById,
   createNew,
@@ -159,5 +172,6 @@ export const orderRepo = {
   getOrderDetail,
   getListOrder,
   getListOrderUser,
-  getDetail
+  getDetail,
+  getLatestOrder
 };

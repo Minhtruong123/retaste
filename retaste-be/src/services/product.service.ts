@@ -1,3 +1,5 @@
+import { Order } from '@getbrevo/brevo';
+import { ObjectId } from 'mongoose';
 import { BAD_REQUEST } from '~/core/errors.response';
 import { ICustomizationGroup } from '~/models/customGroup.model';
 import { IProductOption } from '~/models/option.model';
@@ -5,6 +7,7 @@ import { IProduct } from '~/models/product.model';
 import { categoryRepo } from '~/models/repositories/category.repo';
 import { customRepo } from '~/models/repositories/custom.repo';
 import { optionRepo } from '~/models/repositories/option.repo';
+import { orderRepo } from '~/models/repositories/order.repo';
 import { productRepo } from '~/models/repositories/product.repo';
 import { sizeRepo } from '~/models/repositories/size.repo';
 import { ISize } from '~/models/size.model';
@@ -160,6 +163,30 @@ class CategoryService {
     const deleteOption = await optionRepo.deleteByCustomId(getCustom._id.toString());
     if (!deleteOption.matchedCount) throw new BAD_REQUEST("Cann't delete product !");
     return 'Delete product successfully';
+  };
+  static retaste = async (userId: string) => {
+    const getOrder = (await orderRepo.getLatestOrder(userId)) as unknown as Order & {
+      items: {
+        productId: {
+          categoryId: ObjectId;
+          _id: ObjectId;
+        };
+      }[];
+    };
+    if (!getOrder) return [];
+    if (!getOrder.items.length) return [];
+    const lastestProduct = getOrder.items
+      .map((i) => {
+        return i.productId._id;
+      })
+      .slice(0, 3);
+    const categories = getOrder.items
+      .map((i) => {
+        return i.productId?.categoryId;
+      })
+      .slice(0, 3);
+    const relatedProduct = productRepo.getRelated(categories, lastestProduct);
+    return relatedProduct;
   };
 }
 export default CategoryService;
