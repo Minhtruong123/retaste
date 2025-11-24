@@ -1,8 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./HomePage.module.css";
+import * as categoriesService from "../../../service/categories_service";
 
 export default function HomePage() {
   const [cartCount, setCartCount] = useState(3);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await categoriesService.getListCategory({
+          limit: "5",
+          page: "1",
+          keyWord: "",
+          sortKey: "",
+          sortValue: undefined,
+        });
+        setCategories(res || []);
+      } catch (error) {
+        console.error("Lỗi lấy danh mục:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleAddToCart = (event) => {
     const button = event.target;
@@ -81,61 +102,26 @@ export default function HomePage() {
           <div className={styles.container}>
             <h2 className={styles.sectionTitle}>Danh mục phổ biến</h2>
             <div className={styles.categoriesContainer}>
-              <div className={styles.categoryCard}>
-                <img
-                  src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38"
-                  alt="Pizza"
-                  className={styles.categoryImg}
-                />
-                <div className={styles.categoryInfo}>
-                  <h3>Pizza</h3>
-                </div>
-              </div>
-              <div className={styles.categoryCard}>
-                <img
-                  src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
-                  alt="Burger"
-                  className={styles.categoryImg}
-                />
-                <div className={styles.categoryInfo}>
-                  <h3>Burger</h3>
-                </div>
-              </div>
-              <div className={styles.categoryCard}>
-                <img
-                  src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8"
-                  alt="Đồ uống"
-                  className={styles.categoryImg}
-                />
-                <div className={styles.categoryInfo}>
-                  <h3>Đồ uống</h3>
-                </div>
-              </div>
-              <div className={styles.categoryCard}>
-                <img
-                  src="https://images.unsplash.com/photo-1559847844-5315695dadae"
-                  alt="Món Á"
-                  className={styles.categoryImg}
-                />
-                <div className={styles.categoryInfo}>
-                  <h3>Món Á</h3>
-                </div>
-              </div>
-              <div className={styles.categoryCard}>
-                <img
-                  src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd"
-                  alt="Salad"
-                  className={styles.categoryImg}
-                />
-                <div className={styles.categoryInfo}>
-                  <h3>Salad</h3>
-                </div>
-              </div>
+              {categories.length === 0 ? (
+                <p>Đang tải...</p>
+              ) : (
+                categories.map((cat) => (
+                  <div key={cat._id} className={styles.categoryCard}>
+                    <img
+                      src={cat.imageUrl}
+                      alt={cat.categoryName}
+                      className={styles.categoryImg}
+                    />
+                    <div className={styles.categoryInfo}>
+                      <h3>{cat.categoryName}</h3>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </section>
 
-        {/* Recommended for You */}
         <section className={styles.recommended}>
           <div className={styles.container}>
             <div className={styles.sectionHeader}>
