@@ -21,11 +21,13 @@ export const login = async (values) => {
     const { accessToken, refreshToken, user } = data.metadata;
 
     let userWithId = { ...user };
+    let role = null;
 
     if (!userWithId._id) {
       try {
         const decodedToken = jwtDecode(accessToken);
         userWithId._id = decodedToken.userId;
+        role = decodedToken.role;
       } catch (e) {
         console.warn("Không decode được token để lấy _id");
       }
@@ -33,6 +35,7 @@ export const login = async (values) => {
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
     localStorage.setItem("user", JSON.stringify(userWithId));
+    localStorage.setItem("role", role);
 
     return data;
   } catch (error) {
@@ -49,6 +52,7 @@ export const logout = async () => {
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("role");
     window.location.href = "/auth";
   }
 };
