@@ -194,7 +194,9 @@ export default function HomePage() {
                         {p.category?.categoryName || "Không có danh mục"}
                       </div>
                       <div className={styles.productDetails}>
-                        <div className={styles.productPrice}>{p.price} ₫</div>
+                        <div className={styles.productPrice}>
+                          {p.basePrice} ₫
+                        </div>
                         <div className={styles.productRating}>★★★★★</div>
                       </div>
                       <div className={styles.productActions}>

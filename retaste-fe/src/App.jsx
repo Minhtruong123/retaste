@@ -21,7 +21,9 @@ import DeliveryManagement from "./components/Admin/DeliveryManagement/DeliveryMa
 import OrderManagement from "./components/Admin/OrderManagement/OrderManagement";
 import RevenueManagement from "./components/Admin/RevenueManagement/RevenueManagement";
 import EmployeeManagement from "./components/Admin/EmployeeManagement/EmployeeManagement";
-import AttendanceManagement from "./components/Admin/AttendanceManagement/AttendanceManagement";
+import ScheduleManagement from "./components/Admin/ScheduleManagement/ScheduleManagement";
+import SalaryManagement from "./components/Admin/SalaryManagement/SalaryManagement";
+import ProductManagement from "./components/Admin/ProductManagement/ProductManagement";
 
 const getRole = () => localStorage.getItem("role");
 
@@ -89,9 +91,11 @@ function App() {
               element={<EmployeeManagement />}
             />
             <Route
-              path="attendance_management"
-              element={<AttendanceManagement />}
+              path="schedule_management"
+              element={<ScheduleManagement />}
             />
+            <Route path="salary_management" element={<SalaryManagement />} />
+            <Route path="product_management" element={<ProductManagement />} />
           </Route>
 
           {/* 5. STAFF ROUTES */}
