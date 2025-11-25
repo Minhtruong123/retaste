@@ -35,7 +35,7 @@ export default function Sidebar() {
         </div>
         <div className={styles.userInfo}>
           <div className={styles.userName}>Nguyễn Văn Quản Lý</div>
-          <div className={styles.userRole}>Quản lý cấp cao</div>
+          <div className={styles.userRole}>Quản lý</div>
         </div>
       </div>
 
@@ -74,17 +74,21 @@ export default function Sidebar() {
             },
             {
               icon: "⏰",
-              label: "Chấm công",
-              to: "/admin/attendance_management",
+              label: "Quản lý lịch làm việc",
+              to: "/admin/schedule_management",
             },
-            { icon: "💰", label: "Quản lý lương", to: "/admin/salary" },
+            {
+              icon: "💰",
+              label: "Quản lý lương",
+              to: "/admin/salary_management",
+            },
           ]}
         />
 
         <MenuSection
           title="Quản lý sản phẩm"
           items={[
-            { icon: "🍔", label: "Sản phẩm", to: "/admin/product" },
+            { icon: "🍔", label: "Sản phẩm", to: "/admin/product_management" },
             { icon: "🏷️", label: "Danh mục", to: "/admin/category" },
             { icon: "💯", label: "Khuyến mãi", to: "/admin/voucher" },
             { icon: "🧠", label: "Hệ thống gợi ý", to: "/admin/product" },
