@@ -6,16 +6,16 @@ class DashboardService {
   static control = async () => {
     const users = await userRepo.countUser();
     const orders = await orderRepo.getAllOrder();
-    const revenue = orders.reduce((acc, item) => acc + item.totalAmount, 0);
-    const totalOrder = await orderRepo.countOrder();
-    const diliveries = await deliveryRepo.getAll();
+    const totalAmount = (await orderRepo.getTotalAmount()).totalAmount;
+    const diliveries = await deliveryRepo.getRateDelivery();
+
     return {
       users,
       orders,
-      revenue,
       diliveries,
-      totalOrder
+      totalAmount
     };
   };
+  // static
 }
 export default DashboardService;

@@ -170,11 +170,22 @@ const getAllOrder = async () => {
     orderStatus: 'success'
   });
 };
-const countOrder = async () => {
-  return await Order.countDocuments({
-    isDeleted: false,
-    orderStatus: 'success'
-  });
+const getTotalAmount = async () => {
+  return (
+    await Order.aggregate([
+      {
+        $match: {
+          orderStatus: 'success'
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$subtotal' }
+        }
+      }
+    ])
+  )[0];
 };
 export const orderRepo = {
   findOneById,
@@ -187,5 +198,5 @@ export const orderRepo = {
   getDetail,
   getLatestOrder,
   getAllOrder,
-  countOrder
+  getTotalAmount
 };
