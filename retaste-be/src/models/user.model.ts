@@ -30,11 +30,10 @@ export interface IUser {
   verifyToken: string | null;
   emailVerified: boolean;
   phoneVerified: boolean;
-
-  // addresses: IAddress[];
   createdAt?: Date;
   updatedAt?: Date;
   isDeleted?: boolean;
+  role?: 'admin' | 'user' | 'employee';
 }
 
 const userSchema = new Schema<IUser>(
@@ -49,27 +48,12 @@ const userSchema = new Schema<IUser>(
     emailVerified: { type: Boolean, default: false },
     phoneVerified: { type: Boolean, default: false },
     verifyToken: { type: String, required: true },
-    // addresses: [
-    //   {
-    //     addressType: { type: String, enum: ['home', 'work', 'other'] },
-    //     streetAddress: { type: String, required: true },
-    //     city: { type: String, required: true },
-    //     state: { type: String },
-    //     postalCode: { type: String },
-    //     country: { type: String, required: true },
-    //     location: {
-    //       type: { type: String, enum: ['Point'], default: 'Point' },
-    //       coordinates: { type: [Number], index: '2dsphere' }
-    //     },
-    //     isDefault: { type: Boolean, default: false },
-    //     deliveryInstructions: { type: String },
-    //     createdAt: { type: Date, default: Date.now }
-    //   }
-    // ],
+
     isDeleted: {
       type: Boolean,
       default: false
-    }
+    },
+    role: { type: String, enum: ['admin', 'user', 'employee'], default: 'user' }
   },
   {
     collection: COLLECTION_NAME,
@@ -79,7 +63,6 @@ const userSchema = new Schema<IUser>(
 
 userSchema.index({ email: 1 });
 userSchema.index({ phoneNumber: 1 });
-userSchema.index({ 'addresses.location': '2dsphere' });
 
 const User = model<IUser>(DOCUMENT_USER, userSchema);
 

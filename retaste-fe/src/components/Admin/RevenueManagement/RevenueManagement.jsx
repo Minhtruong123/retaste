@@ -1,0 +1,476 @@
+import React from "react";
+import styles from "./RevenueManagement.module.css";
+
+export default function RevenueManagement() {
+  return (
+    <>
+      <div className={styles.mainContent}>
+        <header className={styles.header}>
+          <button className={styles.toggleSidebar}>☰</button>
+          <div className={styles.headerTitle}>Quản lý doanh thu</div>
+          <div className={styles.headerActions}>
+            <div className={styles.searchBox}>
+              <span className={styles.searchIcon}>🔍</span>
+              <input
+                type="text"
+                className={styles.searchInput}
+                placeholder="Tìm kiếm..."
+              />
+            </div>
+            <button className={styles.actionBtn}>
+              🔔
+              <span className={styles.notificationBadge}>3</span>
+            </button>
+            <button className={styles.actionBtn}>✉️</button>
+            <button className={styles.actionBtn}>🔄</button>
+          </div>
+        </header>
+
+        {/* Breadcrumb */}
+        <div className={styles.breadcrumb}>
+          <div className={styles.breadcrumbItem}>
+            <a href="#">Trang chủ</a>
+          </div>
+          <div className={styles.breadcrumbDivider}>/</div>
+          <div className={styles.breadcrumbCurrent}>Quản lý doanh thu</div>
+        </div>
+
+        {/* Content */}
+        <div className={styles.content}>
+          <div className={styles.pageHeader}>
+            <h1 className={styles.pageTitle}>Báo cáo doanh thu</h1>
+            <div className={styles.dateRange}>
+              <span className={styles.dateRangeIcon}>📅</span>
+              <span>01/10/2025 - 24/10/2025</span>
+            </div>
+          </div>
+
+          {/* Filter Section */}
+          <div className={styles.filterRow}>
+            <div className={styles.filterItem}>
+              <label className={styles.filterLabel}>Từ ngày:</label>
+              <input
+                type="date"
+                className={styles.filterInput}
+                value="2025-10-01"
+              />
+            </div>
+            <div className={styles.filterItem}>
+              <label className={styles.filterLabel}>Đến ngày:</label>
+              <input
+                type="date"
+                className={styles.filterInput}
+                value="2025-10-24"
+              />
+            </div>
+            <div className={styles.filterItem}>
+              <label className={styles.filterLabel}>Chi nhánh:</label>
+              <select className={styles.filterInput}>
+                <option value="">Tất cả chi nhánh</option>
+                <option value="1">Chi nhánh Quận 1</option>
+                <option value="2">Chi nhánh Quận 3</option>
+                <option value="3">Chi nhánh Quận 7</option>
+                <option value="4">Chi nhánh Thủ Đức</option>
+              </select>
+            </div>
+            <button className={styles.filterBtn}>
+              <i>🔍</i> Lọc kết quả
+            </button>
+            <button className={`${styles.filterBtn} ${styles.resetBtn}`}>
+              <i>↻</i> Đặt lại
+            </button>
+            <button className={`${styles.filterBtn} ${styles.exportBtn}`}>
+              <i>📥</i> Xuất báo cáo
+            </button>
+          </div>
+
+          {/* Summary Cards */}
+          <div className={styles.summaryCards}>
+            <div className={`${styles.summaryCard} ${styles.primary}`}>
+              <h3>Tổng doanh thu</h3>
+              <div className={styles.summaryValue}>35.2 triệu ₫</div>
+              <div className={styles.summaryCompare}>
+                <span className={styles.percentageUp}>↗ 12.5%</span>
+                <span>so với tháng trước</span>
+              </div>
+            </div>
+            <div className={`${styles.summaryCard} ${styles.success}`}>
+              <h3>Lợi nhuận ròng</h3>
+              <div className={styles.summaryValue}>12.8 triệu ₫</div>
+              <div className={styles.summaryCompare}>
+                <span className={styles.percentageUp}>↗ 8.2%</span>
+                <span>so với tháng trước</span>
+              </div>
+            </div>
+            <div className={`${styles.summaryCard} ${styles.info}`}>
+              <h3>Số đơn hàng</h3>
+              <div className={styles.summaryValue}>1,258</div>
+              <div className={styles.summaryCompare}>
+                <span className={styles.percentageUp}>↗ 15.7%</span>
+                <span>so với tháng trước</span>
+              </div>
+            </div>
+            <div className={`${styles.summaryCard} ${styles.warning}`}>
+              <h3>Giá trị trung bình</h3>
+              <div className={styles.summaryValue}>279.800 ₫</div>
+              <div className={styles.summaryCompare}>
+                <span className={styles.percentageDown}>↘ 2.1%</span>
+                <span>so với tháng trước</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Revenue Chart */}
+          <div className={styles.chartContainer}>
+            <div className={styles.chartHeader}>
+              <h3 className={styles.chartTitle}>Biểu đồ doanh thu</h3>
+              <div className={styles.chartOptions}>
+                <button className={styles.chartOption}>Ngày</button>
+                <button className={`${styles.chartOption} ${styles.active}`}>
+                  Tuần
+                </button>
+                <button className={styles.chartOption}>Tháng</button>
+                <button className={styles.chartOption}>Quý</button>
+              </div>
+            </div>
+            <div className={styles.chartPlaceholder}>
+              [Biểu đồ đường thể hiện doanh thu theo thời gian]
+            </div>
+          </div>
+
+          {/* Two Charts in a Row */}
+          <div className={styles.chartsRow}>
+            {/* Left Chart */}
+            <div className={styles.chartContainer}>
+              <div className={styles.chartHeader}>
+                <h3 className={styles.chartTitle}>Doanh thu theo danh mục</h3>
+                <div className={styles.chartOptions}>
+                  <button className={styles.chartOption}>Tuần</button>
+                  <button className={`${styles.chartOption} ${styles.active}`}>
+                    Tháng
+                  </button>
+                </div>
+              </div>
+              <div className={styles.chartPlaceholder}>
+                [Biểu đồ tròn thể hiện phân bổ doanh thu theo danh mục sản phẩm]
+              </div>
+            </div>
+            {/* Right Chart */}
+            <div className={styles.chartContainer}>
+              <div className={styles.chartHeader}>
+                <h3 className={styles.chartTitle}>Doanh thu theo chi nhánh</h3>
+                <div className={styles.chartOptions}>
+                  <button className={styles.chartOption}>Tuần</button>
+                  <button className={`${styles.chartOption} ${styles.active}`}>
+                    Tháng
+                  </button>
+                </div>
+              </div>
+              <div className={styles.chartPlaceholder}>
+                [Biểu đồ cột thể hiện doanh thu của từng chi nhánh]
+              </div>
+            </div>
+          </div>
+
+          {/* Revenue by Day Table */}
+          <div className={styles.revenueTableContainer}>
+            <div className={styles.tableHeader}>
+              <h3 className={styles.tableTitle}>Doanh thu theo ngày</h3>
+              <div className={styles.tableActions}>
+                <button
+                  className={`${styles.tableActionBtn} ${styles.secondary}`}
+                >
+                  <i>🔍</i> Lọc
+                </button>
+                <button
+                  className={`${styles.tableActionBtn} ${styles.primary}`}
+                >
+                  <i>📥</i> Xuất Excel
+                </button>
+              </div>
+            </div>
+            <div className={styles.tableScroll}>
+              <table className={styles.dataTable}>
+                <thead>
+                  <tr>
+                    <th>Ngày</th>
+                    <th>Số đơn</th>
+                    <th>Tổng doanh thu</th>
+                    <th>Phí giao hàng</th>
+                    <th>Khuyến mãi</th>
+                    <th>Thuế</th>
+                    <th>Doanh thu ròng</th>
+                    <th>So với hôm trước</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>24/10/2025</td>
+                    <td>57</td>
+                    <td>1.520.000 ₫</td>
+                    <td>285.000 ₫</td>
+                    <td>-175.000 ₫</td>
+                    <td>152.000 ₫</td>
+                    <td>1.478.000 ₫</td>
+                    <td className={styles.statusPositive}>+4.2%</td>
+                  </tr>
+                  <tr>
+                    <td>23/10/2025</td>
+                    <td>62</td>
+                    <td>1.625.000 ₫</td>
+                    <td>310.000 ₫</td>
+                    <td>-195.000 ₫</td>
+                    <td>162.500 ₫</td>
+                    <td>1.418.500 ₫</td>
+                    <td className={styles.statusNegative}>-2.8%</td>
+                  </tr>
+                  <tr>
+                    <td>22/10/2025</td>
+                    <td>59</td>
+                    <td>1.580.000 ₫</td>
+                    <td>295.000 ₫</td>
+                    <td>-185.000 ₫</td>
+                    <td>158.000 ₫</td>
+                    <td>1.459.000 ₫</td>
+                    <td className={styles.statusPositive}>+5.1%</td>
+                  </tr>
+                  <tr>
+                    <td>21/10/2025</td>
+                    <td>51</td>
+                    <td>1.420.000 ₫</td>
+                    <td>255.000 ₫</td>
+                    <td>-165.000 ₫</td>
+                    <td>142.000 ₫</td>
+                    <td>1.388.000 ₫</td>
+                    <td className={styles.statusNegative}>-3.5%</td>
+                  </tr>
+                  <tr>
+                    <td>20/10/2025</td>
+                    <td>65</td>
+                    <td>1.750.000 ₫</td>
+                    <td>325.000 ₫</td>
+                    <td>-210.000 ₫</td>
+                    <td>175.000 ₫</td>
+                    <td>1.438.000 ₫</td>
+                    <td className={styles.statusPositive}>+8.3%</td>
+                  </tr>
+                  <tr>
+                    <td>19/10/2025</td>
+                    <td>48</td>
+                    <td>1.350.000 ₫</td>
+                    <td>240.000 ₫</td>
+                    <td>-150.000 ₫</td>
+                    <td>135.000 ₫</td>
+                    <td>1.328.000 ₫</td>
+                    <td className={styles.statusNegative}>-1.9%</td>
+                  </tr>
+                  <tr>
+                    <td>18/10/2025</td>
+                    <td>53</td>
+                    <td>1.480.000 ₫</td>
+                    <td>265.000 ₫</td>
+                    <td>-170.000 ₫</td>
+                    <td>148.000 ₫</td>
+                    <td>1.353.000 ₫</td>
+                    <td className={styles.statusPositive}>+2.7%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            {/* Pagination */}
+            <div className={styles.pagination}>
+              <div className={`${styles.pageItem} ${styles.disabled}`}>
+                <a href="#" className={styles.pageLink}>
+                  ⟨
+                </a>
+              </div>
+              <div className={`${styles.pageItem} ${styles.active}`}>
+                <a href="#" className={styles.pageLink}>
+                  1
+                </a>
+              </div>
+              <div className={styles.pageItem}>
+                <a href="#" className={styles.pageLink}>
+                  2
+                </a>
+              </div>
+              <div className={styles.pageItem}>
+                <a href="#" className={styles.pageLink}>
+                  3
+                </a>
+              </div>
+              <div className={styles.pageItem}>
+                <a href="#" className={styles.pageLink}>
+                  ⟩
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Revenue by Product Category Table */}
+          <div className={styles.revenueTableContainer}>
+            <div className={styles.tableHeader}>
+              <h3 className={styles.tableTitle}>
+                Doanh thu theo danh mục sản phẩm
+              </h3>
+              <div className={styles.tableActions}>
+                <button
+                  className={`${styles.tableActionBtn} ${styles.secondary}`}
+                >
+                  <i>🔍</i> Lọc
+                </button>
+                <button
+                  className={`${styles.tableActionBtn} ${styles.primary}`}
+                >
+                  <i>📥</i> Xuất Excel
+                </button>
+              </div>
+            </div>
+            <div className={styles.tableScroll}>
+              <table className={styles.dataTable}>
+                <thead>
+                  <tr>
+                    <th>Danh mục</th>
+                    <th>Số lượng bán</th>
+                    <th>Doanh thu</th>
+                    <th>Chi phí</th>
+                    <th>Lợi nhuận</th>
+                    <th>Tỷ suất lợi nhuận</th>
+                    <th>So với tháng trước</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Món chính</td>
+                    <td>852</td>
+                    <td>12.780.000 ₫</td>
+                    <td>7.668.000 ₫</td>
+                    <td>5.112.000 ₫</td>
+                    <td>40%</td>
+                    <td className={styles.statusPositive}>+12.5%</td>
+                  </tr>
+                  <tr>
+                    <td>Món khai vị</td>
+                    <td>625</td>
+                    <td>5.625.000 ₫</td>
+                    <td>3.375.000 ₫</td>
+                    <td>2.250.000 ₫</td>
+                    <td>40%</td>
+                    <td className={styles.statusPositive}>+8.2%</td>
+                  </tr>
+                  <tr>
+                    <td>Tráng miệng</td>
+                    <td>438</td>
+                    <td>3.285.000 ₫</td>
+                    <td>1.971.000 ₫</td>
+                    <td>1.314.000 ₫</td>
+                    <td>40%</td>
+                    <td className={styles.statusPositive}>+5.3%</td>
+                  </tr>
+                  <tr>
+                    <td>Đồ uống</td>
+                    <td>1024</td>
+                    <td>7.168.000 ₫</td>
+                    <td>2.867.200 ₫</td>
+                    <td>4.300.800 ₫</td>
+                    <td>60%</td>
+                    <td className={styles.statusPositive}>+18.9%</td>
+                  </tr>
+                  <tr>
+                    <td>Combo gia đình</td>
+                    <td>156</td>
+                    <td>4.680.000 ₫</td>
+                    <td>3.276.000 ₫</td>
+                    <td>1.404.000 ₫</td>
+                    <td>30%</td>
+                    <td className={styles.statusNegative}>-2.1%</td>
+                  </tr>
+                  <tr>
+                    <td>Món đặc biệt</td>
+                    <td>98</td>
+                    <td>3.920.000 ₫</td>
+                    <td>2.744.000 ₫</td>
+                    <td>1.176.000 ₫</td>
+                    <td>30%</td>
+                    <td className={styles.statusNegative}>-1.5%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className={styles.revenueTableContainer}>
+            <div className={styles.tableHeader}>
+              <h3 className={styles.tableTitle}>Doanh thu theo chi nhánh</h3>
+              <div className={styles.tableActions}>
+                <button
+                  className={`${styles.tableActionBtn} ${styles.secondary}`}
+                >
+                  <i>🔍</i> Lọc
+                </button>
+                <button
+                  className={`${styles.tableActionBtn} ${styles.primary}`}
+                >
+                  <i>📥</i> Xuất Excel
+                </button>
+              </div>
+            </div>
+            <div className={styles.tableScroll}>
+              <table className={styles.dataTable}>
+                <thead>
+                  <tr>
+                    <th>Chi nhánh</th>
+                    <th>Đơn hàng</th>
+                    <th>Doanh thu</th>
+                    <th>Chi phí</th>
+                    <th>Lợi nhuận</th>
+                    <th>Tỷ suất lợi nhuận</th>
+                    <th>So với tháng trước</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Chi nhánh Quận 1</td>
+                    <td>482</td>
+                    <td>14.460.000 ₫</td>
+                    <td>9.399.000 ₫</td>
+                    <td>5.061.000 ₫</td>
+                    <td>35%</td>
+                    <td className={styles.statusPositive}>+15.7%</td>
+                  </tr>
+                  <tr>
+                    <td>Chi nhánh Quận 3</td>
+                    <td>375</td>
+                    <td>11.250.000 ₫</td>
+                    <td>7.312.500 ₫</td>
+                    <td>3.937.500 ₫</td>
+                    <td>35%</td>
+                    <td className={styles.statusPositive}>+8.2%</td>
+                  </tr>
+                  <tr>
+                    <td>Chi nhánh Quận 7</td>
+                    <td>238</td>
+                    <td>5.950.000 ₫</td>
+                    <td>3.867.500 ₫</td>
+                    <td>2.082.500 ₫</td>
+                    <td>35%</td>
+                    <td className={styles.statusPositive}>+12.3%</td>
+                  </tr>
+                  <tr>
+                    <td>Chi nhánh Thủ Đức</td>
+                    <td>163</td>
+                    <td>3.586.000 ₫</td>
+                    <td>2.330.900 ₫</td>
+                    <td>1.255.100 ₫</td>
+                    <td>35%</td>
+                    <td className={styles.statusPositive}>+18.9%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./AuthForm.module.css";
 import * as authService from "../../service/auth_service";
 import { validateAuth } from "../../utils/validate";
+import { Link } from "react-router-dom";
 
 export default function AuthForm() {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
@@ -146,6 +147,10 @@ export default function AuthForm() {
 
   return (
     <div className={styles.authPage}>
+      <Link to="/" className={styles.backButton}>
+        <i className={styles.backIcon}>←</i> Quay lại trang chủ
+      </Link>
+
       <div
         className={`${styles.authContainer} ${
           isRightPanelActive ? styles.rightPanelActive : ""

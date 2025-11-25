@@ -6,11 +6,13 @@
     "emitDeclarationOnly": true,
     "isolatedModules": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "strict": true,
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
-    }
+    },
+    "outDir": "./dist"
   },
   "include": ["src/**/*"],
   "files": ["src/types/global.d.ts"]

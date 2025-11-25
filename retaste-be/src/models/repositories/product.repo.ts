@@ -5,6 +5,7 @@ import { sizeModel } from '../size.model';
 import { customGroupModel } from '../customGroup.model';
 import { optionModel } from '../option.model';
 import { categoryModel } from '../category.model';
+import { ObjectId } from 'mongoose';
 
 const findOneById = async (id: string) => {
   return await Product.findOne({
@@ -54,13 +55,27 @@ const getListProduct = async (option: {
     sort['updatedAt'] = 1;
   }
   const skip = (page - 1) * limit;
-  return await Product.find({
-    isDeleted: false,
-    ...query
-  })
-    .limit(limit)
-    .skip(skip)
-    .sort(sort);
+  return await Product.aggregate([
+    {
+      $match: {
+        ...query
+      }
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'categoryId',
+        foreignField: '_id',
+        as: 'category'
+      }
+    },
+    {
+      $limit: 10
+    },
+    {
+      $skip: skip
+    }
+  ]);
 };
 const deleteProduct = async (id: string) => {
   return await Product.findOneAndUpdate(
@@ -149,11 +164,19 @@ const getDetail = async (id: string) => {
   ]);
   return result;
 };
+const getRelated = async (categories: ObjectId[], lastestProduct: ObjectId[]) => {
+  return await Product.find({
+    categoryId: { $in: categories },
+    isDeleted: false,
+    _id: { $nin: lastestProduct }
+  });
+};
 export const productRepo = {
   createNew,
   update,
   getListProduct,
   deleteProduct,
   getDetail,
-  findOneById
+  findOneById,
+  getRelated
 };

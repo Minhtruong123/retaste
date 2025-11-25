@@ -9,8 +9,7 @@ import corsOptions from './configs/cors';
 import './configs/database';
 import { errorHandling } from './middlewares/errorsHandle.middleware';
 import { indexRoute } from './routers';
-// import { connectRedis } from './configs/redis';
-import 'dotenv/config';
+
 const API_V1 = '/api/v1';
 const app = express();
 
@@ -26,12 +25,12 @@ app.use(API_V1, indexRoute);
 
 app.use(errorHandling);
 
-app.get(`${API_V1}`, (req, res) => {
-  res.json({
-    ok: 'ok'
-  });
-});
-
 app.listen(env.APP_PORT, env.APP_HOST, () => {
   console.log(`App is running on http://${env.APP_HOST}:${env.APP_PORT} !`);
 });
+/**
+ * curd nhan vien,
+ * doanh thu theo ngày tạo bảng
+ * tạo ca nhân viên
+ *
+ */

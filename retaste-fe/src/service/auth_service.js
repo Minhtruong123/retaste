@@ -1,5 +1,6 @@
 import axios from "axios";
 import api from "./api";
+import { jwtDecode } from "jwt-decode";
 
 export const register = async (values) => {
   try {
@@ -18,9 +19,23 @@ export const login = async (values) => {
     });
 
     const { accessToken, refreshToken, user } = data.metadata;
+
+    let userWithId = { ...user };
+    let role = null;
+
+    if (!userWithId._id) {
+      try {
+        const decodedToken = jwtDecode(accessToken);
+        userWithId._id = decodedToken.userId;
+        role = decodedToken.role;
+      } catch (e) {
+        console.warn("Không decode được token để lấy _id");
+      }
+    }
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(userWithId));
+    localStorage.setItem("role", role);
 
     return data;
   } catch (error) {
@@ -29,7 +44,26 @@ export const login = async (values) => {
 };
 
 export const logout = async () => {
-  await api.post("/auth/logout");
-  localStorage.clear();
-  window.location.href = "/auth";
+  try {
+    await api.post("/auth/logout");
+  } catch (error) {
+    console.error("Logout API error:", error);
+  } finally {
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("role");
+    window.location.href = "/auth";
+  }
+};
+
+export const verifyAccount = async (token) => {
+  try {
+    const { data } = await api.put("/access/verify-account", {
+      verifyToken: token,
+    });
+    return data;
+  } catch (error) {
+    throw error.response?.data?.message || "Xác minh thất bại";
+  }
 };

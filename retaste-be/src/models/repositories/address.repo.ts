@@ -1,6 +1,8 @@
 import { createObjectId } from '~/utils/format';
 import Address, { IAddress } from '../address.model';
 import slugify from 'slugify';
+import User from '../user.model';
+import { BAD_REQUEST } from '~/core/errors.response';
 
 const findAddressByStreet = async (street: string, userId: string) => {
   return await Address.findOne({
@@ -93,6 +95,17 @@ const getAddressById = async (id: string, userId: string) => {
     isDeleted: false
   });
 };
+const getAddressAdmin = async () => {
+  const getAdmin = await User.findOne({
+    role: 'admin'
+  });
+  if (!getAdmin) throw new BAD_REQUEST('Admin user is not exist !');
+  return await Address.findOne({
+    userId: getAdmin._id,
+    isDefault: true,
+    isDeleted: false
+  });
+};
 
 export const addressRepo = {
   findAddressByStreet,
@@ -102,5 +115,6 @@ export const addressRepo = {
   deleteById,
   isDefault,
   getDetail,
-  getAddressById
+  getAddressById,
+  getAddressAdmin
 };

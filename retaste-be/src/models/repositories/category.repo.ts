@@ -63,12 +63,13 @@ const getListCategory = async (option: {
     sort['updatedAt'] = 1;
   }
   return await Category.find({
-    _destroy: false,
+    isDeleted: false,
     ...query
   })
+    .sort(sort)
+    .skip((page - 1) * limit)
     .limit(limit)
-    .skip(page)
-    .sort(sort);
+    .lean();
 };
 
 export const categoryRepo = {

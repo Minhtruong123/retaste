@@ -1,18 +1,67 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./Header.module.css";
 import { NavLink } from "react-router-dom";
+import * as authService from "../../../service/auth_service";
 
 export default function Header() {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showCartDropdown, setShowCartDropdown] = useState(false);
+
+  const [cartItems, setCartItems] = useState([
+    {
+      id: 1,
+      name: "Cơm rang dưa bò",
+      price: 75000,
+      quantity: 1,
+      image: "🍚",
+    },
+    {
+      id: 2,
+      name: "Gà sốt chua ngọt",
+      price: 120000,
+      quantity: 2,
+      image: "🍗",
+    },
+    {
+      id: 3,
+      name: "Trà đào cam sả",
+      price: 35000,
+      quantity: 1,
+      image: "🍹",
+    },
+  ]);
+
+  const cartDropdownRef = useRef(null);
+  const userDropdownRef = useRef(null);
 
   useEffect(() => {
-    // Kiểm tra thông tin người dùng từ localStorage khi component được mount
-    const userInfo = localStorage.getItem("userInfo");
+    const userInfo = localStorage.getItem("user");
     if (userInfo) {
       setUser(JSON.parse(userInfo));
     }
+
+    const handleClickOutside = (event) => {
+      if (
+        cartDropdownRef.current &&
+        !cartDropdownRef.current.contains(event.target)
+      ) {
+        setShowCartDropdown(false);
+      }
+
+      if (
+        userDropdownRef.current &&
+        !userDropdownRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const toggleMobileMenu = () => {
@@ -27,10 +76,41 @@ export default function Header() {
     setShowDropdown(!showDropdown);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("userInfo");
-    setUser(null);
-    setShowDropdown(false);
+  const toggleCartDropdown = (e) => {
+    e.preventDefault();
+    setShowCartDropdown(!showCartDropdown);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      setUser(null);
+      setShowDropdown(false);
+    }
+  };
+
+  const handleUpdateQuantity = (itemId, newQuantity) => {
+    if (newQuantity < 1) return;
+
+    setCartItems(
+      cartItems.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  const handleRemoveItem = (itemId) => {
+    setCartItems(cartItems.filter((item) => item.id !== itemId));
+  };
+
+  const calculateTotal = () => {
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
   };
 
   return (
@@ -55,43 +135,181 @@ export default function Header() {
             </div>
 
             <div className={styles.userActions}>
-              <a href="#" className={styles.cartIcon}>
-                🛒 <span className={styles.cartCount}>3</span>
-              </a>
+              <div className={styles.cartContainer} ref={cartDropdownRef}>
+                <a
+                  href="#"
+                  className={styles.cartIcon}
+                  onClick={toggleCartDropdown}
+                >
+                  🛒{" "}
+                  <span className={styles.cartCount}>
+                    {cartItems.reduce(
+                      (total, item) => total + item.quantity,
+                      0
+                    )}
+                  </span>
+                </a>
+
+                {showCartDropdown && (
+                  <div className={styles.cartDropdown}>
+                    <div className={styles.cartHeader}>
+                      <h3>Giỏ hàng của bạn</h3>
+                      <span className={styles.cartItemCount}>
+                        {cartItems.reduce(
+                          (total, item) => total + item.quantity,
+                          0
+                        )}{" "}
+                        món
+                      </span>
+                    </div>
+
+                    {cartItems.length > 0 ? (
+                      <>
+                        <div className={styles.cartItems}>
+                          {cartItems.map((item) => (
+                            <div key={item.id} className={styles.cartItem}>
+                              <div className={styles.cartItemImage}>
+                                {item.image}
+                              </div>
+                              <div className={styles.cartItemInfo}>
+                                <div className={styles.cartItemName}>
+                                  {item.name}
+                                </div>
+                                <div className={styles.cartItemPrice}>
+                                  {new Intl.NumberFormat("vi-VN", {
+                                    style: "currency",
+                                    currency: "VND",
+                                  }).format(item.price)}
+                                </div>
+                              </div>
+                              <div className={styles.cartItemActions}>
+                                <div className={styles.quantityControl}>
+                                  <button
+                                    className={styles.quantityBtn}
+                                    onClick={() =>
+                                      handleUpdateQuantity(
+                                        item.id,
+                                        item.quantity - 1
+                                      )
+                                    }
+                                  >
+                                    -
+                                  </button>
+                                  <span className={styles.quantity}>
+                                    {item.quantity}
+                                  </span>
+                                  <button
+                                    className={styles.quantityBtn}
+                                    onClick={() =>
+                                      handleUpdateQuantity(
+                                        item.id,
+                                        item.quantity + 1
+                                      )
+                                    }
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                                <button
+                                  className={styles.removeBtn}
+                                  onClick={() => handleRemoveItem(item.id)}
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className={styles.cartFooter}>
+                          <div className={styles.cartTotal}>
+                            <span>Tổng cộng:</span>
+                            <span className={styles.totalAmount}>
+                              {new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(calculateTotal())}
+                            </span>
+                          </div>
+                          <div className={styles.cartActions}>
+                            <NavLink
+                              to="/cart"
+                              className={styles.viewCartBtn}
+                              onClick={() => setShowCartDropdown(false)}
+                            >
+                              Xem giỏ hàng
+                            </NavLink>
+                            <NavLink
+                              to="/checkout"
+                              className={styles.checkoutBtn}
+                              onClick={() => setShowCartDropdown(false)}
+                            >
+                              Thanh toán
+                            </NavLink>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className={styles.emptyCart}>
+                        <div className={styles.emptyCartIcon}>🛒</div>
+                        <p>Giỏ hàng của bạn đang trống</p>
+                        <NavLink
+                          to="/menu"
+                          className={styles.continueShoppingBtn}
+                          onClick={() => setShowCartDropdown(false)}
+                        >
+                          Tiếp tục mua sắm
+                        </NavLink>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
 
               {user ? (
-                <div className={styles.userProfile}>
+                <div className={styles.userProfile} ref={userDropdownRef}>
                   <div className={styles.userName} onClick={toggleDropdown}>
-                    {user.name}
+                    <span className={styles.userIcon}>👤</span>
+                    {user.fullName}
+                    <span className={styles.arrowIcon}></span>
                   </div>
                   {showDropdown && (
                     <div className={styles.dropdown}>
+                      <div className={styles.dropdownHeader}>
+                        <span className={styles.userAvatarLarge}>👤</span>
+                        <div className={styles.userInfo}>
+                          <div className={styles.userFullName}>
+                            {user.fullName}
+                          </div>
+                          <div className={styles.userEmail}>
+                            {user.email || "Chưa có email"}
+                          </div>
+                        </div>
+                      </div>
+                      <div className={styles.dropdownDivider}></div>
                       <NavLink
                         to="/profile"
                         className={styles.dropdownItem}
                         onClick={() => setShowDropdown(false)}
                       >
+                        <span className={styles.itemIcon}>👤</span>
                         Thông tin cá nhân
                       </NavLink>
-                      <NavLink
-                        to="/orders"
-                        className={styles.dropdownItem}
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        Đơn hàng của tôi
-                      </NavLink>
+                      <div className={styles.dropdownDivider}></div>
                       <button
                         onClick={handleLogout}
                         className={styles.dropdownItem}
                       >
+                        <span className={styles.itemIcon}>🚪</span>
                         Đăng xuất
                       </button>
                     </div>
                   )}
                 </div>
               ) : (
-                <NavLink to="/auth" className={styles.userIcon}>
-                  👤
+                <NavLink to="/auth" className={styles.authButton}>
+                  <span className={styles.userIcon}>👤</span>
+                  Đăng nhập
                 </NavLink>
               )}
             </div>
@@ -123,11 +341,6 @@ export default function Header() {
               <li>
                 <NavLink to="/combo" onClick={handleNavLinkClick}>
                   Combo
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/promotion" onClick={handleNavLinkClick}>
-                  Khuyến mãi
                 </NavLink>
               </li>
               <li>

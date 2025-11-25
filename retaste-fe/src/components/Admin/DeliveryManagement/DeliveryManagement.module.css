@@ -1,0 +1,828 @@
+/* Main Content Area */
+.mainContent {
+  flex: 1;
+  margin-left: 260px;
+  transition: all 0.3s;
+  width: calc(100% - 260px);
+}
+
+/* Header */
+.header {
+  background-color: var(--white);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+
+.toggleSidebar {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text);
+  display: none;
+}
+
+.headerTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.searchBox {
+  position: relative;
+}
+
+.searchInput {
+  padding: 8px 15px;
+  padding-left: 35px;
+  border-radius: 20px;
+  border: 1px solid var(--gray);
+  outline: none;
+  font-size: 0.9rem;
+  width: 200px;
+  transition: all 0.3s;
+}
+
+.searchInput:focus {
+  width: 250px;
+  border-color: var(--secondary);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--dark-gray);
+}
+
+.actionBtn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.actionBtn:hover {
+  color: var(--primary);
+}
+
+.notificationBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: var(--danger);
+  color: var(--white);
+  font-size: 0.7rem;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  padding: 15px 30px;
+  background-color: var(--white);
+  border-bottom: 1px solid var(--light-gray);
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumbItem {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.breadcrumbItem a {
+  color: var(--secondary);
+  text-decoration: none;
+}
+
+.breadcrumbDivider {
+  margin: 0 8px;
+  color: var(--dark-gray);
+}
+
+.breadcrumbCurrent {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Content */
+.content {
+  padding: 30px;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btnPrimary {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+.btnPrimary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btnSecondary {
+  background-color: var(--secondary);
+  color: var(--white);
+}
+
+.btnSecondary:hover {
+  background-color: var(--secondary-dark);
+}
+
+.btnOutline {
+  background-color: transparent;
+  color: var(--text);
+  border: 1px solid var(--gray);
+}
+
+.btnOutline:hover {
+  background-color: var(--light-gray);
+}
+
+.btnSm {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+}
+
+/* Filter Section */
+.filterSection {
+  background-color: var(--white);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterLabel {
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.filterInput,
+.filterSelect {
+  padding: 8px 12px;
+  border: 1px solid var(--gray);
+  border-radius: 5px;
+  font-size: 0.9rem;
+  outline: none;
+  min-width: 150px;
+}
+
+.filterInput:focus,
+.filterSelect:focus {
+  border-color: var(--secondary);
+}
+
+/* Status Tabs */
+.statusTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.statusTab {
+  padding: 10px 20px;
+  background-color: var(--white);
+  border: 1px solid var(--gray);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusTab:hover {
+  background-color: var(--light-gray);
+}
+
+.statusTab.active {
+  background-color: var(--secondary);
+  color: var(--white);
+  border-color: var(--secondary);
+}
+
+.tabCount {
+  background-color: var(--light-gray);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  min-width: 20px;
+  text-align: center;
+}
+
+.statusTab.active .tabCount {
+  background-color: var(--white);
+  color: var(--secondary);
+}
+
+/* Delivery Grid */
+.deliveryGrid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* Shipper Management */
+.shipperSection {
+  background-color: var(--white);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.sectionHeader {
+  padding: 20px;
+  border-bottom: 1px solid var(--light-gray);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.shipperList {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.shipperItem {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--light-gray);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: background-color 0.3s;
+}
+
+.shipperItem:hover {
+  background-color: var(--light-gray);
+}
+
+.shipperItem:last-child {
+  border-bottom: none;
+}
+
+.shipperAvatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.shipperInfo {
+  flex: 1;
+}
+
+.shipperName {
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.shipperPhone {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 5px;
+}
+
+.shipperStats {
+  display: flex;
+  gap: 15px;
+  font-size: 0.8rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.shipperStatus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.statusOnline {
+  background-color: var(--success);
+}
+
+.statusBusy {
+  background-color: var(--warning);
+}
+
+.statusOffline {
+  background-color: var(--dark-gray);
+}
+
+.statusText {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.currentOrders {
+  background-color: var(--info);
+  color: var(--white);
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Statistics Cards */
+.deliveryStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.statCard {
+  background-color: var(--white);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.statIcon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.statLabel {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.statCard.total {
+  border-left: 4px solid var(--info);
+}
+
+.statCard.active {
+  border-left: 4px solid var(--success);
+}
+
+.statCard.completed {
+  border-left: 4px solid var(--primary);
+}
+
+.statCard.cancelled {
+  border-left: 4px solid var(--danger);
+}
+
+/* Order Tracking */
+.orderTracking {
+  background-color: var(--white);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+
+.trackingContent {
+  padding: 20px;
+}
+
+.orderList {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.orderItem {
+  border: 1px solid var(--light-gray);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 15px;
+  transition: all 0.3s;
+}
+
+.orderItem:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.orderId {
+  font-weight: 600;
+  color: var(--secondary);
+  font-size: 1rem;
+}
+
+.orderTime {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.customerInfo {
+  margin-bottom: 10px;
+}
+
+.customerName {
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.customerAddress {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 3px;
+}
+
+.customerPhone {
+  font-size: 0.85rem;
+  color: var(--info);
+}
+
+.orderDetails {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.orderTotal {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--primary);
+}
+
+.deliveryInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.shipperAssigned {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shipperMiniAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.shipperMiniInfo {
+  font-size: 0.85rem;
+}
+
+.shipperMiniPhone {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.shipperNotAssigned {
+  color: var(--text-light);
+  font-size: 0.85rem;
+}
+
+.deliveryTime {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-left: auto;
+}
+
+.orderStatus {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statusBadge {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.statusPreparing {
+  background-color: rgba(255, 193, 7, 0.15);
+  color: var(--warning);
+}
+
+.statusReady {
+  background-color: rgba(23, 162, 184, 0.15);
+  color: var(--info);
+}
+
+.statusDelivering {
+  background-color: rgba(255, 107, 53, 0.15);
+  color: var(--primary);
+}
+
+.statusDelivered {
+  background-color: rgba(40, 167, 69, 0.15);
+  color: var(--success);
+}
+
+.statusCancelled {
+  background-color: rgba(220, 53, 69, 0.15);
+  color: var(--danger);
+}
+
+.orderActions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionBtnSmall {
+  background: none;
+  border: 1px solid var(--gray);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.actionBtnSmall:hover {
+  background-color: var(--light-gray);
+}
+
+.assignBtn {
+  border-color: var(--secondary);
+  color: var(--secondary);
+}
+
+.assignBtn:hover {
+  background-color: var(--secondary);
+  color: var(--white);
+}
+
+.trackBtn {
+  border-color: var(--info);
+  color: var(--info);
+}
+
+.trackBtn:hover {
+  background-color: var(--info);
+  color: var(--white);
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+.modalOverlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background-color: var(--white);
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(-20px);
+  transition: transform 0.3s;
+}
+
+.modalOverlay.active .modal {
+  transform: translateY(0);
+}
+
+.modalHeader {
+  padding: 20px;
+  border-bottom: 1px solid var(--light-gray);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.modalClose:hover {
+  color: var(--danger);
+}
+
+.modalBody {
+  padding: 20px;
+}
+
+.modalFooter {
+  padding: 15px 20px;
+  border-top: 1px solid var(--light-gray);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.formInput,
+.formSelect {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid var(--gray);
+  border-radius: 5px;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.formInput:focus,
+.formSelect:focus {
+  border-color: var(--secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .toggleSidebar {
+    display: block;
+  }
+
+  .mainContent {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .deliveryGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .searchInput {
+    width: 150px;
+  }
+
+  .searchInput:focus {
+    width: 180px;
+  }
+
+  .headerTitle {
+    display: none;
+  }
+
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .filterRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filterItem {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filterInput,
+  .filterSelect {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .searchBox {
+    display: none;
+  }
+
+  .content {
+    padding: 15px;
+  }
+
+  .deliveryStats {
+    grid-template-columns: 1fr;
+  }
+
+  .orderHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .orderDetails {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .orderStatus {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

@@ -10,7 +10,8 @@ export interface IAddress {
   city: string;
   detail: string;
   country: string;
-
+  lat: string;
+  lng: string;
   isDefault?: boolean;
   deliveryInstructions?: string;
   createdAt?: Date;
@@ -28,7 +29,8 @@ const addressSchema = new Schema<IAddress>(
     city: { type: String, required: true },
     detail: { type: String, required: true },
     country: { type: String, required: true },
-
+    lat: { type: String, required: true },
+    lng: { type: String, required: true },
     isDefault: { type: Boolean, default: false },
     deliveryInstructions: { type: String },
     createdAt: { type: Date, default: Date.now },

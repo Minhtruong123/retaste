@@ -8,6 +8,7 @@ import { optionRouter } from './option.route';
 import { cartRouter } from './cart.route';
 import { orderRouter } from './order.route';
 import { addressRouter } from './address.route';
+import { uploadCloudRouter } from './upload.route';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/option', optionRouter);
 router.use('/cart', cartRouter);
 router.use('/order', orderRouter);
 router.use('/address', addressRouter);
+router.use('/upload', uploadCloudRouter);
 
 export const indexRoute = router;

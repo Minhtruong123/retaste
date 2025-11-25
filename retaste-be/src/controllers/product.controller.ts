@@ -59,5 +59,14 @@ class ProductController {
       next(error);
     }
   };
+  retaste = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      new OK({
+        metadata: await ProductService.retaste(req.user.userId)
+      }).send(res);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 export default new ProductController();
