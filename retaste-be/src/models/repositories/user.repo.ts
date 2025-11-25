@@ -40,6 +40,12 @@ const update = async (data: Partial<IUser>, userId: string) => {
     }
   );
 };
+const countUser = async () => {
+  return await User.countDocuments({
+    isDeleted: false,
+    emailVerified: true
+  });
+};
 
 export const userRepo = {
   findOneByEmail,
@@ -47,5 +53,6 @@ export const userRepo = {
   findOneByVerifyToken,
   createNew,
   update,
-  getAdminUser
+  getAdminUser,
+  countUser
 };

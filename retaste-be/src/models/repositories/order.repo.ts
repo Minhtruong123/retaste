@@ -164,6 +164,18 @@ const getLatestOrder = async (userId: string) => {
       select: 'productName categoryId'
     });
 };
+const getAllOrder = async () => {
+  return await Order.find({
+    isDeleted: false,
+    orderStatus: 'success'
+  });
+};
+const countOrder = async () => {
+  return await Order.countDocuments({
+    isDeleted: false,
+    orderStatus: 'success'
+  });
+};
 export const orderRepo = {
   findOneById,
   createNew,
@@ -173,5 +185,7 @@ export const orderRepo = {
   getListOrder,
   getListOrderUser,
   getDetail,
-  getLatestOrder
+  getLatestOrder,
+  getAllOrder,
+  countOrder
 };
