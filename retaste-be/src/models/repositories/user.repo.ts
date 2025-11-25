@@ -46,6 +46,16 @@ const countUser = async () => {
     emailVerified: true
   });
 };
+const deleteEmployee = async (userId: string) => {
+  return User.updateOne(
+    {
+      _id: createObjectId(userId)
+    },
+    {
+      isDeleted: false
+    }
+  );
+};
 
 export const userRepo = {
   findOneByEmail,
@@ -54,5 +64,6 @@ export const userRepo = {
   createNew,
   update,
   getAdminUser,
-  countUser
+  countUser,
+  deleteEmployee
 };

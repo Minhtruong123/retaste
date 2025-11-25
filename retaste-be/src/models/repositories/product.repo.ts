@@ -55,13 +55,27 @@ const getListProduct = async (option: {
     sort['updatedAt'] = 1;
   }
   const skip = (page - 1) * limit;
-  return await Product.find({
-    isDeleted: false,
-    ...query
-  })
-    .limit(limit)
-    .skip(skip)
-    .sort(sort);
+  return await Product.aggregate([
+    {
+      $match: {
+        ...query
+      }
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'categoryId',
+        foreignField: '_id',
+        as: 'category'
+      }
+    },
+    {
+      $limit: 10
+    },
+    {
+      $skip: skip
+    }
+  ]);
 };
 const deleteProduct = async (id: string) => {
   return await Product.findOneAndUpdate(

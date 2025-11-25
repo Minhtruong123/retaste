@@ -67,7 +67,7 @@ const getListCategory = async (option: {
     ...query
   })
     .sort(sort)
-    .skip((page - 1) * limit)   
+    .skip((page - 1) * limit)
     .limit(limit)
     .lean();
 };
