@@ -33,7 +33,7 @@ export interface IUser {
   createdAt?: Date;
   updatedAt?: Date;
   isDeleted?: boolean;
-  role?: 'admin' | 'user' | 'employer';
+  role?: 'admin' | 'user' | 'employee';
 }
 
 const userSchema = new Schema<IUser>(
@@ -53,7 +53,7 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false
     },
-    role: { type: String, enum: ['admin', 'user', 'employer'], default: 'user' }
+    role: { type: String, enum: ['admin', 'user', 'employee'], default: 'user' }
   },
   {
     collection: COLLECTION_NAME,

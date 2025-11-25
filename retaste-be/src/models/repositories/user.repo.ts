@@ -40,6 +40,22 @@ const update = async (data: Partial<IUser>, userId: string) => {
     }
   );
 };
+const countUser = async () => {
+  return await User.countDocuments({
+    isDeleted: false,
+    emailVerified: true
+  });
+};
+const deleteEmployee = async (userId: string) => {
+  return User.updateOne(
+    {
+      _id: createObjectId(userId)
+    },
+    {
+      isDeleted: false
+    }
+  );
+};
 
 export const userRepo = {
   findOneByEmail,
@@ -47,5 +63,7 @@ export const userRepo = {
   findOneByVerifyToken,
   createNew,
   update,
-  getAdminUser
+  getAdminUser,
+  countUser,
+  deleteEmployee
 };

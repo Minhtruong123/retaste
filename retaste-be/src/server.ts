@@ -28,3 +28,9 @@ app.use(errorHandling);
 app.listen(env.APP_PORT, env.APP_HOST, () => {
   console.log(`App is running on http://${env.APP_HOST}:${env.APP_PORT} !`);
 });
+/**
+ * curd nhan vien,
+ * doanh thu theo ngày tạo bảng
+ * tạo ca nhân viên
+ *
+ */

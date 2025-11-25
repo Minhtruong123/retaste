@@ -164,6 +164,29 @@ const getLatestOrder = async (userId: string) => {
       select: 'productName categoryId'
     });
 };
+const getAllOrder = async () => {
+  return await Order.find({
+    isDeleted: false,
+    orderStatus: 'success'
+  });
+};
+const getTotalAmount = async () => {
+  return (
+    await Order.aggregate([
+      {
+        $match: {
+          orderStatus: 'success'
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$subtotal' }
+        }
+      }
+    ])
+  )[0];
+};
 export const orderRepo = {
   findOneById,
   createNew,
@@ -173,5 +196,7 @@ export const orderRepo = {
   getListOrder,
   getListOrderUser,
   getDetail,
-  getLatestOrder
+  getLatestOrder,
+  getAllOrder,
+  getTotalAmount
 };
