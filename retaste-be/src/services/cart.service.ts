@@ -157,10 +157,11 @@ class CartService {
     }
     return customAndOptionValid;
   };
-  static updateQuantity = async (data: { productId: string; createdAt: Date }, userId: string) => {
+  static updateQuantity = async (data: { productId: string; createdAt: string }, userId: string) => {
     const getCart = await cartRepo.findCartByUserId(userId);
     if (!getCart) throw new BAD_REQUEST('Request is not valid !');
-    const { productId, createdAt } = data;
+    const { productId } = data;
+    const createdAt = new Date(data.createdAt);
     const getProduct = await productRepo.findOneById(productId);
     if (!getProduct) throw new BAD_REQUEST('Product is not valid !');
     if (!getProduct.isAvailable) throw new BAD_REQUEST('Product is not valid !');
