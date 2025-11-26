@@ -1,182 +1,153 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./CategoryManagement.module.css";
+import * as categoryService from "../../../service/categories_service";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function CategoryManagement() {
-  const [categories, setCategories] = useState([
-    {
-      id: 1,
-      name: "Món chính",
-      image:
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=100",
-      itemCount: 24,
-      status: "active",
-      featured: true,
-      dateCreated: "15/07/2025",
-    },
-    {
-      id: 2,
-      name: "Món tráng miệng",
-      image:
-        "https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=100",
-      itemCount: 18,
-      status: "active",
-      featured: false,
-      dateCreated: "22/07/2025",
-    },
-    {
-      id: 3,
-      name: "Đồ uống",
-      image:
-        "https://images.unsplash.com/photo-1544145945-f90425340c7e?q=80&w=100",
-      itemCount: 32,
-      status: "active",
-      featured: true,
-      dateCreated: "05/08/2025",
-    },
-    {
-      id: 4,
-      name: "Món khai vị",
-      image:
-        "https://images.unsplash.com/photo-1541529086526-db283c563270?q=80&w=100",
-      itemCount: 15,
-      status: "inactive",
-      featured: false,
-      dateCreated: "12/08/2025",
-    },
-    {
-      id: 5,
-      name: "Món ăn nhanh",
-      image:
-        "https://images.unsplash.com/photo-1561758033-d89a9ad46330?q=80&w=100",
-      itemCount: 21,
-      status: "active",
-      featured: true,
-      dateCreated: "18/08/2025",
-    },
-    {
-      id: 6,
-      name: "Món chay",
-      image:
-        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=100",
-      itemCount: 12,
-      status: "active",
-      featured: false,
-      dateCreated: "25/08/2025",
-    },
-    {
-      id: 7,
-      name: "Món Âu",
-      image:
-        "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?q=80&w=100",
-      itemCount: 17,
-      status: "active",
-      featured: false,
-      dateCreated: "02/09/2025",
-    },
-  ]);
-
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortBy, setSortBy] = useState("name");
+  const [imageFile, setImageFile] = useState(null);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const data = await categoryService.getListCategory({
+        limit: "21",
+        page: "1",
+        keyWord: "",
+        sortKey: "",
+        sortValue: undefined,
+      });
+      setCategories(data || []);
+    } catch (error) {
+      toast.error("Không tải được danh sách danh mục");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredCategories = categories
-    .filter((category) => {
-      if (filterStatus !== "all" && category.status !== filterStatus)
+    .filter((cat) => {
+      if (
+        filterStatus !== "all" &&
+        cat.isActive?.toString() !== (filterStatus === "active").toString()
+      )
         return false;
-      return category.name.toLowerCase().includes(searchTerm.toLowerCase());
+      return cat.categoryName.toLowerCase().includes(searchTerm.toLowerCase());
     })
     .sort((a, b) => {
-      if (sortBy === "name") {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy === "itemCount") {
-        return b.itemCount - a.itemCount;
-      } else if (sortBy === "dateCreated") {
-        return (
-          new Date(b.dateCreated.split("/").reverse().join("-")) -
-          new Date(a.dateCreated.split("/").reverse().join("-"))
-        );
-      }
+      if (sortBy === "name")
+        return a.categoryName.localeCompare(b.categoryName);
+      if (sortBy === "itemCount")
+        return (b.itemCount || 0) - (a.itemCount || 0);
+      if (sortBy === "dateCreated")
+        return new Date(b.createdAt) - new Date(a.createdAt);
       return 0;
     });
 
   const handleAddCategory = () => {
     setSelectedCategory(null);
+    setImageFile(null);
     setIsModalOpen(true);
   };
 
   const handleEditCategory = (category) => {
     setSelectedCategory(category);
+    setImageFile(null);
     setIsModalOpen(true);
-  };
-
-  const handleDeleteCategory = (categoryId) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
-      setCategories(categories.filter((cat) => cat.id !== categoryId));
-    }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedCategory(null);
+    setImageFile(null);
   };
 
-  const handleSubmitCategory = (e) => {
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmitCategory = async (e) => {
     e.preventDefault();
+
     const form = e.target;
-    const formData = new FormData(form);
+    const name = form.name.value.trim();
+    const description = form.description.value.trim();
+    const status = form.status.value;
+    const isActive = status === "active";
 
-    const categoryData = {
-      name: formData.get("name"),
-      status: formData.get("status"),
-      featured: formData.get("featured") === "on",
-      // In a real app, you would handle image upload here
-      image: selectedCategory?.image || "https://via.placeholder.com/100",
-      itemCount: selectedCategory?.itemCount || 0,
-      dateCreated:
-        selectedCategory?.dateCreated || new Date().toLocaleDateString("vi-VN"),
-    };
-
-    if (selectedCategory) {
-      // Edit existing category
-      setCategories(
-        categories.map((cat) =>
-          cat.id === selectedCategory.id ? { ...cat, ...categoryData } : cat
-        )
-      );
-    } else {
-      // Add new category
-      const newId = Math.max(...categories.map((c) => c.id), 0) + 1;
-      setCategories([
-        ...categories,
-        {
-          id: newId,
-          ...categoryData,
-        },
-      ]);
+    if (!name) {
+      toast.error("Tên danh mục không được để trống!");
+      return;
     }
 
-    handleCloseModal();
+    const formData = new FormData();
+
+    formData.append("categoryName", name);
+    formData.append("description", description);
+    formData.append("isActive", isActive);
+
+    if (imageFile) {
+      formData.append("imageUrl", imageFile);
+    }
+
+    try {
+      if (selectedCategory) {
+        await categoryService.updateCategory(selectedCategory._id, formData);
+        toast.success("Cập nhật danh mục thành công!");
+      } else {
+        await categoryService.createCategory(formData);
+        toast.success("Tạo danh mục mới thành công!");
+      }
+
+      fetchCategories();
+      handleCloseModal();
+    } catch (err) {
+      console.error("Lỗi tạo/cập nhật:", err);
+      toast.error(
+        err?.response?.data?.message || "Không thể lưu danh mục, thử lại sau."
+      );
+    }
   };
 
-  const toggleCategoryStatus = (categoryId) => {
-    setCategories(
-      categories.map((cat) =>
-        cat.id === categoryId
-          ? { ...cat, status: cat.status === "active" ? "inactive" : "active" }
-          : cat
-      )
-    );
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa danh mục này?")) return;
+
+    try {
+      await categoryService.deleteCategory(id);
+      toast.success("Xóa danh mục thành công!");
+      fetchCategories();
+    } catch (error) {
+      toast.error("Xóa thất bại");
+    }
   };
 
-  const toggleFeatured = (categoryId) => {
-    setCategories(
-      categories.map((cat) =>
-        cat.id === categoryId ? { ...cat, featured: !cat.featured } : cat
-      )
-    );
+  const toggleCategoryStatus = async (category) => {
+    try {
+      const formData = new FormData();
+      formData.append("categoryName", category.categoryName);
+      formData.append("isActive", !category.isActive);
+      if (category.imageUrl) formData.append("imageUrl", category.imageUrl);
+
+      await categoryService.updateCategory(category._id, formData);
+      toast.success("Cập nhật trạng thái thành công!");
+      fetchCategories();
+    } catch (error) {
+      toast.error("Cập nhật thất bại");
+    }
   };
+
   return (
     <>
       <div className={styles.mainContent}>
@@ -321,154 +292,162 @@ export default function CategoryManagement() {
             </div>
           </div>
 
-          <div className={styles.categoryGrid}>
-            {filteredCategories.map((category) => (
-              <div key={category.id} className={styles.categoryCard}>
-                <div className={styles.categoryImageContainer}>
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className={styles.categoryImage}
-                  />
-                  {category.featured && (
-                    <span className={styles.featuredBadge}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                      </svg>
-                    </span>
-                  )}
-                  <div className={styles.categoryOverlay}>
-                    <button
-                      className={styles.editCategoryBtn}
-                      onClick={() => handleEditCategory(category)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                <div className={styles.categoryContent}>
-                  <h3 className={styles.categoryName}>{category.name}</h3>
-                  <div className={styles.categoryMeta}>
-                    <div className={styles.metaItem}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M6.5 7a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z" />
-                        <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                      </svg>
-                      <span>{category.itemCount} món</span>
-                    </div>
-                    <div className={styles.metaItem}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
-                      </svg>
-                      <span>{category.dateCreated}</span>
-                    </div>
-                  </div>
-                  <div className={styles.categoryActions}>
-                    <div className={styles.statusToggleContainer}>
-                      <span className={styles.statusLabel}>Trạng thái:</span>
-                      <button
-                        className={`${styles.statusToggle} ${
-                          category.status === "active"
-                            ? styles.statusActive
-                            : styles.statusInactive
-                        }`}
-                        onClick={() => toggleCategoryStatus(category.id)}
-                        aria-label={`${
-                          category.status === "active"
-                            ? "Vô hiệu hóa"
-                            : "Kích hoạt"
-                        } danh mục`}
-                      >
-                        <span className={styles.statusToggleSlider}></span>
-                      </button>
-                      <span className={styles.statusText}>
-                        {category.status === "active"
-                          ? "Đang hoạt động"
-                          : "Ngừng hoạt động"}
-                      </span>
-                    </div>
-                    <div className={styles.categoryActionButtons}>
-                      <button
-                        className={`${styles.iconBtn} ${styles.featureBtn} ${
-                          category.featured ? styles.featured : ""
-                        }`}
-                        onClick={() => toggleFeatured(category.id)}
-                        title={
-                          category.featured ? "Bỏ nổi bật" : "Đánh dấu nổi bật"
-                        }
-                      >
+          {loading ? (
+            <div className={styles.loading}>Đang tải danh mục...</div>
+          ) : (
+            <div className={styles.categoryGrid}>
+              {filteredCategories.map((category) => (
+                <div key={category._id} className={styles.categoryCard}>
+                  <div className={styles.categoryImageContainer}>
+                    <img
+                      src={
+                        category.imageUrl || "https://via.placeholder.com/100"
+                      }
+                      alt={category.categoryName}
+                      className={styles.categoryImage}
+                    />
+                    {category.featured && (
+                      <span className={styles.featuredBadge}>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
+                          width="14"
+                          height="14"
                           fill="currentColor"
                           viewBox="0 0 16 16"
                         >
                           <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
                         </svg>
-                      </button>
+                      </span>
+                    )}
+                    <div className={styles.categoryOverlay}>
                       <button
-                        className={`${styles.iconBtn} ${styles.deleteBtn}`}
-                        onClick={() => handleDeleteCategory(category.id)}
-                        title="Xóa danh mục"
+                        className={styles.editCategoryBtn}
+                        onClick={() => handleEditCategory(category)}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
+                          width="18"
+                          height="18"
                           fill="currentColor"
                           viewBox="0 0 16 16"
                         >
-                          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
-                          <path
-                            fillRule="evenodd"
-                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-                          />
+                          <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
                         </svg>
                       </button>
                     </div>
                   </div>
+                  <div className={styles.categoryContent}>
+                    <h3 className={styles.categoryName}>
+                      {category.categoryName}
+                    </h3>
+                    <div className={styles.categoryMeta}>
+                      <div className={styles.metaItem}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M6.5 7a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z" />
+                          <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                        </svg>
+                        <span>{category.itemCount || 0} món</span>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          fill="currentColor"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+                        </svg>
+                        <span>
+                          {new Date(category.createdAt).toLocaleDateString(
+                            "vi-VN"
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                    <div className={styles.categoryActions}>
+                      <div className={styles.statusToggleContainer}>
+                        <span className={styles.statusLabel}>Trạng thái:</span>
+                        <button
+                          className={`${styles.statusToggle} ${
+                            category.isActive
+                              ? styles.statusActive
+                              : styles.statusInactive
+                          }`}
+                          onClick={() => toggleCategoryStatus(category)}
+                          aria-label={`${
+                            category.status === "active"
+                              ? "Vô hiệu hóa"
+                              : "Kích hoạt"
+                          } danh mục`}
+                        >
+                          <span className={styles.statusToggleSlider}></span>
+                        </button>
+                        <span className={styles.statusText}>
+                          {category.isActive
+                            ? "Đang hoạt động"
+                            : "Ngừng hoạt động"}
+                        </span>
+                      </div>
+                      <div className={styles.categoryActionButtons}>
+                        <button
+                          className={`${styles.iconBtn} ${styles.featureBtn} ${
+                            category.featured ? styles.featured : ""
+                          }`}
+                          onClick={() => toggleFeatured(category.id)}
+                          title={
+                            category.featured
+                              ? "Bỏ nổi bật"
+                              : "Đánh dấu nổi bật"
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+                          </svg>
+                        </button>
+                        <button
+                          className={`${styles.iconBtn} ${styles.deleteBtn}`}
+                          onClick={() => handleDeleteCategory(category._id)}
+                          title="Xóa danh mục"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            viewBox="0 0 16 16"
+                          >
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                            <path
+                              fillRule="evenodd"
+                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
-          {filteredCategories.length === 0 && (
+          {filteredCategories.length === 0 && !loading && (
             <div className={styles.emptyState}>
-              <div className={styles.emptyStateIcon}>🍽️</div>
-              <h3 className={styles.emptyStateTitle}>
-                Không tìm thấy danh mục nào
-              </h3>
-              <p className={styles.emptyStateDescription}>
-                Không tìm thấy danh mục nào phù hợp với tiêu chí tìm kiếm của
-                bạn.
-              </p>
+              <div className={styles.emptyStateIcon}>No categories found</div>
+              <h3>Không tìm thấy danh mục nào</h3>
               <button
                 className={styles.emptyStateBtn}
                 onClick={handleAddCategory}
@@ -491,123 +470,93 @@ export default function CategoryManagement() {
                 className={styles.modalCloseBtn}
                 onClick={handleCloseModal}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                </svg>
+                X
               </button>
             </div>
-            <div className={styles.modalBody}>
-              <form onSubmit={handleSubmitCategory}>
+
+            <form onSubmit={handleSubmitCategory}>
+              <div className={styles.modalBody}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>
+                  <label>
                     Tên danh mục <span className={styles.requiredMark}>*</span>
                   </label>
                   <input
                     type="text"
                     name="name"
                     className={styles.formInput}
-                    placeholder="Nhập tên danh mục"
-                    defaultValue={selectedCategory?.name || ""}
+                    defaultValue={selectedCategory?.categoryName || ""}
                     required
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Hình ảnh danh mục</label>
+                  <label>Hình ảnh danh mục</label>
                   <div className={styles.imageUploadContainer}>
-                    <div className={styles.imagePreview}>
-                      {selectedCategory && (
-                        <img
-                          src={selectedCategory.image}
-                          alt="Preview"
-                          className={styles.previewImage}
-                        />
-                      )}
-                    </div>
-                    <div className={styles.uploadButtonContainer}>
-                      <button type="button" className={styles.uploadButton}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                          <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
-                        </svg>
-                        Tải ảnh lên
-                      </button>
-                      <p className={styles.uploadHint}>
-                        Cho phép JPG, PNG. Tối đa 2MB
-                      </p>
-                    </div>
+                    {(selectedCategory?.imageUrl || imageFile) && (
+                      <img
+                        src={
+                          imageFile
+                            ? URL.createObjectURL(imageFile)
+                            : selectedCategory.imageUrl
+                        }
+                        alt="Preview"
+                        className={styles.previewImage}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          objectFit: "cover",
+                          borderRadius: 8,
+                        }}
+                      />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      style={{ marginTop: 10 }}
+                    />
                   </div>
                 </div>
 
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Trạng thái</label>
+                    <label>Trạng thái</label>
                     <select
                       name="status"
                       className={styles.formSelect}
-                      defaultValue={selectedCategory?.status || "active"}
+                      defaultValue={
+                        selectedCategory?.isActive ? "active" : "inactive"
+                      }
                     >
                       <option value="active">Đang hoạt động</option>
                       <option value="inactive">Ngừng hoạt động</option>
                     </select>
                   </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.formLabel}>Hiển thị nổi bật</label>
-                    <div className={styles.checkboxWrapper}>
-                      <input
-                        type="checkbox"
-                        name="featured"
-                        id="featured"
-                        className={styles.checkbox}
-                        defaultChecked={selectedCategory?.featured || false}
-                      />
-                      <label
-                        htmlFor="featured"
-                        className={styles.checkboxLabel}
-                      >
-                        Đánh dấu là danh mục nổi bật
-                      </label>
-                    </div>
-                  </div>
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Mô tả</label>
+                  <label>Mô tả</label>
                   <textarea
                     name="description"
                     className={styles.formTextarea}
-                    placeholder="Nhập mô tả cho danh mục (không bắt buộc)"
                     defaultValue={selectedCategory?.description || ""}
                   />
                 </div>
+              </div>
 
-                <div className={styles.modalFooter}>
-                  <button
-                    type="button"
-                    className={styles.cancelBtn}
-                    onClick={handleCloseModal}
-                  >
-                    Hủy bỏ
-                  </button>
-                  <button type="submit" className={styles.saveBtn}>
-                    {selectedCategory ? "Lưu thay đổi" : "Tạo danh mục"}
-                  </button>
-                </div>
-              </form>
-            </div>
+              <div className={styles.modalFooter}>
+                <button
+                  type="button"
+                  className={styles.cancelBtn}
+                  onClick={handleCloseModal}
+                >
+                  Hủy bỏ
+                </button>
+                <button type="submit" className={styles.saveBtn}>
+                  {selectedCategory ? "Lưu thay đổi" : "Tạo danh mục"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
