@@ -164,24 +164,63 @@ const getLatestOrder = async (userId: string) => {
       select: 'productName categoryId'
     });
 };
-const getAllOrder = async () => {
-  return await Order.find({
-    isDeleted: false,
-    orderStatus: 'success'
-  });
-};
-const getTotalAmount = async () => {
+
+const getTotalAmount = async (): Promise<{
+  totalAmount: number;
+  orderCount: number;
+  averageOrderValue: number;
+}> => {
   return (
     await Order.aggregate([
       {
         $match: {
-          orderStatus: 'success'
+          orderStatus: 'success',
+          isDeleted: false
         }
       },
       {
         $group: {
           _id: null,
-          totalAmount: { $sum: '$subtotal' }
+          totalAmount: { $sum: '$subtotal' },
+          orderCount: { $count: {} }
+        }
+      },
+      {
+        $project: {
+          totalAmount: 1,
+          orderCount: 1,
+          averageOrderValue: {
+            $cond: [{ $eq: ['$orderCount', 0] }, 0, { $divide: ['$totalAmount', '$orderCount'] }]
+          }
+        }
+      }
+    ])
+  )[0];
+};
+const getRenvenureByTime = async ({ start, end }: { start: Date; end: Date }) => {
+  return (
+    await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end },
+          orderStatus: 'success', // chỉ tính đơn thành công
+          paymentStatus: 'paid' // chỉ tính đơn đã thanh toán
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: '$totalAmount' },
+          totalOrders: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          totalRevenue: 1,
+          totalOrders: 1,
+          startDate: start,
+          endDate: end
         }
       }
     ])
@@ -197,6 +236,6 @@ export const orderRepo = {
   getListOrderUser,
   getDetail,
   getLatestOrder,
-  getAllOrder,
-  getTotalAmount
+  getTotalAmount,
+  getRenvenureByTime
 };

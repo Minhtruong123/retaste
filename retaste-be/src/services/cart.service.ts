@@ -157,7 +157,10 @@ class CartService {
     }
     return customAndOptionValid;
   };
-  static updateQuantity = async (data: { productId: string; createdAt: string }, userId: string) => {
+  static updateQuantity = async (
+    data: { productId: string; createdAt: string },
+    userId: string
+  ) => {
     const getCart = await cartRepo.findCartByUserId(userId);
     if (!getCart) throw new BAD_REQUEST('Request is not valid !');
     const { productId } = data;
@@ -166,14 +169,19 @@ class CartService {
     if (!getProduct) throw new BAD_REQUEST('Product is not valid !');
     if (!getProduct.isAvailable) throw new BAD_REQUEST('Product is not valid !');
     const idxProduct = getCart.products.findIndex(
-      (p) => p.productId.toString() === productId && p.createdAt === createdAt
+      (p) =>
+        p.productId.toString() === productId &&
+        p.createdAt.toISOString() === new Date(createdAt).toISOString()
     );
     if (idxProduct === -1) throw new BAD_REQUEST('Product is not exist in cart !');
     const updated = await cartRepo.addProduct(userId, {
       index: idxProduct,
       data: {
-        ...getCart.products[idxProduct],
-        quantity: getCart.products[idxProduct].quantity + 1
+        quantity: getCart.products[idxProduct].quantity + 1,
+        productId: getCart.products[idxProduct].productId,
+        sizeId: getCart.products[idxProduct].sizeId,
+        createdAt: getCart.products[idxProduct].createdAt,
+        customs: getCart.products[idxProduct].customs
       }
     });
     if (!updated.matchedCount) throw new BAD_REQUEST('Update failed !');
