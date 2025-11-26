@@ -7,7 +7,7 @@ const { authentication } = authMiddleware;
 const router = Router();
 
 router.post(
-  '/craete',
+  '/create',
   authentication,
   multerUploadMiddleware.uploadImage.single('imageUrl'),
   uploadMiddleware.uploadToCloudinary,

@@ -12,6 +12,7 @@ import SuggestedDishesPage from "./components/Client/Pages/SuggestedDishesPage";
 import AboutUsPage from "./components/Client/Pages/AboutUsPage";
 import ContactPage from "./components/Client/Pages/ContactPage";
 import AuthForm from "./components/Auth/AuthForm";
+import OrderConfirmation from "./components/Client/Pages/OrderConfirmation";
 import Layout from "./components/Client/Pages/Layout";
 import VerifyAccount from "./components/Auth/VerifyAccount";
 import ProtectedRoute from "./ProtectedRoute";
@@ -24,6 +25,7 @@ import EmployeeManagement from "./components/Admin/EmployeeManagement/EmployeeMa
 import ScheduleManagement from "./components/Admin/ScheduleManagement/ScheduleManagement";
 import SalaryManagement from "./components/Admin/SalaryManagement/SalaryManagement";
 import ProductManagement from "./components/Admin/ProductManagement/ProductManagement";
+import CategoryManagement from "./components/Admin/CategoryManagement/CategoryManagement";
 
 const getRole = () => localStorage.getItem("role");
 
@@ -68,6 +70,7 @@ function App() {
             <Route path="/suggest" element={<SuggestedDishesPage />} />
             <Route path="/about" element={<AboutUsPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/order_confirmation" element={<OrderConfirmation />} />
           </Route>
 
           {/* 4. ADMIN ROUTES */}
@@ -96,6 +99,10 @@ function App() {
             />
             <Route path="salary_management" element={<SalaryManagement />} />
             <Route path="product_management" element={<ProductManagement />} />
+            <Route
+              path="category_management"
+              element={<CategoryManagement />}
+            />
           </Route>
 
           {/* 5. STAFF ROUTES */}
