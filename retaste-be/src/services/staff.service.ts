@@ -1,9 +1,11 @@
-import { BAD_REQUEST } from '~/core/errors.response';
+import { BAD_REQUEST, UNAUTHORIZED } from '~/core/errors.response';
 import bcrypt from 'bcryptjs';
-import { createObjectId } from '~/utils/format';
+import { createObjectId, pickUser } from '~/utils/format';
 import { IStaff } from '~/models/staff.model';
 import { staffRepo } from '~/models/repositories/staff.repo';
 import { positionRepo } from '~/models/repositories/position.repo';
+import { JwtProvider } from '~/providers/jwt.provider';
+import env from '~/configs/environments';
 /**
  * crud Employee
  */
@@ -120,8 +122,51 @@ class EmployeeService {
 
   static login = async (data: { email: string; password: string }) => {
     const { email, password } = data;
-    const getStaff = await staffRepo.findOneByEmail(email);
-    // if(!getStaff)
+    const getStaff = await staffRepo.findOneByEmail(email, {
+      status: 'active'
+    });
+    if (!getStaff) throw new BAD_REQUEST('Staff is not exist !');
+    if (!bcrypt.compareSync(password, getStaff.password))
+      throw new UNAUTHORIZED('Password or email is not correct !');
+    const payload = {
+      staffId: getStaff._id.toString(),
+      email: getStaff.email,
+      role: getStaff.role
+    };
+    const accessToken = await JwtProvider.generateToken(
+      payload,
+      env.ACCESS_TOKEN_SECRET_SIGNATURE,
+      env.ACCESS_TOKEN_LIFE
+    );
+    const refreshToken = await JwtProvider.generateToken(
+      payload,
+      env.REFRESH_TOKEN_SECRET_SIGNATURE,
+      env.REFRESH_TOKEN_LIFE
+    );
+    return {
+      accessToken,
+      refreshToken,
+      user: pickUser(getStaff, ['email', 'phoneNumber', 'firstName', 'lastName', 'avatar'])
+    };
+  };
+
+  static refreshToken = async (refreshToken: string) => {
+    const decoded = JwtProvider.verifyToken(
+      refreshToken,
+      env.REFRESH_TOKEN_SECRET_SIGNATURE
+    ) as Staff;
+    if (!decoded) throw new UNAUTHORIZED();
+    const payload = {
+      staffId: decoded.staffId,
+      email: decoded.email,
+      role: decoded.role
+    };
+    const accessToken = JwtProvider.generateToken(
+      payload,
+      env.ACCESS_TOKEN_SECRET_SIGNATURE,
+      env.ACCESS_TOKEN_LIFE
+    );
+    return { accessToken };
   };
 }
 export default EmployeeService;

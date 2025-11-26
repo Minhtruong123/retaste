@@ -77,20 +77,45 @@ const getListOrder = async (option: {
 }) => {
   const { limit, page, sortKey, sortValue } = option;
   const query: Record<string, string | object> = {};
-
   const sort: Record<string, 1 | -1> = {};
   if (sortKey && sortValue) {
     sort[sortKey] = sortValue;
   } else {
     sort['updatedAt'] = 1;
   }
-  return await Order.find({
-    isDeleted: false,
-    ...query
-  })
-    .limit(limit)
-    .skip((page - 1) * limit)
-    .sort(sort);
+  const skip = (page - 1) * limit;
+  return await Order.aggregate([
+    {
+      $match: {
+        isDeleted: false,
+        ...query
+      }
+    },
+    {
+      $lookup: {
+        from: DOCUMENT_USER,
+        foreignField: '_id',
+        localField: 'userId',
+        as: 'user',
+        pipeline: [
+          {
+            $match: {
+              isDeleted: false
+            }
+          }
+        ]
+      }
+    },
+    {
+      $limit: limit
+    },
+    {
+      $skip: skip
+    },
+    {
+      $sort: sort
+    }
+  ]);
 };
 const getListOrderUser = async (
   option: {
