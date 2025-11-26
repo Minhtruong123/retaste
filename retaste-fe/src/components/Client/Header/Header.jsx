@@ -233,7 +233,7 @@ export default function Header() {
                           </div>
                           <div className={styles.cartActions}>
                             <NavLink
-                              to="/cart"
+                              to="/order_confirmation"
                               className={styles.viewCartBtn}
                               onClick={() => setShowCartDropdown(false)}
                             >

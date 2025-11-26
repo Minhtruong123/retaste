@@ -11,21 +11,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow);
-}
-
-.toggleSidebar {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--text);
-  display: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .headerTitle {
   font-size: 1.2rem;
   font-weight: 600;
+  color: var(--text);
 }
 
 .headerActions {
@@ -41,17 +34,20 @@
 .searchInput {
   padding: 8px 15px;
   padding-left: 35px;
-  border-radius: 20px;
-  border: 1px solid var(--gray);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
   outline: none;
   font-size: 0.9rem;
   width: 200px;
   transition: all 0.3s;
+  background-color: #f5f7fa;
 }
 
 .searchInput:focus {
   width: 250px;
   border-color: var(--secondary);
+  box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
+  background-color: var(--white);
 }
 
 .searchIcon {
@@ -59,39 +55,48 @@
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--dark-gray);
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
 }
 
 .actionBtn {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
   color: var(--text-light);
   cursor: pointer;
-  transition: color 0.3s;
+  transition: all 0.3s;
   position: relative;
 }
 
 .actionBtn:hover {
   color: var(--primary);
+  background-color: rgba(255, 107, 53, 0.08);
 }
 
 .notificationBadge {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: var(--danger);
+  top: -4px;
+  right: -4px;
+  background-color: var(--primary);
   color: var(--white);
-  font-size: 0.7rem;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
+  font-size: 0.65rem;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(255, 107, 53, 0.3);
 }
 
-/* Breadcrumb */
 .breadcrumb {
   padding: 15px 30px;
   background-color: var(--white);
