@@ -1,10 +1,26 @@
-import { Schema } from 'mongoose';
-import { DOCUMENT_USER } from './user.model';
+import { model, Schema } from 'mongoose';
+export const DOCUMENT_STAFF = 'Staff';
+const COLLECTION_NAME = 'staffs';
+export interface IStaff {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  hireDate: Date;
+  terminationDate?: Date;
+  employmentStatus?: 'active' | 'on_leave' | 'terminated' | 'suspended';
+  password: string;
+  jobTitle?: string;
+  hourlyRate?: number;
+  avatar: string;
+  role?: 'staff';
+  createdAt?: Date;
+  updatedAt?: Date;
+  isDeleted?: boolean;
+}
 
-const employeeSchema = new Schema(
+const staffSchema = new Schema<IStaff>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: DOCUMENT_USER },
-    employeeCode: { type: String, required: true, unique: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -17,37 +33,34 @@ const employeeSchema = new Schema(
       enum: ['active', 'on_leave', 'terminated', 'suspended'],
       default: 'active'
     },
-
+    avatar: String,
     jobTitle: String,
-    department: String,
+    // department: String,
     hourlyRate: Number,
-
-    roles: [
-      {
-        roleId: { type: Schema.Types.ObjectId, ref: 'Role' },
-        assignedAt: { type: Date, default: Date.now },
-        assignedBy: { type: Schema.Types.ObjectId, ref: 'Employee' }
-      }
-    ],
-
-    workShifts: [
-      {
-        shiftDate: { type: Date, required: true },
-        scheduledStartTime: { type: String, required: true },
-        scheduledEndTime: { type: String, required: true },
-        actualStartTime: Date,
-        actualEndTime: Date,
-        breakDuration: { type: Number, default: 0 },
-        shiftStatus: {
-          type: String,
-          enum: ['pending', 'accept', 'finished', 'cancel'],
-          default: 'pending'
-        },
-        notes: String
-      }
-    ]
+    password: {
+      type: String,
+      required: true
+    },
+    role: {
+      type: String,
+      default: 'staff'
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    }
   },
   {
-    timestamps: true
+    timestamps: true,
+    collection: COLLECTION_NAME
   }
 );
+
+const Staff = model(DOCUMENT_STAFF, staffSchema);
+
+export const staffModel = {
+  COLLECTION_NAME,
+  DOCUMENT_STAFF
+};
+
+export default Staff;
