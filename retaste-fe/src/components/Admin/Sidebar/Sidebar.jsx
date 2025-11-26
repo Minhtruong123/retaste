@@ -89,8 +89,7 @@ export default function Sidebar() {
           title="Quản lý sản phẩm"
           items={[
             { icon: "🍔", label: "Sản phẩm", to: "/admin/product_management" },
-            { icon: "🏷️", label: "Danh mục", to: "/admin/category" },
-            { icon: "💯", label: "Khuyến mãi", to: "/admin/voucher" },
+            { icon: "🏷️", label: "Danh mục", to: "/admin/category_management" },
             { icon: "🧠", label: "Hệ thống gợi ý", to: "/admin/product" },
           ]}
         />
