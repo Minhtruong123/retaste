@@ -10,6 +10,7 @@ import { orderRouter } from './order.route';
 import { addressRouter } from './address.route';
 import { uploadCloudRouter } from './upload.route';
 import { dashboardRouter } from './dashboard.route';
+import { positionRouter } from './position.route';
 
 const router = Router();
 
@@ -24,4 +25,5 @@ router.use('/order', orderRouter);
 router.use('/address', addressRouter);
 router.use('/upload', uploadCloudRouter);
 router.use('/dashboard', dashboardRouter);
+router.use('/position', positionRouter);
 export const indexRoute = router;

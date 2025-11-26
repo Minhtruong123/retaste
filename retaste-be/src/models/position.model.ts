@@ -1,8 +1,8 @@
 import { model, Schema } from 'mongoose';
-export const DOCUMENT_DEPARTMENT = 'Department';
-const COLLECTION_NAME = 'departments';
+export const DOCUMENT_POSITION = 'position';
+const COLLECTION_NAME = 'positions';
 
-export interface IDepartment {
+export interface IPosition {
   name: string;
   description?: string;
   status?: 'active' | 'inactive';
@@ -11,7 +11,7 @@ export interface IDepartment {
   isDeleted?: boolean;
 }
 
-const departmentSchema = new Schema<IDepartment>(
+const positionSchema = new Schema<IPosition>(
   {
     name: { type: String, required: true, unique: true },
     description: { type: String },
@@ -30,10 +30,10 @@ const departmentSchema = new Schema<IDepartment>(
     collection: COLLECTION_NAME
   }
 );
-const Department = model<IDepartment>(DOCUMENT_DEPARTMENT, departmentSchema);
+const Position = model<IPosition>(DOCUMENT_POSITION, positionSchema);
 
-export const departmentModel = {
+export const positionModel = {
   COLLECTION_NAME,
-  DOCUMENT_DEPARTMENT
+  DOCUMENT_POSITION
 };
-export default Department;
+export default Position;

@@ -1,4 +1,5 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
+import { DOCUMENT_POSITION } from './position.model';
 export const DOCUMENT_STAFF = 'Staff';
 const COLLECTION_NAME = 'staffs';
 export interface IStaff {
@@ -6,13 +7,10 @@ export interface IStaff {
   lastName: string;
   email: string;
   phoneNumber?: string;
-  hireDate: Date;
-  terminationDate?: Date;
-  employmentStatus?: 'active' | 'on_leave' | 'terminated' | 'suspended';
+  positionId: Types.ObjectId;
+  status?: 'active' | 'on_leave' | 'terminated' | 'suspended';
   password: string;
-  jobTitle?: string;
-  hourlyRate?: number;
-  avatar: string;
+  avatar?: string;
   role?: 'staff';
   createdAt?: Date;
   updatedAt?: Date;
@@ -25,18 +23,13 @@ const staffSchema = new Schema<IStaff>(
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phoneNumber: String,
-
-    hireDate: { type: Date, required: true },
-    terminationDate: Date,
-    employmentStatus: {
+    status: {
       type: String,
       enum: ['active', 'on_leave', 'terminated', 'suspended'],
       default: 'active'
     },
+    positionId: { type: Schema.Types.ObjectId, ref: DOCUMENT_POSITION, required: true },
     avatar: String,
-    jobTitle: String,
-    // department: String,
-    hourlyRate: Number,
     password: {
       type: String,
       required: true

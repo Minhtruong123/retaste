@@ -58,7 +58,8 @@ const getListProduct = async (option: {
   return await Product.aggregate([
     {
       $match: {
-        ...query
+        ...query,
+        isDeleted: false
       }
     },
     {
