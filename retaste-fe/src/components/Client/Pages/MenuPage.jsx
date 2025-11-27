@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styles from "./MenuPage.module.css";
+import { useNavigate } from "react-router-dom";
 import * as productsService from "../../../service/products_service";
 
 export default function MenuPage() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,6 +64,7 @@ export default function MenuPage() {
     };
     return map[opt] || "salesCount";
   };
+
   const getSortValue = (opt) => (opt === "price-asc" ? "1" : "-1");
 
   const filteredProducts = products.filter((p) => {
@@ -189,7 +192,7 @@ export default function MenuPage() {
     const full = Math.floor(rating || 0);
     const half = rating % 1 >= 0.5;
     return (
-      <>
+      <div className={styles.starsContainer}>
         {[...Array(5)].map((_, i) => (
           <span
             key={i}
@@ -200,8 +203,58 @@ export default function MenuPage() {
             ★
           </span>
         ))}
-      </>
+      </div>
     );
+  };
+
+  const renderFeatureIcon = (feature) => {
+    const icons = {
+      Leaf: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          width="16"
+          height="16"
+        >
+          <path d="M6.05 8.05a7.001 7.001 0 0 0 13.9 0C20 12.41 16.41 16 12 16c-4.41 0-8-3.59-8-8s3.59-8 8-8c1.48 0 2.86.41 4.05 1.12A7.059 7.059 0 0 0 12 0a8 8 0 1 0 0 16c4.41 0 8-3.59 8-8 0-2.52-1.17-4.77-3-6.24a7.001 7.001 0 0 0-10.95 6.29z" />
+        </svg>
+      ),
+      Wheat: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          width="16"
+          height="16"
+        >
+          <path d="M12 2L9 5h6l-3-3zm6 6h-3v10c0 1.1-.9 2-2 2s-2-.9-2-2V8H8l3-3 3 3zM9 14v2h2v-2H9zm2-4v2h2v-2h-2z" />
+        </svg>
+      ),
+      Fire: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          width="16"
+          height="16"
+        >
+          <path d="M12 23a7.5 7.5 0 0 1-7.5-7.5c0-2.39 1.22-4.5 3.05-5.8V8a4.5 4.5 0 1 1 9 0v1.7c1.83 1.3 3.05 3.41 3.05 5.8A7.5 7.5 0 0 1 12 23zm2.45-14.97v-.08A2.5 2.5 0 0 0 9.95 8v4.17L9 12.83A5.5 5.5 0 0 0 6.5 15.5a5.5 5.5 0 0 0 11 0 5.5 5.5 0 0 0-2.5-4.63V8a2.5 2.5 0 0 0-.55.03z" />
+        </svg>
+      ),
+      Sparkles: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          width="16"
+          height="16"
+        >
+          <path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z" />
+        </svg>
+      ),
+    };
+    return icons[feature] || null;
   };
 
   return (
@@ -279,6 +332,7 @@ export default function MenuPage() {
                 <button
                   className={styles.removeTag}
                   onClick={() => removeFilterTag(f.type)}
+                  aria-label="Xóa bộ lọc"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -300,7 +354,7 @@ export default function MenuPage() {
 
         <div className={styles.resultsInfo}>
           Hiển thị <strong>{sortedProducts.length}</strong> trong tổng số{" "}
-          {totalProducts} sản phẩm
+          <strong>{totalProducts}</strong> sản phẩm
         </div>
 
         <div
@@ -311,6 +365,7 @@ export default function MenuPage() {
             <button
               className={styles.closeFilter}
               onClick={() => setIsFilterOpen(false)}
+              aria-label="Đóng bộ lọc"
             >
               ×
             </button>
@@ -389,7 +444,9 @@ export default function MenuPage() {
                         setFilters({ ...filters, features: e.target.value })
                       }
                     />
-                    <span className={styles.featureIcon}>{f.icon}</span>
+                    <span className={styles.featureIcon}>
+                      {renderFeatureIcon(f.icon)}
+                    </span>
                     <span>{f.label}</span>
                   </label>
                 ))}
@@ -434,6 +491,18 @@ export default function MenuPage() {
 
         {error && (
           <div className={styles.errorContainer}>
+            <div className={styles.errorIcon}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="48"
+                height="48"
+                fill="currentColor"
+              >
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+              </svg>
+            </div>
+            <h3>Không thể tải dữ liệu</h3>
             <p>{error}</p>
             <button className={styles.retryButton} onClick={loadProducts}>
               Thử lại
@@ -443,6 +512,17 @@ export default function MenuPage() {
 
         {!loading && !error && currentProducts.length === 0 && (
           <div className={styles.emptyState}>
+            <div className={styles.emptyIcon}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="48"
+                height="48"
+                fill="currentColor"
+              >
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 11h-9c-.55 0-1-.45-1-1s.45-1 1-1h9c.55 0 1 .45 1 1s-.45 1-1 1z" />
+              </svg>
+            </div>
             <h3>Không tìm thấy món nào</h3>
             <p>Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm nhé!</p>
             <button className={styles.resetFilterButton} onClick={resetAll}>
@@ -455,7 +535,12 @@ export default function MenuPage() {
           <>
             <div className={styles.menuGrid}>
               {currentProducts.map((item) => (
-                <div key={item._id} className={styles.menuItem}>
+                <div
+                  key={item._id}
+                  className={styles.menuItem}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/detail_product/${item._id}`)}
+                >
                   <div className={styles.imageContainer}>
                     <img
                       src={item.imageUrl || "https://via.placeholder.com/300"}
@@ -464,21 +549,6 @@ export default function MenuPage() {
                       loading="lazy"
                     />
                     <div className={styles.itemBadges}>
-                      {/* Backend chưa có discount → tạm ẩn */}
-                      {/* {item.discount > 0 && (
-                <span className={`${styles.itemBadge} ${styles.discountBadge}`}>
-                  -{item.discount}%
-                </span>
-              )} */}
-
-                      {/* Backend chưa có isNew → ẩn luôn */}
-                      {/* {item.isNew && (
-                <span className={`${styles.itemBadge} ${styles.newBadge}`}>
-                  Mới
-                </span>
-              )} */}
-
-                      {/* bestSeller → backend có rồi, đổi thành bestSeller (camelCase) */}
                       {item.bestSeller && (
                         <span
                           className={`${styles.itemBadge} ${styles.bestsellerBadge}`}
@@ -487,26 +557,75 @@ export default function MenuPage() {
                         </span>
                       )}
                     </div>
+
+                    <div className={styles.quickActions}>
+                      <button
+                        className={styles.quickActionBtn}
+                        aria-label="Thêm vào yêu thích"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                        >
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                      </button>
+                      <button
+                        className={styles.quickActionBtn}
+                        aria-label="Xem chi tiết"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                        >
+                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
 
                   <div className={styles.itemInfo}>
                     <span className={styles.itemCategory}>
-                      {item.category?.[0]?.categoryName || "Không có"}
+                      {item.category?.categoryName ||
+                        item.category?.[0]?.categoryName ||
+                        "Không có"}
                     </span>
 
                     <h3 className={styles.itemTitle}>{item.productName}</h3>
 
                     <div className={styles.itemRating}>
-                      {renderStars(0)}
+                      {renderStars(item.rating || 0)}
                       <span className={styles.ratingCount}>
                         ({item.ratingCount || 0})
                       </span>
                     </div>
 
                     <div className={styles.itemTags}>
-                      {/* {item.isVegetarian && <span className={`${styles.itemTag} ${styles.vegTag}`}>Chay</span>} */}
-                      {/* {item.isSpicy && <span className={`${styles.itemTag} ${styles.spicyTag}`}>Cay</span>} */}
-                      {/* {item.isGlutenFree && <span className={`${styles.itemTag} ${styles.glutenFreeTag}`}>Không gluten</span>} */}
+                      {item.isVegetarian && (
+                        <span className={`${styles.itemTag} ${styles.vegTag}`}>
+                          Chay
+                        </span>
+                      )}
+                      {item.isSpicy && (
+                        <span
+                          className={`${styles.itemTag} ${styles.spicyTag}`}
+                        >
+                          Cay
+                        </span>
+                      )}
+                      {item.isGlutenFree && (
+                        <span
+                          className={`${styles.itemTag} ${styles.glutenFreeTag}`}
+                        >
+                          Không gluten
+                        </span>
+                      )}
                     </div>
 
                     <p className={styles.itemDescription}>
@@ -524,6 +643,8 @@ export default function MenuPage() {
                         className={styles.cartIcon}
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
+                        width="18"
+                        height="18"
                         fill="currentColor"
                       >
                         <path d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-9.83-3.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4h-.01l-1.1 2-2.76 5H8.53l-.13-.27L6.16 6l-.95-2-.94-2H1v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.13 0-.25-.11-.25-.25z" />
@@ -543,8 +664,17 @@ export default function MenuPage() {
                   }`}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
+                  aria-label="Trang trước"
                 >
-                  ←
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                  >
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                  </svg>
                 </button>
 
                 {[...Array(totalPages)].map((_, i) => {
@@ -566,7 +696,7 @@ export default function MenuPage() {
                       </button>
                     );
                   }
-                  if (page === 2 || page === totalPages - 1) {
+                  if (page === currentPage - 2 || page === currentPage + 2) {
                     return (
                       <span key={page} className={styles.pageDots}>
                         ...
@@ -584,8 +714,17 @@ export default function MenuPage() {
                     setCurrentPage((p) => Math.min(totalPages, p + 1))
                   }
                   disabled={currentPage === totalPages}
+                  aria-label="Trang sau"
                 >
-                  →
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                  >
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                  </svg>
                 </button>
               </div>
             )}
