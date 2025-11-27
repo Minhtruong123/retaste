@@ -63,3 +63,37 @@ export const getProductDetailAdmin = async (productId) => {
     throw error.response?.data?.message || "Lấy chi tiết sản phẩm thất bại";
   }
 };
+
+export const getDetailProduct = async (productId) => {
+  try {
+    console.log(productId);
+
+    const data = await api.get(`/product/detail/${productId}`);
+    console.log(data);
+
+    return data.metadata || data;
+  } catch (error) {
+    throw error.response?.data?.message || "Lấy chi tiết sản phẩm thất bại";
+  }
+};
+
+export const getRetasteProducts = async () => {
+  try {
+    const { data } = await api.get("/product/retaste");
+
+    console.log("Retaste response:", data);
+    const products = data.metadata ?? data;
+
+    if (Array.isArray(products)) {
+      return products;
+    }
+
+    return [];
+  } catch (error) {
+    console.warn(
+      "Không lấy được retaste (có thể chưa có đơn):",
+      error.response?.data || error.message
+    );
+    return [];
+  }
+};

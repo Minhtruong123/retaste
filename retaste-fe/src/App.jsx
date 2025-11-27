@@ -13,6 +13,8 @@ import AboutUsPage from "./components/Client/Pages/AboutUsPage";
 import ContactPage from "./components/Client/Pages/ContactPage";
 import AuthForm from "./components/Auth/AuthForm";
 import OrderConfirmation from "./components/Client/Pages/OrderConfirmation";
+import PaymentPage from "./components/Client/Pages/PaymentPage";
+import DetailProductPage from "./components/Client/Pages/DetailProductPage";
 import Layout from "./components/Client/Pages/Layout";
 import VerifyAccount from "./components/Auth/VerifyAccount";
 import ProtectedRoute from "./ProtectedRoute";
@@ -71,6 +73,11 @@ function App() {
             <Route path="/about" element={<AboutUsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/order_confirmation" element={<OrderConfirmation />} />
+            <Route path="/payment" element={<PaymentPage />} />
+            <Route
+              path="/detail_product/:productId"
+              element={<DetailProductPage />}
+            />
           </Route>
 
           {/* 4. ADMIN ROUTES */}
