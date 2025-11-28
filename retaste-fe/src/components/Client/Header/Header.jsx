@@ -2,39 +2,37 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./Header.module.css";
 import { NavLink } from "react-router-dom";
 import * as authService from "../../../service/auth_service";
+import * as cartService from "../../../service/cart_service";
 
 export default function Header() {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showCartDropdown, setShowCartDropdown] = useState(false);
-
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Cơm rang dưa bò",
-      price: 75000,
-      quantity: 1,
-      image: "🍚",
-    },
-    {
-      id: 2,
-      name: "Gà sốt chua ngọt",
-      price: 120000,
-      quantity: 2,
-      image: "🍗",
-    },
-    {
-      id: 3,
-      name: "Trà đào cam sả",
-      price: 35000,
-      quantity: 1,
-      image: "🍹",
-    },
-  ]);
+  const [cartBounce, setCartBounce] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [loadingCart, setLoadingCart] = useState(false);
 
   const cartDropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
+
+  const fetchCartData = async () => {
+    if (!user) {
+      setCartItems([]);
+      return;
+    }
+
+    try {
+      setLoadingCart(true);
+      const data = await cartService.getCartDetail();
+      setCartItems(data.products || []);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+      setCartItems([]);
+    } finally {
+      setLoadingCart(false);
+    }
+  };
 
   useEffect(() => {
     const userInfo = localStorage.getItem("user");
@@ -58,11 +56,27 @@ export default function Header() {
       }
     };
 
+    const handleCartBounce = () => {
+      console.log("Cart bounce triggered!");
+      setCartBounce(true);
+      fetchCartData();
+      setTimeout(() => {
+        setCartBounce(false);
+      }, 600);
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("cartBounce", handleCartBounce);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("cartBounce", handleCartBounce);
     };
   }, []);
+
+  useEffect(() => {
+    fetchCartData();
+  }, [user]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuActive(!isMobileMenuActive);
@@ -79,6 +93,9 @@ export default function Header() {
   const toggleCartDropdown = (e) => {
     e.preventDefault();
     setShowCartDropdown(!showCartDropdown);
+    if (!showCartDropdown) {
+      fetchCartData();
+    }
   };
 
   const handleLogout = async () => {
@@ -88,29 +105,71 @@ export default function Header() {
       console.error("Logout error:", error);
     } finally {
       setUser(null);
+      setCartItems([]);
       setShowDropdown(false);
     }
   };
 
-  const handleUpdateQuantity = (itemId, newQuantity) => {
-    if (newQuantity < 1) return;
+  const handleUpdateQuantity = async (
+    productId,
+    createdAt,
+    currentQuantity,
+    action
+  ) => {
+    try {
+      if (action === "decrease" && currentQuantity <= 1) {
+        if (window.confirm("Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?")) {
+          await handleRemoveItem(productId, createdAt);
+        }
+        return;
+      }
 
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === itemId ? { ...item, quantity: newQuantity } : item
-      )
-    );
+      if (action === "increase") {
+        await cartService.updateCartQuantity(productId, createdAt);
+      }
+
+      await fetchCartData();
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      alert(error || "Cập nhật số lượng thất bại");
+    }
   };
 
-  const handleRemoveItem = (itemId) => {
-    setCartItems(cartItems.filter((item) => item.id !== itemId));
+  const handleRemoveItem = async (productId, createdAt) => {
+    try {
+      await cartService.removeFromCart(productId, createdAt);
+      await fetchCartData();
+    } catch (error) {
+      console.error("Error removing item:", error);
+      alert(error || "Xóa sản phẩm thất bại");
+    }
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    if (!cartItems || cartItems.length === 0) return 0;
+
+    return cartItems.reduce((total, item) => {
+      let itemPrice = item.productId?.basePrice || 0;
+
+      if (item.sizeId?.priceModifier) {
+        itemPrice += item.sizeId.priceModifier;
+      }
+
+      if (item.customs && item.customs.length > 0) {
+        item.customs.forEach((custom) => {
+          if (custom.optionId?.price) {
+            itemPrice += custom.optionId.price * (custom.quantity || 1);
+          }
+        });
+      }
+
+      return total + itemPrice * item.quantity;
+    }, 0);
+  };
+
+  const getTotalQuantity = () => {
+    if (!cartItems || cartItems.length === 0) return 0;
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
   return (
@@ -138,15 +197,18 @@ export default function Header() {
               <div className={styles.cartContainer} ref={cartDropdownRef}>
                 <a
                   href="#"
-                  className={styles.cartIcon}
+                  className={`${styles.cartIcon} ${
+                    cartBounce ? styles.bounce : ""
+                  }`}
                   onClick={toggleCartDropdown}
                 >
                   🛒{" "}
-                  <span className={styles.cartCount}>
-                    {cartItems.reduce(
-                      (total, item) => total + item.quantity,
-                      0
-                    )}
+                  <span
+                    className={`${styles.cartCount} ${
+                      cartBounce ? styles.pulse : ""
+                    }`}
+                  >
+                    {getTotalQuantity()}
                   </span>
                 </a>
 
@@ -155,70 +217,119 @@ export default function Header() {
                     <div className={styles.cartHeader}>
                       <h3>Giỏ hàng của bạn</h3>
                       <span className={styles.cartItemCount}>
-                        {cartItems.reduce(
-                          (total, item) => total + item.quantity,
-                          0
-                        )}{" "}
-                        món
+                        {getTotalQuantity()} món
                       </span>
                     </div>
 
-                    {cartItems.length > 0 ? (
+                    {loadingCart ? (
+                      <div className={styles.loadingCart}>
+                        <p>Đang tải giỏ hàng...</p>
+                      </div>
+                    ) : cartItems.length > 0 ? (
                       <>
                         <div className={styles.cartItems}>
-                          {cartItems.map((item) => (
-                            <div key={item.id} className={styles.cartItem}>
-                              <div className={styles.cartItemImage}>
-                                {item.image}
-                              </div>
-                              <div className={styles.cartItemInfo}>
-                                <div className={styles.cartItemName}>
-                                  {item.name}
+                          {cartItems.map((item, index) => {
+                            const itemPrice = (() => {
+                              let price = item.productId?.basePrice || 0;
+                              if (item.sizeId?.priceModifier) {
+                                price += item.sizeId.priceModifier;
+                              }
+                              if (item.customs && item.customs.length > 0) {
+                                item.customs.forEach((custom) => {
+                                  if (custom.optionId?.price) {
+                                    price +=
+                                      custom.optionId.price *
+                                      (custom.quantity || 1);
+                                  }
+                                });
+                              }
+                              return price;
+                            })();
+
+                            return (
+                              <div
+                                key={`${item.productId?._id}-${index}`}
+                                className={styles.cartItem}
+                              >
+                                <div className={styles.cartItemImage}>
+                                  <img
+                                    src={
+                                      item.productId?.imageUrl ||
+                                      "https://via.placeholder.com/60"
+                                    }
+                                    alt={
+                                      item.productId?.productName || "Product"
+                                    }
+                                    style={{
+                                      width: "60px",
+                                      height: "60px",
+                                      objectFit: "cover",
+                                      borderRadius: "8px",
+                                    }}
+                                  />
                                 </div>
-                                <div className={styles.cartItemPrice}>
-                                  {new Intl.NumberFormat("vi-VN", {
-                                    style: "currency",
-                                    currency: "VND",
-                                  }).format(item.price)}
+                                <div className={styles.cartItemInfo}>
+                                  <div className={styles.cartItemName}>
+                                    {item.productId?.productName || "Sản phẩm"}
+                                  </div>
+                                  <div className={styles.cartItemSize}>
+                                    {item.sizeId?.sizeName &&
+                                      `Size: ${item.sizeId.sizeName}`}
+                                  </div>
+                                  <div className={styles.cartItemPrice}>
+                                    {new Intl.NumberFormat("vi-VN", {
+                                      style: "currency",
+                                      currency: "VND",
+                                    }).format(itemPrice)}
+                                  </div>
                                 </div>
-                              </div>
-                              <div className={styles.cartItemActions}>
-                                <div className={styles.quantityControl}>
+                                <div className={styles.cartItemActions}>
+                                  <div className={styles.quantityControl}>
+                                    <button
+                                      className={styles.quantityBtn}
+                                      onClick={() =>
+                                        handleUpdateQuantity(
+                                          item.productId._id,
+                                          item.createdAt,
+                                          item.quantity,
+                                          "decrease"
+                                        )
+                                      }
+                                    >
+                                      -
+                                    </button>
+                                    <span className={styles.quantity}>
+                                      {item.quantity}
+                                    </span>
+                                    <button
+                                      className={styles.quantityBtn}
+                                      onClick={() =>
+                                        handleUpdateQuantity(
+                                          item.productId._id,
+                                          item.createdAt,
+                                          item.quantity,
+                                          "increase"
+                                        )
+                                      }
+                                    >
+                                      +
+                                    </button>
+                                  </div>
                                   <button
-                                    className={styles.quantityBtn}
+                                    className={styles.removeBtn}
                                     onClick={() =>
-                                      handleUpdateQuantity(
-                                        item.id,
-                                        item.quantity - 1
+                                      handleRemoveItem(
+                                        item.productId._id,
+                                        item.createdAt
                                       )
                                     }
                                   >
-                                    -
-                                  </button>
-                                  <span className={styles.quantity}>
-                                    {item.quantity}
-                                  </span>
-                                  <button
-                                    className={styles.quantityBtn}
-                                    onClick={() =>
-                                      handleUpdateQuantity(
-                                        item.id,
-                                        item.quantity + 1
-                                      )
-                                    }
-                                  >
-                                    +
+                                    ×
                                   </button>
                                 </div>
-                                <button
-                                  className={styles.removeBtn}
-                                  onClick={() => handleRemoveItem(item.id)}
-                                >
-                                  ×
-                                </button>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
 
                         <div className={styles.cartFooter}>

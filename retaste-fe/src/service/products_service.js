@@ -17,7 +17,6 @@ export const getListProduct = async (query = {}) => {
     const url = `/product/list-product${queryString ? `?${queryString}` : ""}`;
 
     const { data } = await api.get(url);
-    console.log(data);
 
     return data.metadata || data;
   } catch (error) {
@@ -55,23 +54,12 @@ export const deleteProductAdmin = async (productId) => {
   }
 };
 
-export const getProductDetailAdmin = async (productId) => {
-  try {
-    const { data } = await api.get(`/product/detail/${productId}`);
-    return data.metadata || data;
-  } catch (error) {
-    throw error.response?.data?.message || "Lấy chi tiết sản phẩm thất bại";
-  }
-};
-
 export const getDetailProduct = async (productId) => {
   try {
-    console.log(productId);
-
     const data = await api.get(`/product/detail/${productId}`);
-    console.log(data);
+    console.log(data.data.metadata);
 
-    return data.metadata || data;
+    return data.data.metadata;
   } catch (error) {
     throw error.response?.data?.message || "Lấy chi tiết sản phẩm thất bại";
   }
