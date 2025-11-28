@@ -14,6 +14,10 @@ const API_V1 = '/api/v1';
 const app = express();
 
 // init middleware
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
 app.use(helmet());
 app.use(compression());
 app.use(morgan(env.BUILD_MODE));
