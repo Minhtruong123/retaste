@@ -192,6 +192,20 @@ const getCorrespondingProduct = async (items: string[], userId: string) => {
   ]);
   return cartDetails;
 };
+const deleteMulty = async (ids: string[], userId: string) => {
+  return await Cart.updateOne(
+    {
+      userId: createObjectId(userId)
+    },
+    {
+      $pull: {
+        products: {
+          _id: { $in: ids.map((i) => createObjectId(i)) }
+        }
+      }
+    }
+  );
+};
 
 export const cartRepo = {
   createNew,
@@ -199,5 +213,6 @@ export const cartRepo = {
   addProduct,
   removeProduct,
   getDetail,
-  getCorrespondingProduct
+  getCorrespondingProduct,
+  deleteMulty
 };
