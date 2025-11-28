@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./OrderConfirmation.module.css";
 
 export default function OrderConfirmation() {
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([
     {
       id: 1,
@@ -48,7 +50,7 @@ export default function OrderConfirmation() {
     0
   );
   const deliveryFee = deliveryOption === "standard" ? 15000 : 30000;
-  const total = subtotal + deliveryFee - discount;
+  const total = subtotal + deliveryFee;
 
   const handleQuantityChange = (id, change) => {
     setCartItems((prevItems) =>
@@ -64,28 +66,24 @@ export default function OrderConfirmation() {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
-  const handleApplyPromo = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      if (promoCode.toUpperCase() === "WELCOME10") {
-        setDiscount(Math.round(subtotal * 0.1));
-      } else {
-        setDiscount(0);
-        alert("Mã khuyến mãi không hợp lệ!");
-      }
-      setIsLoading(false);
-    }, 800);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
-      alert(
-        "Đặt hàng thành công! Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi."
-      );
-      setIsLoading(false);
-    }, 1500);
+    if (paymentMethod === "cash") {
+      setTimeout(() => {
+        alert(
+          "Đặt hàng thành công! Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi."
+        );
+        setIsLoading(false);
+      }, 1500);
+    } else {
+      navigate("/payment", {
+        state: {
+          cartItems,
+          totalAmount,
+        },
+      });
+    }
   };
   return (
     <>

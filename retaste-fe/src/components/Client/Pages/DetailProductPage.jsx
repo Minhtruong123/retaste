@@ -1,7 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import styles from "./DetailProductPage.module.css";
+import * as productsService from "../../../service/products_service";
 
 export default function DetailProductPage() {
+  const { productId } = useParams();
+  const navigate = useNavigate();
+
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [activeTab, setActiveTab] = useState("description");
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(
@@ -16,6 +25,28 @@ export default function DetailProductPage() {
     "https://images.unsplash.com/photo-1586190848861-99aa4a171e90",
     "https://images.unsplash.com/photo-1550547660-d9450f859349",
   ];
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const data = await productsService.getDetailProduct(productId);
+
+        setProduct(data?.[0] || null);
+      } catch (err) {
+        console.error(err);
+        setError("Không tải được sản phẩm");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) fetchProduct();
+  }, [productId]);
+
+  if (loading) return <div>Đang tải chi tiết món ăn...</div>;
+  if (error) return <div>{error}</div>;
+  if (!product) return <div>Không tìm thấy sản phẩm</div>;
 
   const changeImage = (src) => {
     setActiveImage(src);
@@ -46,6 +77,39 @@ export default function DetailProductPage() {
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
+
+  const renderStars = (rating = 0) => {
+    const full = Math.floor(rating);
+    const hasHalf = rating % 1 >= 0.5;
+
+    return (
+      <div style={{ display: "inline-flex", gap: "2px" }}>
+        {[...Array(5)].map((_, i) => (
+          <span
+            key={i}
+            style={{
+              color: "#ffc107",
+              fontSize: "1.1em",
+            }}
+          >
+            {i < full ? "★" : i === full && hasHalf ? "★" : "☆"}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
+  const getCategoryName = (cat) => {
+    const map = {
+      pizza: "Pizza",
+      burger: "Burger",
+      asian: "Món Á",
+      drink: "Đồ uống",
+      salad: "Salad",
+      dessert: "Tráng miệng",
+    };
+    return map[cat] || cat || "Khác";
+  };
   return (
     <>
       <div className={styles.container}>
@@ -60,14 +124,25 @@ export default function DetailProductPage() {
         </div>
       </div>
 
+      {/* <div className={styles.container}>
+        <div className={styles.breadcrumbs}>
+          <a href="/">Trang chủ</a> <span>/</span>
+          <a href="/menu">Thực đơn</a> <span>/</span>
+          <a href={`/menu#${product.category}`}>{getCategoryName(product.category)}</a> <span>/</span>
+          <span>{product.productName}</span>
+        </div>
+      </div> */}
+
       <section className={styles.productDetail}>
         <div className={styles.container}>
           <div className={styles.productContainer}>
             <div className={styles.productGallery}>
-              <span className={styles.productBadge}>Bán chạy</span>
+              {product.bestSeller && (
+                <span className={styles.productBadge}>Bán chạy</span>
+              )}
               <img
-                src={activeImage}
-                alt="Classic Burger"
+                src={product.imageUrl}
+                alt={product.productName}
                 className={styles.mainImage}
               />
               <div className={styles.imageThumbnails}>
@@ -86,20 +161,21 @@ export default function DetailProductPage() {
             </div>
 
             <div className={styles.productInfo}>
-              <h1>Classic Burger</h1>
+              <h1>{product.productName}</h1>
               <div className={styles.productMeta}>
                 <div className={styles.productRating}>
-                  ★★★★★ <span>(156 đánh giá)</span>
+                  {renderStars(product.rating || 0)}{" "}
+                  <span>({product.ratingCount || 0} đánh giá)</span>
                 </div>
-                <div className={styles.productCategory}>Burger</div>
+                <div className={styles.productCategory}>
+                  {getCategoryName(product.category)}
+                </div>
               </div>
-              <div className={styles.productPrice}>69.000 ₫</div>
+              <div className={styles.productPrice}>
+                {product.basePrice.toLocaleString("vi-VN")}₫
+              </div>
               <div className={styles.productDescription}>
-                Burger bò cổ điển với bánh mì mềm, thịt bò Úc 100% nguyên chất
-                nướng tới mức hoàn hảo, phô mai Cheddar tan chảy, rau xà lách
-                tươi giòn, cà chua mọng nước, hành tây và sốt đặc biệt của nhà
-                RETASTE. Đây là lựa chọn lý tưởng cho bữa trưa nhanh chóng hoặc
-                bữa tối nhẹ nhàng.
+                {product.description || "Chưa có mô tả"}
               </div>
 
               <div className={styles.productFeatures}>
