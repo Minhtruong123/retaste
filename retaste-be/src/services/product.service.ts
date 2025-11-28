@@ -147,7 +147,7 @@ class CategoryService {
   static getDetail = async (id: string) => {
     const getProduct = await productRepo.getDetail(id);
     if (!getProduct) throw new BAD_REQUEST('Product is not exist !');
-    return getProduct[0] || null;
+    return getProduct || null;
   };
   static delete = async (id: string) => {
     const deletedProduct = await productRepo.deleteProduct(id);

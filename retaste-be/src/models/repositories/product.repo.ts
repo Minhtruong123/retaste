@@ -64,14 +64,24 @@ const getListProduct = async (option: {
     },
     {
       $lookup: {
-        from: 'categories',
+        from: categoryModel.COLLECTION_NAME,
         localField: 'categoryId',
         foreignField: '_id',
-        as: 'category'
+        as: 'category',
+        pipeline: [
+          {
+            $match: {
+              isDeleted: false
+            }
+          }
+        ]
       }
     },
     {
-      $limit: 10
+      $unwind: '$category'
+    },
+    {
+      $limit: limit
     },
     {
       $skip: skip
@@ -149,7 +159,7 @@ const getDetail = async (id: string) => {
         from: categoryModel.COLLECTION_NAME,
         localField: 'categoryId',
         foreignField: '_id',
-        as: 'categorie',
+        as: 'category',
         pipeline: [
           {
             $match: {
@@ -160,7 +170,7 @@ const getDetail = async (id: string) => {
       }
     },
     {
-      $unwind: '$categorie'
+      $unwind: '$category'
     }
   ]);
   return result[0];
