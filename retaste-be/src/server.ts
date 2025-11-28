@@ -32,5 +32,8 @@ app.listen(env.APP_PORT, env.APP_HOST, () => {
  * curd nhan vien,
  * doanh thu theo ngày tạo bảng
  * tạo ca nhân viên
+ * cập lại trạng thái sản phẩm khi giao hàng
+ * tich webhook của sepay
+ * thêm enum nhân viên
  *
  */

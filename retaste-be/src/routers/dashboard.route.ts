@@ -3,5 +3,6 @@ import dashBoardController from '~/controllers/dashboard.controller';
 import { authMiddleware } from '~/middlewares/auth.middleware';
 const { authentication } = authMiddleware;
 const router = Router();
+router.get('/control', authentication, dashBoardController.control);
 
 export const dashboardRouter = router;

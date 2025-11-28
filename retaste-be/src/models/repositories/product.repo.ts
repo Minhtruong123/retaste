@@ -58,19 +58,30 @@ const getListProduct = async (option: {
   return await Product.aggregate([
     {
       $match: {
-        ...query
+        ...query,
+        isDeleted: false
       }
     },
     {
       $lookup: {
-        from: 'categories',
+        from: categoryModel.COLLECTION_NAME,
         localField: 'categoryId',
         foreignField: '_id',
-        as: 'category'
+        as: 'category',
+        pipeline: [
+          {
+            $match: {
+              isDeleted: false
+            }
+          }
+        ]
       }
     },
     {
-      $limit: 10
+      $unwind: '$category'
+    },
+    {
+      $limit: limit
     },
     {
       $skip: skip
@@ -148,7 +159,7 @@ const getDetail = async (id: string) => {
         from: categoryModel.COLLECTION_NAME,
         localField: 'categoryId',
         foreignField: '_id',
-        as: 'categorie',
+        as: 'category',
         pipeline: [
           {
             $match: {
@@ -159,10 +170,10 @@ const getDetail = async (id: string) => {
       }
     },
     {
-      $unwind: '$categorie'
+      $unwind: '$category'
     }
   ]);
-  return result;
+  return result[0];
 };
 const getRelated = async (categories: ObjectId[], lastestProduct: ObjectId[]) => {
   return await Product.find({
