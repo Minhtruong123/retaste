@@ -5,6 +5,6 @@ const { authentication } = authMiddleware;
 const router = Router();
 router.post('/add-to-cart', authentication, cartController.addToCart);
 router.put('/update-quantity/:id', authentication, cartController.updateQuantity);
-router.delete('/remove-product', authentication, cartController.removeProduct);
-router.get('/get-detail/:id', authentication, cartController.getDetail);
+router.delete('/remove-product/:id', authentication, cartController.removeProduct);
+router.get('/get-detail', authentication, cartController.getDetail);
 export const cartRouter = router;
