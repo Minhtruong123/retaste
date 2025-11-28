@@ -187,12 +187,14 @@ class CartService {
     if (!updated.matchedCount) throw new BAD_REQUEST('Update failed !');
     return 'Update successfully !';
   };
-  static removeProduct = async (data: { productId: string; createdAt: Date }, userId: string) => {
+  static removeProduct = async (data: { productId: string; createdAt: string }, userId: string) => {
     const getCart = await cartRepo.findCartByUserId(userId);
     if (!getCart) throw new BAD_REQUEST('Request is not valid !');
     const { productId, createdAt } = data;
     const idxProduct = getCart.products.findIndex(
-      (p) => p.productId.toString() === productId && p.createdAt === createdAt
+      (p) =>
+        p.productId.toString() === productId &&
+        p.createdAt.toISOString() === new Date(createdAt).toISOString()
     );
     if (idxProduct === -1) throw new BAD_REQUEST('Product is not exist in cart !');
     const deleted = await cartRepo.removeProduct(userId, idxProduct);

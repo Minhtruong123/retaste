@@ -169,7 +169,7 @@ class OrderService {
       userId: createObjectId(userId)
     } as IOrder;
     const created = await orderRepo.createNew(newOrder);
-    // await cartRepo.deleteMulty(items, userId);
+    await cartRepo.deleteMulty(items, userId);
     if (paymentMethod === 'bank_transfer') {
       const checkoutURL = clientSepay.checkout.initCheckoutUrl();
       const checkoutFormfields = clientSepay.checkout.initOneTimePaymentFields({
