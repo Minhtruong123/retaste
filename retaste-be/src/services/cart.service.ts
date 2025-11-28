@@ -158,46 +158,22 @@ class CartService {
     return customAndOptionValid;
   };
   static updateQuantity = async (
-    data: { productId: string; createdAt: string },
+    data: { id: string; action: 'subtract' | 'add' },
     userId: string
   ) => {
     const getCart = await cartRepo.findCartByUserId(userId);
     if (!getCart) throw new BAD_REQUEST('Request is not valid !');
-    const { productId } = data;
-    const createdAt = new Date(data.createdAt);
-    const getProduct = await productRepo.findOneById(productId);
-    if (!getProduct) throw new BAD_REQUEST('Product is not valid !');
-    if (!getProduct.isAvailable) throw new BAD_REQUEST('Product is not valid !');
-    const idxProduct = getCart.products.findIndex(
-      (p) =>
-        p.productId.toString() === productId &&
-        p.createdAt.toISOString() === new Date(createdAt).toISOString()
-    );
-    if (idxProduct === -1) throw new BAD_REQUEST('Product is not exist in cart !');
-    const updated = await cartRepo.addProduct(userId, {
-      index: idxProduct,
-      data: {
-        quantity: getCart.products[idxProduct].quantity + 1,
-        productId: getCart.products[idxProduct].productId,
-        sizeId: getCart.products[idxProduct].sizeId,
-        createdAt: getCart.products[idxProduct].createdAt,
-        customs: getCart.products[idxProduct].customs
-      }
-    });
-    if (!updated.matchedCount) throw new BAD_REQUEST('Update failed !');
+    const { id, action } = data;
+    const qty = action === 'add' ? 1 : -1;
+    const idxProduct = getCart.products.findIndex((p) => p._id?.toString() === id);
+    if (action === 'subtract' && getCart.products[idxProduct].quantity - qty === 0)
+      throw new BAD_REQUEST("Can't delete product !");
+    const updated = await cartRepo.updateQuantity(id, qty, userId);
+    if (!updated.matchedCount) throw new BAD_REQUEST("Can't update quantity !");
     return 'Update successfully !';
   };
-  static removeProduct = async (data: { productId: string; createdAt: string }, userId: string) => {
-    const getCart = await cartRepo.findCartByUserId(userId);
-    if (!getCart) throw new BAD_REQUEST('Request is not valid !');
-    const { productId, createdAt } = data;
-    const idxProduct = getCart.products.findIndex(
-      (p) =>
-        p.productId.toString() === productId &&
-        p.createdAt.toISOString() === new Date(createdAt).toISOString()
-    );
-    if (idxProduct === -1) throw new BAD_REQUEST('Product is not exist in cart !');
-    const deleted = await cartRepo.removeProduct(userId, idxProduct);
+  static removeProduct = async (id: string, userId: string) => {
+    const deleted = await cartRepo.removeProduct(id, userId);
     if (!deleted.matchedCount) throw new BAD_REQUEST('Update failed !');
     return 'Remove successfully !';
   };
