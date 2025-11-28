@@ -169,13 +169,14 @@ class OrderService {
       userId: createObjectId(userId)
     } as IOrder;
     const created = await orderRepo.createNew(newOrder);
+    await cartRepo.deleteMulty(items, userId);
     if (paymentMethod === 'bank_transfer') {
-      const checkoutUrk = clientSepay.checkout.initCheckoutUrl();
+      const checkoutURL = clientSepay.checkout.initCheckoutUrl();
       const checkoutFormfields = clientSepay.checkout.initOneTimePaymentFields({
         operation: 'PURCHASE',
         payment_method: 'BANK_TRANSFER',
         order_invoice_number: newOrder.orderNumber,
-        order_amount: newOrder.totalAmount,
+        order_amount: 20000,
         currency: 'VND',
         order_description: `Thanh toan don hang ${newOrder.orderNumber}`
         // success_url: 'https://example.com/order/DH123?payment=success',
@@ -183,8 +184,17 @@ class OrderService {
         // cancel_url: 'https://example.com/order/DH123?payment=cancel'
       });
       return {
-        checkoutUrk,
-        checkoutFormfields
+        form: `
+            <form action="${checkoutURL}" method="POST" class="form-payment">
+              ${(Object.keys(checkoutFormfields) as Array<keyof typeof checkoutFormfields>)
+                .map(
+                  (field) =>
+                    `<input type="hidden" name="${field}" value="${checkoutFormfields[field]}" />`
+                )
+                .join('\n')}
+              <button type="submit">Pay now</button>
+            </form>
+          `
       };
     } else {
       return {
