@@ -5,8 +5,7 @@
 
 import { BAD_REQUEST } from '~/core/errors.response';
 import { cartRepo } from '~/models/repositories/cart.repo';
-import { createObjectId } from '~/utils/format';
-import { v4 as uuidv4 } from 'uuid';
+import { createObjectId, generateOrderNumber } from '~/utils/format';
 import { IOrder } from '~/models/order.model';
 import { addressRepo } from '~/models/repositories/address.repo';
 import { Types } from 'mongoose';
@@ -100,10 +99,9 @@ class OrderService {
         address: getAddres.streetAddress
       }
     );
-    const orderNumber = uuidv4();
     const viewOrder: Partial<IOrder> = {
       userId: createObjectId(userId),
-      orderNumber,
+      orderNumber: generateOrderNumber(),
       orderStatus: 'pending',
       items: cartDetail.map((c) => {
         const item = {
@@ -168,9 +166,10 @@ class OrderService {
       paymentStatus: 'pending',
       userId: createObjectId(userId)
     } as IOrder;
-    const created = await orderRepo.createNew(newOrder);
     await cartRepo.deleteMulty(items, userId);
     if (paymentMethod === 'bank_transfer') {
+      newOrder.paymentStatus = 'unpaid';
+      const created = await orderRepo.createNew(newOrder);
       const checkoutURL = clientSepay.checkout.initCheckoutUrl();
       const checkoutFormfields = clientSepay.checkout.initOneTimePaymentFields({
         operation: 'PURCHASE',
@@ -194,9 +193,11 @@ class OrderService {
                 .join('\n')}
               <button type="submit">Pay now</button>
             </form>
-          `
+          `,
+        order: created
       };
     } else {
+      const created = await orderRepo.createNew(newOrder);
       return {
         order: created
       };
@@ -272,7 +273,8 @@ class OrderService {
       });
       return {
         createOrderDelivery,
-        orderDelivery
+        orderDelivery,
+        quotation
       };
     }
   };
