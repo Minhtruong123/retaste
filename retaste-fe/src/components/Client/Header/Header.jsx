@@ -3,6 +3,7 @@ import styles from "./Header.module.css";
 import { NavLink } from "react-router-dom";
 import * as authService from "../../../service/auth_service";
 import * as cartService from "../../../service/cart_service";
+import { useCart } from "../Pages/CartContext";
 
 export default function Header() {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
@@ -10,29 +11,11 @@ export default function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [cartBounce, setCartBounce] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
+  const { cartItems, fetchCart, setCartItems } = useCart();
   const [loadingCart, setLoadingCart] = useState(false);
 
   const cartDropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
-
-  const fetchCartData = async () => {
-    if (!user) {
-      setCartItems([]);
-      return;
-    }
-
-    try {
-      setLoadingCart(true);
-      const data = await cartService.getCartDetail();
-      setCartItems(data.products || []);
-    } catch (error) {
-      console.error("Error fetching cart:", error);
-      setCartItems([]);
-    } finally {
-      setLoadingCart(false);
-    }
-  };
 
   useEffect(() => {
     const userInfo = localStorage.getItem("user");
@@ -59,7 +42,6 @@ export default function Header() {
     const handleCartBounce = () => {
       console.log("Cart bounce triggered!");
       setCartBounce(true);
-      fetchCartData();
       setTimeout(() => {
         setCartBounce(false);
       }, 600);
@@ -73,10 +55,6 @@ export default function Header() {
       window.removeEventListener("cartBounce", handleCartBounce);
     };
   }, []);
-
-  useEffect(() => {
-    fetchCartData();
-  }, [user]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuActive(!isMobileMenuActive);
@@ -94,7 +72,7 @@ export default function Header() {
     e.preventDefault();
     setShowCartDropdown(!showCartDropdown);
     if (!showCartDropdown) {
-      fetchCartData();
+      fetchCart?.();
     }
   };
 
@@ -127,8 +105,7 @@ export default function Header() {
       if (action === "increase") {
         await cartService.updateCartQuantity(productId, createdAt);
       }
-
-      await fetchCartData();
+      await fetchCart();
     } catch (error) {
       console.error("Error updating quantity:", error);
       alert(error || "Cập nhật số lượng thất bại");
@@ -138,7 +115,7 @@ export default function Header() {
   const handleRemoveItem = async (productId, createdAt) => {
     try {
       await cartService.removeFromCart(productId, createdAt);
-      await fetchCartData();
+      await fetchCart();
     } catch (error) {
       console.error("Error removing item:", error);
       alert(error || "Xóa sản phẩm thất bại");
@@ -168,7 +145,6 @@ export default function Header() {
   };
 
   const getTotalQuantity = () => {
-    if (!cartItems || cartItems.length === 0) return 0;
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./DetailProductPage.module.css";
 import * as productsService from "../../../service/products_service";
-import * as cartService from "../../../service/cart_service";
 import { useCart } from "./CartContext";
 
 export default function DetailProductPage() {
@@ -172,6 +171,7 @@ export default function DetailProductPage() {
       };
 
       await addToCartContext(cartData);
+      window.dispatchEvent(new Event("cartBounce"));
 
       setIsInCart(true);
       setTimeout(() => {
