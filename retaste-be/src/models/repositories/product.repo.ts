@@ -163,7 +163,7 @@ const getDetail = async (id: string) => {
       $unwind: '$categorie'
     }
   ]);
-  return result;
+  return result[0];
 };
 const getRelated = async (categories: ObjectId[], lastestProduct: ObjectId[]) => {
   return await Product.find({
