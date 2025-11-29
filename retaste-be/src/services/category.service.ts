@@ -1,5 +1,6 @@
 import { BAD_REQUEST } from '~/core/errors.response';
 import { categoryRepo } from '~/models/repositories/category.repo';
+import { productRepo } from '~/models/repositories/product.repo';
 import { customSlug } from '~/utils/format';
 
 class CategoryService {
@@ -26,6 +27,9 @@ class CategoryService {
     },
     id: string
   ) => {
+    const { isActive } = data;
+    const getCategory = await categoryRepo.findOneById(id);
+    if (!getCategory) throw new BAD_REQUEST('Category is not exist !');
     const updated = await categoryRepo.update(
       {
         ...data,
@@ -34,6 +38,13 @@ class CategoryService {
       id
     );
     if (!updated.matchedCount) throw new BAD_REQUEST("Cann't updaet category !");
+    if (getCategory.isActive === false && isActive === true) {
+      //
+    }
+    if (getCategory.isActive === true && isActive === false) {
+      //
+    }
+
     return 'Update sucess !';
   };
   static getListCategory = async (query: {
@@ -55,6 +66,8 @@ class CategoryService {
   static delete = async (id: string) => {
     const deleted = await categoryRepo.deleteById(id);
     if (!deleted.matchedCount) throw new BAD_REQUEST("Cann't delete category !");
+    const deletedProd = await productRepo.deleteByCategoryId(id);
+    if (!deletedProd.matchedCount) throw new BAD_REQUEST("Cann't delete category !");
     return deleted;
   };
   static getDetail = async (id: string) => {

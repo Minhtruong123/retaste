@@ -3,22 +3,6 @@ import { Schema, model } from 'mongoose';
 export const DOCUMENT_USER = 'User';
 const COLLECTION_NAME = 'users';
 
-// export interface IAddress {
-//   addressType?: 'home' | 'work' | 'other';
-//   streetAddress: string;
-//   city: string;
-//   state?: string;
-//   postalCode?: string;
-//   country: string;
-//   location?: {
-//     type?: 'Point';
-//     coordinates: [number, number];
-//   };
-//   isDefault?: boolean;
-//   deliveryInstructions?: string;
-//   createdAt?: Date;
-// }
-
 export interface IUser {
   email: string;
   phoneNumber?: string;
@@ -60,9 +44,6 @@ const userSchema = new Schema<IUser>(
     timestamps: true
   }
 );
-
-userSchema.index({ email: 1 });
-userSchema.index({ phoneNumber: 1 });
 
 const User = model<IUser>(DOCUMENT_USER, userSchema);
 

@@ -51,7 +51,7 @@ const productSchema = new Schema<IProduct>(
 productSchema.index({ categoryId: 1 });
 productSchema.index({ isDeleted: 1 });
 productSchema.index({ isAvailable: 1, isFeatured: -1 });
-const Product = model(DOCUMENT_PRODUCT, productSchema);
+const Product = model<IProduct>(DOCUMENT_PRODUCT, productSchema);
 
 export const productModel = {
   COLLECTION_NAME,

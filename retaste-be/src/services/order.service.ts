@@ -1,8 +1,3 @@
-/**
- * view order
- * create order
- */
-
 import { BAD_REQUEST } from '~/core/errors.response';
 import { cartRepo } from '~/models/repositories/cart.repo';
 import { createObjectId, generateOrderNumber } from '~/utils/format';
@@ -11,7 +6,7 @@ import { addressRepo } from '~/models/repositories/address.repo';
 import { Types } from 'mongoose';
 import { lalaMoveProvider } from '~/providers/lalamove.provider';
 import { orderRepo } from '~/models/repositories/order.repo';
-import { clientSepay } from '~/providers/sepay.provider';
+import { cancelOrder, clientSepay } from '~/providers/sepay.provider';
 import { deliveryRepo } from '~/models/repositories/delivery.repo';
 import { userRepo } from '~/models/repositories/user.repo';
 class OrderService {
@@ -175,12 +170,9 @@ class OrderService {
         operation: 'PURCHASE',
         payment_method: 'BANK_TRANSFER',
         order_invoice_number: newOrder.orderNumber,
-        order_amount: 20000,
+        order_amount: newOrder.totalAmount,
         currency: 'VND',
         order_description: `Thanh toan don hang ${newOrder.orderNumber}`
-        // success_url: 'https://example.com/order/DH123?payment=success',
-        // error_url: 'https://example.com/order/DH123?payment=error',
-        // cancel_url: 'https://example.com/order/DH123?payment=cancel'
       });
       return {
         form: `
@@ -281,7 +273,11 @@ class OrderService {
   static cancel = async (orderId: string, userId: string) => {
     const getOrder = await orderRepo.getOrderByUserId(orderId, userId);
     if (!getOrder) throw new BAD_REQUEST('Order is not exist !');
-    if (getOrder.orderStatus === 'success')
+    if (
+      getOrder.orderStatus === 'success' ||
+      getOrder.orderStatus === 'out_for_delivery' ||
+      getOrder.orderStatus === 'cancelled'
+    )
       throw new BAD_REQUEST('Cannot cancel delivered order !');
     if (getOrder.orderStatus === 'confirmed') {
       const getDelivery = await deliveryRepo.getDeliveryByOrderId(orderId);
@@ -295,6 +291,10 @@ class OrderService {
         updated,
         cancelDelivery
       };
+    }
+    if (getOrder.paymentMethod === 'bank_transfer' && getOrder.paymentStatus === 'paid') {
+      const refund = await cancelOrder(getOrder.orderNumber);
+      console.log(refund);
     }
     const updated = await orderRepo.changeStatus('cancelled', orderId);
     return updated;
@@ -334,12 +334,16 @@ class OrderService {
     );
   };
   static getDetail = async (orderId: string) => {
-    return await orderRepo.getDetail(orderId);
+    const result = await orderRepo.getDetail(orderId);
+    if (!result) throw new BAD_REQUEST('Order is not exist !');
+    return result;
   };
   static getDetailByUser = async (orderId: string, userId: string) => {
-    return await orderRepo.getDetail(orderId, {
+    const result = await orderRepo.getDetail(orderId, {
       userId: createObjectId(userId)
     });
+    if (!result) throw new BAD_REQUEST('Order is not exist !');
+    return result;
   };
 }
 export default OrderService;

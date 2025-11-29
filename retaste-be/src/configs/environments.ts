@@ -21,6 +21,8 @@ const env: {
   ACCESS_TOKEN_LIFE: string;
   REFRESH_TOKEN_SECRET_SIGNATURE: string;
   REFRESH_TOKEN_LIFE: string;
+  SEPAY_SECRET_KEY_DEV: string;
+  SEPAY_MERCHANT_ID_DEV: string;
 } = {
   APP_PORT: parseInt(process.env.APP_PORT || '3000', 10),
   APP_HOST: process.env.APP_HOST || 'localhost',
@@ -41,6 +43,8 @@ const env: {
   ACCESS_TOKEN_SECRET_SIGNATURE: process.env.ACCESS_TOKEN_SECRET_SIGNATURE || '',
   ACCESS_TOKEN_LIFE: process.env.ACCESS_TOKEN_LIFE || '',
   REFRESH_TOKEN_SECRET_SIGNATURE: process.env.REFRESH_TOKEN_SECRET_SIGNATURE || '',
-  REFRESH_TOKEN_LIFE: process.env.REFRESH_TOKEN_LIFE || ''
+  REFRESH_TOKEN_LIFE: process.env.REFRESH_TOKEN_LIFE || '',
+  SEPAY_SECRET_KEY_DEV: process.env.SEPAY_SECRET_KEY_DEV || '',
+  SEPAY_MERCHANT_ID_DEV: process.env.SEPAY_MERCHANT_ID_DEV || ''
 };
 export default env;

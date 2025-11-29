@@ -188,5 +188,33 @@ class CategoryService {
     const relatedProduct = productRepo.getRelated(categories, lastestProduct);
     return relatedProduct;
   };
+  static getListProductUser = async (query: {
+    limit: number;
+    page: number;
+    keyWord: string;
+    sortKey?: string | undefined;
+    sortValue?: 1 | -1 | undefined;
+  }) => {
+    const { limit, page, keyWord, sortKey, sortValue } = query;
+    return await productRepo.getListProduct(
+      {
+        limit,
+        page,
+        keyWord,
+        sortKey,
+        sortValue
+      },
+      {
+        isAvailable: true
+      }
+    );
+  };
+  static getDetailUser = async (id: string) => {
+    const getProduct = await productRepo.getDetail(id, {
+      isAvailable: true
+    });
+    if (!getProduct) throw new BAD_REQUEST('Product is not exist !');
+    return getProduct || null;
+  };
 }
 export default CategoryService;
