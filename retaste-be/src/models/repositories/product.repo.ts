@@ -28,13 +28,16 @@ const update = async (data: Partial<IProduct>, id: string) => {
     }
   );
 };
-const getListProduct = async (option: {
-  limit: number;
-  page: number;
-  keyWord: string | undefined;
-  sortKey?: string;
-  sortValue?: 1 | -1 | undefined;
-}) => {
+const getListProduct = async (
+  option: {
+    limit: number;
+    page: number;
+    keyWord: string | undefined;
+    sortKey?: string;
+    sortValue?: 1 | -1 | undefined;
+  },
+  choice: Partial<IProduct> = {}
+) => {
   const { limit, page, keyWord, sortKey, sortValue } = option;
   const query: Record<string, string | object> = {};
   if (keyWord) {
@@ -59,7 +62,8 @@ const getListProduct = async (option: {
     {
       $match: {
         ...query,
-        isDeleted: false
+        isDeleted: false,
+        ...choice
       }
     },
     {
@@ -101,12 +105,40 @@ const deleteProduct = async (id: string) => {
     }
   );
 };
-const getDetail = async (id: string) => {
+const deleteByCategoryId = async (categoryId: string) => {
+  return Product.updateMany(
+    {
+      categoryId: createObjectId(categoryId),
+      isDeleted: false
+    },
+    {
+      $set: {
+        isDeleted: true
+      }
+    }
+  );
+};
+const restoreByCategoryId = async (categoryId: string) => {
+  return Product.updateMany(
+    {
+      categoryId: createObjectId(categoryId),
+      isDeleted: true,
+      isActive: true
+    },
+    {
+      $set: {
+        isDeleted: true
+      }
+    }
+  );
+};
+const getDetail = async (id: string, option: Partial<IProduct> = {}) => {
   const result = await Product.aggregate([
     {
       $match: {
         _id: createObjectId(id),
-        isDeleted: false
+        isDeleted: false,
+        ...option
       }
     },
     {
@@ -179,7 +211,8 @@ const getRelated = async (categories: ObjectId[], lastestProduct: ObjectId[]) =>
   return await Product.find({
     categoryId: { $in: categories },
     isDeleted: false,
-    _id: { $nin: lastestProduct }
+    _id: { $nin: lastestProduct },
+    isActive: true
   });
 };
 export const productRepo = {
@@ -189,5 +222,7 @@ export const productRepo = {
   deleteProduct,
   getDetail,
   findOneById,
-  getRelated
+  getRelated,
+  deleteByCategoryId,
+  restoreByCategoryId
 };

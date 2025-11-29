@@ -1,6 +1,6 @@
 import { createObjectId } from '~/utils/format';
 import Order, { IOrder } from '../order.model';
-import { DOCUMENT_USER } from '../user.model';
+import { DOCUMENT_USER, userModel } from '../user.model';
 import { DOCUMENT_ADDRESS } from '../address.model';
 import { DOCUMENT_PRODUCT } from '../product.model';
 const findOneById = async (id: string) => {
@@ -88,12 +88,13 @@ const getListOrder = async (option: {
     {
       $match: {
         isDeleted: false,
+        paymentStatus: { $ne: 'unpaid' },
         ...query
       }
     },
     {
       $lookup: {
-        from: DOCUMENT_USER,
+        from: userModel.COLLECTION_NAME,
         foreignField: '_id',
         localField: 'userId',
         as: 'user',
@@ -107,13 +108,13 @@ const getListOrder = async (option: {
       }
     },
     {
+      $unwind: '$user'
+    },
+    {
       $limit: limit
     },
     {
       $skip: skip
-    },
-    {
-      $sort: sort
     }
   ]);
 };
@@ -137,8 +138,9 @@ const getListOrderUser = async (
   }
   return await Order.find({
     isDeleted: false,
-    ...query,
-    userId: createObjectId(userId)
+    userId: createObjectId(userId),
+    paymentStatus: { $ne: 'unpaid' },
+    ...query
   })
     .limit(limit)
     .skip((page - 1) * limit)
@@ -148,6 +150,7 @@ const getDetail = async (orderId: string, option: Partial<IOrder> = {}) => {
   return await Order.findOne({
     _id: createObjectId(orderId),
     isDeleted: false,
+    paymentStatus: { $ne: 'unpaid' },
     ...option
   })
     .populate({

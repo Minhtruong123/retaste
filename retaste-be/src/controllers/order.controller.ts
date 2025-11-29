@@ -49,7 +49,7 @@ class OrderController {
       const orderId = req.params.orderId;
       if (!orderId) throw new BAD_REQUEST('OrderId is required !');
       new OK({
-        metadata: (await OrderService.getDetail(orderId)) || {}
+        metadata: await OrderService.getDetail(orderId)
       }).send(res);
     } catch (error) {
       next(error);
@@ -60,7 +60,7 @@ class OrderController {
       const orderId = req.params.orderId;
       if (!orderId) throw new BAD_REQUEST('OrderId is required !');
       new OK({
-        metadata: (await OrderService.getDetailByUser(orderId, req.user.userId)) || {}
+        metadata: await OrderService.getDetailByUser(orderId, req.user.userId)
       }).send(res);
     } catch (error) {
       next(error);

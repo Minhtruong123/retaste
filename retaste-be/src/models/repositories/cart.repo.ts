@@ -54,14 +54,14 @@ const addProduct = async (
     }
   );
 };
-const removeProduct = async (userId: string, index: number) => {
+const removeProduct = async (id: string, userId: string) => {
   return await Cart.updateOne(
     {
       userId: createObjectId(userId)
     },
     {
-      $unset: {
-        [`products.${index}`]: 1
+      $pull: {
+        products: { _id: createObjectId(id) }
       }
     }
   );
@@ -207,6 +207,18 @@ const deleteMulty = async (ids: string[], userId: string) => {
   );
 };
 
+const updateQuantity = async (id: string, qty: number, userId: string) => {
+  return await Cart.updateOne(
+    {
+      userId: createObjectId(userId),
+      'products._id': createObjectId(id)
+    },
+    {
+      $inc: { 'products.$.quantity': qty }
+    }
+  );
+};
+
 export const cartRepo = {
   createNew,
   findCartByUserId,
@@ -214,5 +226,6 @@ export const cartRepo = {
   removeProduct,
   getDetail,
   getCorrespondingProduct,
-  deleteMulty
+  deleteMulty,
+  updateQuantity
 };

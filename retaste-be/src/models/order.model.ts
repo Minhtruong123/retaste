@@ -14,7 +14,7 @@ export interface IOrder {
   orderNumber: string;
   deliveryAddress: Types.ObjectId;
   orderStatus: 'pending' | 'confirmed' | 'out_for_delivery' | 'success' | 'cancelled';
-  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded' | 'unpaid';
   paymentMethod: 'cash' | 'bank_transfer';
   items: {
     productId: Types.ObjectId;
