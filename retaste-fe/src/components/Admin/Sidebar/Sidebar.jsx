@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { logout } from "../../../service/auth_service";
+import { useAuth } from "../../../context/AuthContext";
 import styles from "./Sidebar.module.css";
 
 export default function Sidebar() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async (e) => {

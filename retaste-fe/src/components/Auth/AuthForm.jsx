@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styles from "./AuthForm.module.css";
-import * as authService from "../../service/auth_service";
 import { validateAuth } from "../../utils/validate";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AuthForm() {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const { login, register } = useAuth();
   const [signUpForm, setSignUpForm] = useState({
     fullName: "",
     email: "",
@@ -102,7 +103,7 @@ export default function AuthForm() {
     }
 
     try {
-      await authService.register({
+      await register({
         fullName: signUpForm.fullName,
         email: signUpForm.email,
         phoneNumber: signUpForm.phoneNumber,
@@ -129,7 +130,7 @@ export default function AuthForm() {
     setSignInSuccess("");
 
     try {
-      await authService.login({
+      await login({
         email: signInForm.email,
         password: signInForm.password,
       });

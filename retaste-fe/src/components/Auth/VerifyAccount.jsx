@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Spin, Alert } from "antd";
-import * as authService from "../../service/auth_service";
 import "./VerifyAccount.css";
+import { useAuth } from "../../context/AuthContext";
 
 export default function VerifyAccount() {
   const location = useLocation();
   const navigate = useNavigate();
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
+  const { verifyAccount } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -23,7 +24,7 @@ export default function VerifyAccount() {
 
     const verify = async () => {
       try {
-        await authService.verifyAccount(token);
+        await verifyAccount(token);
         setStatus("success");
         setMessage("Xác minh thành công! Đang chuyển hướng...");
         setTimeout(() => navigate("/auth"), 2000);
