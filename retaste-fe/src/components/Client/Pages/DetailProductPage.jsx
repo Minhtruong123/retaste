@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styles from "./DetailProductPage.module.css";
-import * as productsService from "../../../service/products_service";
 import { useCart } from "./CartContext";
+import { useProductService } from "../../../hooks/useProductService";
+import { useAuth } from "../../../context/AuthContext";
 
 export default function DetailProductPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { cartItems, addToCart: addToCartContext } = useCart();
+  const { addToCart: addToCartContext } = useCart();
+  const { getDetailProduct } = useProductService();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,7 +26,7 @@ export default function DetailProductPage() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const data = await productsService.getDetailProduct(productId);
+        const data = await getDetailProduct(productId);
         setProduct(data);
 
         if (data.sizes && data.sizes.length > 0) {

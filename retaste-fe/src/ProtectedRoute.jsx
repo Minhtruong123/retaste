@@ -1,12 +1,24 @@
+// src/components/ProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../src/context/AuthContext";
 
-export default function ProtectedRoute({ children, role }) {
-  const userRole = localStorage.getItem("role");
+export default function ProtectedRoute({ children, requiredRole }) {
+  const { isAuthenticated, role, loading } = useAuth();
 
-  if (!userRole) return <Navigate to="/auth" />;
+  if (loading) return <div>Đang tải...</div>;
 
-  if (role && userRole !== role) {
-    return <Navigate to="/auth" />;
+  if (!isAuthenticated) {
+    const currentPath = window.location.pathname + window.location.search;
+    return (
+      <Navigate
+        to={`/auth?redirect=${encodeURIComponent(currentPath)}`}
+        replace
+      />
+    );
+  }
+
+  if (requiredRole && role !== requiredRole) {
+    return <Navigate to="/403" replace />;
   }
 
   return children;
