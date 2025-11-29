@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styles from "./MenuPage.module.css";
 import { useNavigate } from "react-router-dom";
-import * as productsService from "../../../service/products_service";
+import { useProductService } from "../../../hooks/useProductService";
 
 export default function MenuPage() {
   const navigate = useNavigate();
@@ -11,6 +11,10 @@ export default function MenuPage() {
 
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortOption, setSortOption] = useState("popular");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const limit = 8;
 
   const [filters, setFilters] = useState({
     priceMin: "",
@@ -21,15 +25,13 @@ export default function MenuPage() {
   const [activeFilters, setActiveFilters] = useState([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
-  const limit = 8;
+  const { getListProduct } = useProductService();
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
-      const data = await productsService.getListProduct({
+      const data = await getListProduct({
         page: currentPage,
         limit,
         sortKey: getSortKey(sortOption),
@@ -68,12 +70,18 @@ export default function MenuPage() {
   const getSortValue = (opt) => (opt === "price-asc" ? "1" : "-1");
 
   const filteredProducts = products.filter((p) => {
-    if (activeCategory !== "all" && p.category !== activeCategory) return false;
-
-    if (filters.priceMin && p.price < Number(filters.priceMin)) return false;
-    if (filters.priceMax && p.price > Number(filters.priceMax)) return false;
-    if (filters.rating && p.rating < Number(filters.rating)) return false;
-
+    if (
+      activeCategory !== "all" &&
+      p.category?._id !== activeCategory &&
+      p.category !== activeCategory
+    )
+      return false;
+    if (filters.priceMin && p.basePrice < Number(filters.priceMin))
+      return false;
+    if (filters.priceMax && p.basePrice > Number(filters.priceMax))
+      return false;
+    if (filters.rating && (p.rating || 0) < Number(filters.rating))
+      return false;
     if (filters.features) {
       const map = {
         vegetarian: p.isVegetarian,

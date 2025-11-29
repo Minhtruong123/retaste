@@ -1,87 +1,89 @@
-import api from "./api";
-import qs from "qs";
+// import { useApi } from "../hooks/use_api";
+// import qs from "qs";
 
-export const getListProduct = async (query = {}) => {
-  try {
-    const processedQuery = {
-      ...query,
-      sortOrder: query.sortValue,
-      sortValue: undefined,
-    };
+// const api = useApi();
 
-    const queryString = qs.stringify(processedQuery, {
-      encode: false,
-      skipNulls: true,
-    });
+// export const getListProduct = async (query = {}) => {
+//   try {
+//     const processedQuery = {
+//       ...query,
+//       sortOrder: query.sortValue,
+//       sortValue: undefined,
+//     };
 
-    const url = `/product/list-product${queryString ? `?${queryString}` : ""}`;
+//     const queryString = qs.stringify(processedQuery, {
+//       encode: false,
+//       skipNulls: true,
+//     });
 
-    const { data } = await api.get(url);
+//     const url = `/product/list-product${queryString ? `?${queryString}` : ""}`;
 
-    return data.metadata || data;
-  } catch (error) {
-    throw error.response?.data?.message || "Lấy danh sách sản phẩm thất bại";
-  }
-};
+//     const { data } = await api.get(url);
 
-export const createProductAdmin = async (productData) => {
-  try {
-    const { data } = await api.post("/product/create", productData);
-    return data.metadata || data;
-  } catch (error) {
-    throw error.response?.data?.message || "Tạo sản phẩm thất bại";
-  }
-};
+//     return data.metadata || data;
+//   } catch (error) {
+//     throw error.response?.data?.message || "Lấy danh sách sản phẩm thất bại";
+//   }
+// };
 
-export const updateProductAdmin = async (productId, productData) => {
-  try {
-    const { data } = await api.patch(
-      `/product/update/${productId}`,
-      productData
-    );
-    return data.metadata || data;
-  } catch (error) {
-    throw error.response?.data?.message || "Cập nhật sản phẩm thất bại";
-  }
-};
+// export const createProductAdmin = async (productData) => {
+//   try {
+//     const { data } = await api.post("/product/create", productData);
+//     return data.metadata || data;
+//   } catch (error) {
+//     throw error.response?.data?.message || "Tạo sản phẩm thất bại";
+//   }
+// };
 
-export const deleteProductAdmin = async (productId) => {
-  try {
-    const { data } = await api.delete(`/product/delete/${productId}`);
-    return data.metadata || data;
-  } catch (error) {
-    throw error.response?.data?.message || "Xóa sản phẩm thất bại";
-  }
-};
+// export const updateProductAdmin = async (productId, productData) => {
+//   try {
+//     const { data } = await api.patch(
+//       `/product/update/${productId}`,
+//       productData
+//     );
+//     return data.metadata || data;
+//   } catch (error) {
+//     throw error.response?.data?.message || "Cập nhật sản phẩm thất bại";
+//   }
+// };
 
-export const getDetailProduct = async (productId) => {
-  try {
-    const data = await api.get(`/product/detail/${productId}`);
-    console.log(data.data.metadata);
+// export const deleteProductAdmin = async (productId) => {
+//   try {
+//     const { data } = await api.delete(`/product/delete/${productId}`);
+//     return data.metadata || data;
+//   } catch (error) {
+//     throw error.response?.data?.message || "Xóa sản phẩm thất bại";
+//   }
+// };
 
-    return data.data.metadata;
-  } catch (error) {
-    throw error.response?.data?.message || "Lấy chi tiết sản phẩm thất bại";
-  }
-};
+// export const getDetailProduct = async (productId) => {
+//   try {
+//     const data = await api.get(`/product/detail/${productId}`);
+//     console.log(data.data.metadata);
 
-export const getRetasteProducts = async () => {
-  try {
-    const { data } = await api.get("/product/retaste");
+//     return data.data.metadata;
+//   } catch (error) {
+//     throw error.response?.data?.message || "Lấy chi tiết sản phẩm thất bại";
+//   }
+// };
 
-    console.log("Retaste response:", data);
-    const products = data.metadata ?? data;
+// export const getRetasteProducts = async () => {
+//   try {
+//     const { data } = await api.get("/product/retaste");
 
-    if (Array.isArray(products)) {
-      return products;
-    }
+//     console.log("Retaste response:", data);
+//     const products = data.metadata ?? data;
 
-    return [];
-  } catch (error) {
-    console.warn(
-      "Không lấy được retaste (có thể chưa có đơn):",
-      error.response?.data || error.message
-    );
-    return [];
-  }
-};
+//     if (Array.isArray(products)) {
+//       return products;
+//     }
+
+//     return [];
+//   } catch (error) {
+//     console.warn(
+//       "Không lấy được retaste (có thể chưa có đơn):",
+//       error.response?.data || error.message
+//     );
+//     return [];
+//   }
+// };

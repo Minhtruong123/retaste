@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./CategoryManagement.module.css";
-import * as categoryService from "../../../service/categories_service";
+import { useCategoryService } from "../../../hooks/useCategoryService";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function CategoryManagement() {
@@ -12,8 +12,9 @@ export default function CategoryManagement() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortBy, setSortBy] = useState("name");
   const [imageFile, setImageFile] = useState(null);
+  const { getListCategory, createCategory, updateCategory, deleteCategory } =
+    useCategoryService();
 
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
@@ -25,7 +26,7 @@ export default function CategoryManagement() {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const data = await categoryService.getListCategory({
+      const data = await getListCategory({
         limit: "21",
         page: "1",
         keyWord: "",
@@ -60,7 +61,6 @@ export default function CategoryManagement() {
       return 0;
     });
 
-  // Calculate pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredCategories.slice(
@@ -71,7 +71,6 @@ export default function CategoryManagement() {
     filteredCategories.length / itemsPerPage
   );
 
-  // Pagination helpers
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -86,7 +85,6 @@ export default function CategoryManagement() {
 
   useEffect(() => {
     setTotalPages(Math.ceil(filteredCategories.length / itemsPerPage));
-    // Reset to first page when filters change
     setCurrentPage(1);
   }, [
     filteredCategories.length,
@@ -146,10 +144,10 @@ export default function CategoryManagement() {
 
     try {
       if (selectedCategory) {
-        await categoryService.updateCategory(selectedCategory._id, formData);
+        await updateCategory(selectedCategory._id, formData);
         toast.success("Cập nhật danh mục thành công!");
       } else {
-        await categoryService.createCategory(formData);
+        await createCategory(formData);
         toast.success("Tạo danh mục mới thành công!");
       }
 
@@ -167,7 +165,7 @@ export default function CategoryManagement() {
     if (!window.confirm("Bạn có chắc chắn muốn xóa danh mục này?")) return;
 
     try {
-      await categoryService.deleteCategory(id);
+      await deleteCategory(id);
       toast.success("Xóa danh mục thành công!");
       fetchCategories();
     } catch (error) {
@@ -191,7 +189,6 @@ export default function CategoryManagement() {
   };
 
   const toggleFeatured = async (categoryId) => {
-    // Implement toggle featured functionality
     toast.success("Cập nhật trạng thái nổi bật thành công!");
   };
 

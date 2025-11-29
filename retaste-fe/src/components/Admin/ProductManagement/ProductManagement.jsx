@@ -1,11 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
-import * as productsService from "../../../service/products_service";
+import { useProductService } from "../../../hooks/useProductService";
 import styles from "./ProductManagement.module.css";
 
 export default function ProductManagement() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const {
+    getListProduct,
+    createProductAdmin,
+    updateProductAdmin,
+    deleteProductAdmin,
+    getDetailProduct,
+    getRetasteProducts,
+  } = useProductService();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -25,7 +33,7 @@ export default function ProductManagement() {
   const loadProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await productsService.getListProduct();
+      const data = await getListProduct();
       setProducts(data.products || data || []);
     } catch (err) {
       setError("Không thể tải danh sách sản phẩm");
@@ -112,7 +120,7 @@ export default function ProductManagement() {
   const handleDeleteProduct = async () => {
     if (!deleteProductId) return;
     try {
-      await productsService.deleteProductAdmin(deleteProductId);
+      awaitdeleteProductAdmin(deleteProductId);
       setProducts((prev) => prev.filter((p) => p._id !== deleteProductId));
     } catch (err) {
       alert("Xóa thất bại");

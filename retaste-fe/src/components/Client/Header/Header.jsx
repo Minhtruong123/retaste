@@ -1,28 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./Header.module.css";
 import { NavLink } from "react-router-dom";
-import * as authService from "../../../service/auth_service";
-import * as cartService from "../../../service/cart_service";
 import { useCart } from "../Pages/CartContext";
+import { useAuth } from "../../../context/AuthContext";
+import { useCartService } from "../../../hooks/useCartService";
 
 export default function Header() {
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
-  const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [cartBounce, setCartBounce] = useState(false);
+
   const { cartItems, fetchCart, setCartItems } = useCart();
   const [loadingCart, setLoadingCart] = useState(false);
+  const { user, logout } = useAuth();
+  const { updateCartQuantity, removeFromCart } = useCartService();
 
   const cartDropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
 
   useEffect(() => {
-    const userInfo = localStorage.getItem("user");
-    if (userInfo) {
-      setUser(JSON.parse(userInfo));
-    }
-
     const handleClickOutside = (event) => {
       if (
         cartDropdownRef.current &&
@@ -40,7 +37,6 @@ export default function Header() {
     };
 
     const handleCartBounce = () => {
-      console.log("Cart bounce triggered!");
       setCartBounce(true);
       setTimeout(() => {
         setCartBounce(false);
@@ -78,7 +74,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      await authService.logout();
+      await logout();
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
@@ -97,28 +93,18 @@ export default function Header() {
     try {
       if (action === "decrease" && currentQuantity <= 1) {
         if (window.confirm("Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?")) {
-          await handleRemoveItem(productId, createdAt);
+          await removeFromCart(productId, createdAt);
         }
         return;
       }
 
       if (action === "increase") {
-        await cartService.updateCartQuantity(productId, createdAt);
+        await updateCartQuantity(productId, createdAt);
       }
       await fetchCart();
     } catch (error) {
       console.error("Error updating quantity:", error);
       alert(error || "Cập nhật số lượng thất bại");
-    }
-  };
-
-  const handleRemoveItem = async (productId, createdAt) => {
-    try {
-      await cartService.removeFromCart(productId, createdAt);
-      await fetchCart();
-    } catch (error) {
-      console.error("Error removing item:", error);
-      alert(error || "Xóa sản phẩm thất bại");
     }
   };
 
