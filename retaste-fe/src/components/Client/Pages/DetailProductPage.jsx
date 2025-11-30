@@ -27,6 +27,8 @@ export default function DetailProductPage() {
       try {
         setLoading(true);
         const data = await getDetailProduct(productId);
+        console.log(data);
+
         setProduct(data);
 
         if (data.sizes && data.sizes.length > 0) {

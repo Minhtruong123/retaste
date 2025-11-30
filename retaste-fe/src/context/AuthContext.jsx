@@ -36,7 +36,6 @@ export const AuthProvider = ({ children }) => {
   ).current;
 
   const authDataRef = useRef({ accessToken: null, user: null });
-  
   useEffect(() => {
     authDataRef.current = { accessToken, user };
   }, [accessToken, user]);
@@ -61,10 +60,8 @@ export const AuthProvider = ({ children }) => {
 
         if (error.response?.status === 410 && !originalRequest._retry) {
           originalRequest._retry = true;
-
           const refreshToken = localStorage.getItem("refreshToken");
           const storedUser = JSON.parse(localStorage.getItem("user") || "null");
-
           if (!refreshToken || !storedUser?._id) {
             logoutRef.current?.();
             return Promise.reject(error);
