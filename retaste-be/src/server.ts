@@ -9,11 +9,14 @@ import corsOptions from './configs/cors';
 import './configs/database';
 import { errorHandling } from './middlewares/errorsHandle.middleware';
 import { indexRoute } from './routers';
-
+import './cron-job';
 const API_V1 = '/api/v1';
 const app = express();
 
-// init middleware
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
 app.use(helmet());
 app.use(compression());
 app.use(morgan(env.BUILD_MODE));
@@ -28,9 +31,3 @@ app.use(errorHandling);
 app.listen(env.APP_PORT, env.APP_HOST, () => {
   console.log(`App is running on http://${env.APP_HOST}:${env.APP_PORT} !`);
 });
-/**
- * curd nhan vien,
- * doanh thu theo ngày tạo bảng
- * tạo ca nhân viên
- *
- */

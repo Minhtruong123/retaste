@@ -23,7 +23,7 @@ class OptionService {
     return 'Create successfully';
   };
   static getOption = async (productId: string) => {
-    const option = optionRepo.getOptionByCustomId(productId);
+    const option = await optionRepo.getOptionByCustomId(productId);
     return option;
   };
   static update = async (

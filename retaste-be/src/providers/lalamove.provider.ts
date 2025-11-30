@@ -124,6 +124,7 @@ const createOrder = async (
 ) => {
   const body = JSON.stringify({
     data: {
+      serviceType: 'MOTORCYCLE',
       quotationId: quotation.quotationId,
       sender: {
         stopId: quotation.stops[0].stopId,

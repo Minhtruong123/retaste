@@ -1,0 +1,455 @@
+.paymentPage {
+  background-color: var(--background);
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.paymentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.paymentHeader h1 {
+  font-size: 1.8rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--white);
+  padding: 8px 16px;
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.timerIcon {
+  font-size: 1.2rem;
+}
+
+.timerWarning {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.paymentContent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+/* Left column: Payment summary */
+.paymentSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.orderSummary {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  padding: 25px;
+  box-shadow: var(--shadow);
+}
+
+.orderSummary h2 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--text);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
+}
+
+.orderItems {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.orderItem {
+  display: flex;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.orderItem:last-child {
+  border-bottom: none;
+}
+
+.itemImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-right: 15px;
+}
+
+.itemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemDetails {
+  flex: 1;
+}
+
+.itemDetails h3 {
+  font-size: 0.95rem;
+  margin-bottom: 5px;
+  color: var(--text);
+}
+
+.itemOptions {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 5px;
+}
+
+.itemQuantity {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.itemTotal {
+  font-weight: 600;
+  color: var(--secondary);
+  align-self: center;
+}
+
+.totalAmount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 2px solid var(--border-color);
+}
+
+.totalLabel {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.totalValue {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.securityNote {
+  background-color: var(--primary-light);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.securityIcon {
+  font-size: 1.5rem;
+}
+
+.securityText p {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+/* Right column: Payment form */
+.paymentForm {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  padding: 25px;
+  box-shadow: var(--shadow);
+}
+
+.paymentForm h2 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.paymentMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.methodCard {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+
+.methodCard:hover {
+  border-color: var(--primary);
+}
+
+.methodCard.selected {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+.methodCard input {
+  position: absolute;
+  opacity: 0;
+}
+
+.methodContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.methodIcon {
+  font-size: 1.3rem;
+}
+
+.cardBrands {
+  display: flex;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.cardBrands span {
+  background-color: var(--light-gray);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.cardForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.formGroup label {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.formGroup input {
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.formGroup input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.inputError {
+  border-color: #e74c3c !important;
+}
+
+.errorMessage {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 3px;
+}
+
+.formRow {
+  display: flex;
+  gap: 15px;
+}
+
+.formRow .formGroup {
+  flex: 1;
+}
+
+.momoInfo,
+.bankingInfo {
+  margin-bottom: 30px;
+}
+
+.qrContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.qrPlaceholder {
+  width: 200px;
+  height: 200px;
+  background-color: var(--light-gray);
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.momoInstructions,
+.bankingInstructions {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.bankList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.bankOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.bankOption:hover {
+  border-color: var(--primary);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.cancelButton,
+.payButton {
+  padding: 15px 20px;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.cancelButton {
+  flex: 0.4;
+  background-color: var(--light-gray);
+  color: var(--text);
+  border: 1px solid var(--border-color);
+}
+
+.cancelButton:hover {
+  background-color: var(--gray);
+}
+
+.payButton {
+  flex: 1;
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+}
+
+.payButton:hover {
+  background-color: var(--primary-dark);
+}
+
+.payButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loadingSpinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 992px) {
+  .paymentContent {
+    grid-template-columns: 1fr;
+  }
+
+  .paymentSummary {
+    order: 2;
+  }
+
+  .paymentForm {
+    order: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .paymentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .formRow {
+    flex-direction: column;
+  }
+
+  .bankList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .orderItem {
+    flex-direction: column;
+  }
+
+  .itemImage {
+    width: 100%;
+    height: 120px;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .itemTotal {
+    align-self: flex-end;
+    margin-top: 10px;
+  }
+}

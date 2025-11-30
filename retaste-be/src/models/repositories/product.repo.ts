@@ -10,7 +10,8 @@ import { ObjectId } from 'mongoose';
 const findOneById = async (id: string) => {
   return await Product.findOne({
     _id: createObjectId(id),
-    isDeleted: false
+    isDeleted: false,
+    isActive: true
   });
 };
 
@@ -21,20 +22,24 @@ const update = async (data: Partial<IProduct>, id: string) => {
   return await Product.updateOne(
     {
       _id: createObjectId(id),
-      isDeleted: false
+      isDeleted: false,
+      isActive: true
     },
     {
       $set: data
     }
   );
 };
-const getListProduct = async (option: {
-  limit: number;
-  page: number;
-  keyWord: string | undefined;
-  sortKey?: string;
-  sortValue?: 1 | -1 | undefined;
-}) => {
+const getListProduct = async (
+  option: {
+    limit: number;
+    page: number;
+    keyWord: string | undefined;
+    sortKey?: string;
+    sortValue?: 1 | -1 | undefined;
+  },
+  choice: Partial<IProduct> = {}
+) => {
   const { limit, page, keyWord, sortKey, sortValue } = option;
   const query: Record<string, string | object> = {};
   if (keyWord) {
@@ -58,29 +63,56 @@ const getListProduct = async (option: {
   return await Product.aggregate([
     {
       $match: {
-        ...query
+        ...query,
+        isDeleted: false,
+        ...choice,
+        isActive: true
       }
     },
     {
       $lookup: {
-        from: 'categories',
+        from: categoryModel.COLLECTION_NAME,
         localField: 'categoryId',
         foreignField: '_id',
-        as: 'category'
+        as: 'category',
+        pipeline: [
+          {
+            $match: {
+              isDeleted: false
+            }
+          }
+        ]
       }
     },
     {
-      $limit: 10
-    },
-    {
-      $skip: skip
+      $unwind: '$category'
     }
+    // {
+    //   $limit: limit
+    // },
+    // {
+    //   $skip: skip
+    // }
   ]);
 };
 const deleteProduct = async (id: string) => {
   return await Product.findOneAndUpdate(
     {
       _id: createObjectId(id),
+      isDeleted: false,
+      isActive: true
+    },
+    {
+      $set: {
+        isDeleted: true
+      }
+    }
+  );
+};
+const deleteByCategoryId = async (categoryId: string) => {
+  return await Product.updateMany(
+    {
+      categoryId: createObjectId(categoryId),
       isDeleted: false
     },
     {
@@ -90,12 +122,44 @@ const deleteProduct = async (id: string) => {
     }
   );
 };
-const getDetail = async (id: string) => {
+
+const restoreByCategoryId = async (categoryId: string) => {
+  return await Product.updateMany(
+    {
+      categoryId: createObjectId(categoryId),
+      isDeleted: false,
+      isActive: false
+    },
+    {
+      $set: {
+        isActive: true
+      }
+    }
+  );
+};
+const deactivateByCategoryId = async (categoryId: string) => {
+  return await Product.updateMany(
+    {
+      categoryId: createObjectId(categoryId),
+      isDeleted: false,
+      isActive: true
+    },
+    {
+      $set: {
+        isActive: false
+      }
+    }
+  );
+};
+
+const getDetail = async (id: string, option: Partial<IProduct> = {}) => {
   const result = await Product.aggregate([
     {
       $match: {
         _id: createObjectId(id),
-        isDeleted: false
+        isDeleted: false,
+        ...option,
+        isActive: true
       }
     },
     {
@@ -148,7 +212,7 @@ const getDetail = async (id: string) => {
         from: categoryModel.COLLECTION_NAME,
         localField: 'categoryId',
         foreignField: '_id',
-        as: 'categorie',
+        as: 'category',
         pipeline: [
           {
             $match: {
@@ -159,16 +223,17 @@ const getDetail = async (id: string) => {
       }
     },
     {
-      $unwind: '$categorie'
+      $unwind: '$category'
     }
   ]);
-  return result;
+  return result[0];
 };
 const getRelated = async (categories: ObjectId[], lastestProduct: ObjectId[]) => {
   return await Product.find({
     categoryId: { $in: categories },
     isDeleted: false,
-    _id: { $nin: lastestProduct }
+    _id: { $nin: lastestProduct },
+    isActive: true
   });
 };
 export const productRepo = {
@@ -178,5 +243,8 @@ export const productRepo = {
   deleteProduct,
   getDetail,
   findOneById,
-  getRelated
+  getRelated,
+  deleteByCategoryId,
+  restoreByCategoryId,
+  deactivateByCategoryId
 };

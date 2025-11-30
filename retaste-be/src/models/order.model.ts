@@ -4,6 +4,7 @@ import { DOCUMENT_PRODUCT } from './product.model';
 import { DOCUMENT_SIZE } from './size.model';
 import { DOCUMENT_OPTIONS } from './option.model';
 import { DOCUMENT_ADDRESS } from './address.model';
+import { DOCUMENT_USER } from './user.model';
 
 export const DOCUMENT_ORDER = 'Orders';
 const COLLECTION_NAME = 'orders';
@@ -12,8 +13,8 @@ export interface IOrder {
   userId: Types.ObjectId;
   orderNumber: string;
   deliveryAddress: Types.ObjectId;
-  orderStatus: 'pending' | 'confirmed' | 'success' | 'cancelled';
-  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  orderStatus: 'pending' | 'confirmed' | 'out_for_delivery' | 'success' | 'cancelled';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded' | 'unpaid';
   paymentMethod: 'cash' | 'bank_transfer';
   items: {
     productId: Types.ObjectId;
@@ -39,12 +40,12 @@ export interface IOrder {
 
 const orderSchema = new Schema<IOrder>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: Schema.Types.ObjectId, ref: DOCUMENT_USER, required: true },
     orderNumber: { type: String, required: true, unique: true },
     deliveryAddress: { type: Schema.Types.ObjectId, ref: DOCUMENT_ADDRESS, required: true },
     orderStatus: {
       type: String,
-      enum: ['pending', 'confirmed', 'success', 'cancelled'],
+      enum: ['pending', 'confirmed', 'out_for_delivery', 'success', 'cancelled'],
       default: 'pending',
       required: true
     },

@@ -1,10 +1,11 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
+import { StringValue } from 'ms';
 
 const generatePairToken = (payload: object, privateKey: string) => {
   try {
     const accessToken = jwt.sign(payload, privateKey, {
       algorithm: 'RS256',
-      expiresIn: '1h'
+      expiresIn: '3m'
     });
     const refreshToken = jwt.sign(payload, privateKey, {
       algorithm: 'RS256',
@@ -14,6 +15,20 @@ const generatePairToken = (payload: object, privateKey: string) => {
       accessToken,
       refreshToken
     };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+  }
+};
+const generateToken = async (userInfo: object, secretSignature: string, tokenLife: string) => {
+  try {
+    const signOptions: SignOptions = {
+      algorithm: 'HS256',
+      expiresIn: tokenLife as StringValue
+    };
+
+    return jwt.sign(userInfo, secretSignature, signOptions);
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
@@ -32,5 +47,6 @@ const verifyToken = (token: string, publicKey: string) => {
 };
 export const JwtProvider = {
   generatePairToken,
-  verifyToken
+  verifyToken,
+  generateToken
 };

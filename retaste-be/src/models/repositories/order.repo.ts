@@ -1,6 +1,6 @@
 import { createObjectId } from '~/utils/format';
 import Order, { IOrder } from '../order.model';
-import { DOCUMENT_USER } from '../user.model';
+import { DOCUMENT_USER, userModel } from '../user.model';
 import { DOCUMENT_ADDRESS } from '../address.model';
 import { DOCUMENT_PRODUCT } from '../product.model';
 const findOneById = async (id: string) => {
@@ -77,20 +77,46 @@ const getListOrder = async (option: {
 }) => {
   const { limit, page, sortKey, sortValue } = option;
   const query: Record<string, string | object> = {};
-
   const sort: Record<string, 1 | -1> = {};
   if (sortKey && sortValue) {
     sort[sortKey] = sortValue;
   } else {
     sort['updatedAt'] = 1;
   }
-  return await Order.find({
-    isDeleted: false,
-    ...query
-  })
-    .limit(limit)
-    .skip((page - 1) * limit)
-    .sort(sort);
+  const skip = (page - 1) * limit;
+  return await Order.aggregate([
+    {
+      $match: {
+        isDeleted: false,
+        paymentStatus: { $ne: 'unpaid' },
+        ...query
+      }
+    },
+    {
+      $lookup: {
+        from: userModel.COLLECTION_NAME,
+        foreignField: '_id',
+        localField: 'userId',
+        as: 'user',
+        pipeline: [
+          {
+            $match: {
+              isDeleted: false
+            }
+          }
+        ]
+      }
+    },
+    {
+      $unwind: '$user'
+    },
+    {
+      $limit: limit
+    },
+    {
+      $skip: skip
+    }
+  ]);
 };
 const getListOrderUser = async (
   option: {
@@ -112,8 +138,9 @@ const getListOrderUser = async (
   }
   return await Order.find({
     isDeleted: false,
-    ...query,
-    userId: createObjectId(userId)
+    userId: createObjectId(userId),
+    paymentStatus: { $ne: 'unpaid' },
+    ...query
   })
     .limit(limit)
     .skip((page - 1) * limit)
@@ -123,6 +150,7 @@ const getDetail = async (orderId: string, option: Partial<IOrder> = {}) => {
   return await Order.findOne({
     _id: createObjectId(orderId),
     isDeleted: false,
+    paymentStatus: { $ne: 'unpaid' },
     ...option
   })
     .populate({
@@ -164,24 +192,63 @@ const getLatestOrder = async (userId: string) => {
       select: 'productName categoryId'
     });
 };
-const getAllOrder = async () => {
-  return await Order.find({
-    isDeleted: false,
-    orderStatus: 'success'
-  });
-};
-const getTotalAmount = async () => {
+
+const getTotalAmount = async (): Promise<{
+  totalAmount: number;
+  orderCount: number;
+  averageOrderValue: number;
+}> => {
   return (
     await Order.aggregate([
       {
         $match: {
-          orderStatus: 'success'
+          orderStatus: 'success',
+          isDeleted: false
         }
       },
       {
         $group: {
           _id: null,
-          totalAmount: { $sum: '$subtotal' }
+          totalAmount: { $sum: '$subtotal' },
+          orderCount: { $count: {} }
+        }
+      },
+      {
+        $project: {
+          totalAmount: 1,
+          orderCount: 1,
+          averageOrderValue: {
+            $cond: [{ $eq: ['$orderCount', 0] }, 0, { $divide: ['$totalAmount', '$orderCount'] }]
+          }
+        }
+      }
+    ])
+  )[0];
+};
+const getRenvenureByTime = async ({ start, end }: { start: Date; end: Date }) => {
+  return (
+    await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end },
+          orderStatus: 'success', // chỉ tính đơn thành công
+          paymentStatus: 'paid' // chỉ tính đơn đã thanh toán
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: '$totalAmount' },
+          totalOrders: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          totalRevenue: 1,
+          totalOrders: 1,
+          startDate: start,
+          endDate: end
         }
       }
     ])
@@ -197,6 +264,6 @@ export const orderRepo = {
   getListOrderUser,
   getDetail,
   getLatestOrder,
-  getAllOrder,
-  getTotalAmount
+  getTotalAmount,
+  getRenvenureByTime
 };

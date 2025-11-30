@@ -10,6 +10,7 @@ const COLLECTION_NAME = 'carts';
 export interface ICart {
   userId: Types.ObjectId;
   products: {
+    _id?: Types.ObjectId;
     productId: Types.ObjectId;
     sizeId: Types.ObjectId;
     customs: {

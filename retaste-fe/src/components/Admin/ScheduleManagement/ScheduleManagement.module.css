@@ -1,4 +1,3 @@
-/* Kế thừa styles từ Dashboard.module.css */
 .mainContent {
   flex: 1;
   margin-left: 260px;
@@ -12,21 +11,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow);
-}
-
-.toggleSidebar {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--text);
-  display: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .headerTitle {
   font-size: 1.2rem;
   font-weight: 600;
+  color: var(--text);
 }
 
 .headerActions {
@@ -42,17 +34,20 @@
 .searchInput {
   padding: 8px 15px;
   padding-left: 35px;
-  border-radius: 20px;
-  border: 1px solid var(--gray);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
   outline: none;
   font-size: 0.9rem;
   width: 200px;
   transition: all 0.3s;
+  background-color: #f5f7fa;
 }
 
 .searchInput:focus {
   width: 250px;
   border-color: var(--secondary);
+  box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
+  background-color: var(--white);
 }
 
 .searchIcon {
@@ -61,35 +56,45 @@
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-light);
+  display: flex;
+  align-items: center;
 }
 
 .actionBtn {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
   color: var(--text-light);
   cursor: pointer;
-  transition: color 0.3s;
+  transition: all 0.3s;
   position: relative;
 }
 
 .actionBtn:hover {
   color: var(--primary);
+  background-color: rgba(255, 107, 53, 0.08);
 }
 
 .notificationBadge {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: #dc3545;
+  top: -4px;
+  right: -4px;
+  background-color: var(--primary);
   color: var(--white);
-  font-size: 0.7rem;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
+  font-size: 0.65rem;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(255, 107, 53, 0.3);
 }
 
 /* Breadcrumb */
@@ -139,35 +144,75 @@
   color: var(--text);
 }
 
-.headerStats {
-  display: flex;
-  gap: 20px;
-}
-
-.statItem {
+.viewToggle {
   display: flex;
   align-items: center;
+  background-color: var(--light-gray);
+  border-radius: 30px;
+  padding: 5px;
+}
+
+.viewBtn {
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text);
+  transition: all 0.3s;
+}
+
+.viewBtn.active {
   background-color: var(--white);
-  padding: 15px 20px;
-  border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
+  color: var(--primary);
 }
 
-.statIcon {
-  font-size: 1.5rem;
-  margin-right: 12px;
+.dateNavigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
 }
 
-.statNumber {
-  font-size: 1.5rem;
+.navBtn {
+  background-color: var(--white);
+  border: 1px solid var(--gray);
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.navBtn:hover {
+  background-color: var(--light-gray);
+}
+
+.currentDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.currentDate h2 {
+  font-size: 1.3rem;
   font-weight: 600;
   color: var(--primary);
-  line-height: 1;
+  margin-bottom: 8px;
 }
 
-.statLabel {
+.todayBtn {
+  background: none;
+  border: none;
+  color: var(--secondary);
   font-size: 0.85rem;
-  color: var(--text-light);
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 /* Form Card */
@@ -192,7 +237,7 @@
   color: var(--text);
 }
 
-.attendanceForm {
+.scheduleForm {
   padding: 25px;
 }
 
@@ -311,8 +356,7 @@
   align-items: center;
 }
 
-.filterSelect,
-.filterMonth {
+.filterSelect {
   padding: 8px 12px;
   border: 1px solid var(--gray);
   border-radius: var(--border-radius-sm);
@@ -339,20 +383,20 @@
   overflow-x: auto;
 }
 
-.attendanceTable {
+.scheduleTable {
   width: 100%;
   border-collapse: collapse;
 }
 
-.attendanceTable th,
-.attendanceTable td {
+.scheduleTable th,
+.scheduleTable td {
   padding: 15px 18px;
   text-align: left;
   border-bottom: 1px solid var(--light-gray);
   font-size: 0.9rem;
 }
 
-.attendanceTable th {
+.scheduleTable th {
   background-color: #f8f9fa;
   font-weight: 600;
   color: var(--text-light);
@@ -361,9 +405,47 @@
   letter-spacing: 0.5px;
 }
 
+.employeeCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.employeeAvatar {
+  width: 35px;
+  height: 35px;
+  background-color: var(--primary-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.employeeInfo {
+  display: flex;
+  flex-direction: column;
+}
+
 .employeeName {
   font-weight: 600;
   color: var(--text);
+}
+
+.employeePosition {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.shiftBadge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+  min-width: 80px;
 }
 
 .notes {
@@ -371,46 +453,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.statusBadge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 15px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-align: center;
-  min-width: 80px;
-}
-
-.statusPresent {
-  background-color: rgba(40, 167, 69, 0.15);
-  color: #28a745;
-}
-
-.statusAbsent {
-  background-color: rgba(220, 53, 69, 0.15);
-  color: #dc3545;
-}
-
-.statusLate {
-  background-color: rgba(255, 193, 7, 0.15);
-  color: #ffc107;
-}
-
-.statusEarlyLeave {
-  background-color: rgba(255, 107, 53, 0.15);
-  color: var(--primary);
-}
-
-.statusHalfDay {
-  background-color: rgba(23, 162, 184, 0.15);
-  color: #17a2b8;
-}
-
-.statusOvertime {
-  background-color: rgba(102, 16, 242, 0.15);
-  color: #6610f2;
 }
 
 .actionCell {
@@ -467,6 +509,226 @@
   font-size: 0.9rem;
 }
 
+/* Week View */
+.weekViewContainer {
+  padding: 15px;
+  overflow-x: auto;
+}
+
+.weekGrid {
+  min-width: 1000px;
+}
+
+.weekHeader {
+  display: flex;
+  border-bottom: 1px solid var(--gray);
+}
+
+.weekTimeCol {
+  width: 80px;
+  padding: 15px 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  border-right: 1px solid var(--light-gray);
+}
+
+.weekDayCol {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  border-right: 1px solid var(--light-gray);
+  min-width: 120px;
+}
+
+.weekDayName {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.weekDayDate {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.weekBody {
+  position: relative;
+}
+
+.weekRow {
+  display: flex;
+  height: 60px;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.weekRow:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.weekEvent {
+  position: relative;
+  padding: 5px 8px;
+  border-radius: var(--border-radius-sm);
+  color: white;
+  font-size: 0.8rem;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 100%;
+}
+
+.weekEventName {
+  font-weight: 600;
+}
+
+.weekEventTime {
+  font-size: 0.75rem;
+  opacity: 0.9;
+}
+
+/* Request Cards */
+.requestsContainer {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: 20px;
+}
+
+.requestCard {
+  background-color: #f9f9f9;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--light-gray);
+  overflow: hidden;
+}
+
+.requestHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: var(--white);
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.requestStatus {
+  display: flex;
+  align-items: center;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  min-width: 100px;
+}
+
+.statusPending {
+  background-color: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.statusApproved {
+  background-color: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+}
+
+.statusRejected {
+  background-color: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+}
+
+.requestDetails {
+  padding: 20px;
+}
+
+.requestWeek {
+  font-weight: 500;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  color: var(--text);
+}
+
+.preferredShifts {
+  margin-bottom: 15px;
+}
+
+.preferredShiftsTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--light-gray);
+  margin-bottom: 15px;
+}
+
+.preferredShiftsTable th,
+.preferredShiftsTable td {
+  padding: 10px;
+  border-bottom: 1px solid var(--light-gray);
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.preferredShiftsTable th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.requestNotes {
+  font-size: 0.9rem;
+  color: var(--text);
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: var(--border-radius-sm);
+  margin-top: 15px;
+}
+
+.requestActions {
+  display: flex;
+  padding: 15px 20px;
+  gap: 10px;
+  background-color: var(--white);
+  border-top: 1px solid var(--light-gray);
+}
+
+.approveBtn {
+  background-color: #28a745;
+  color: var(--white);
+  border: none;
+  padding: 8px 15px;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  flex: 1;
+}
+
+.rejectBtn {
+  background-color: #dc3545;
+  color: var(--white);
+  border: none;
+  padding: 8px 15px;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  flex: 1;
+}
+
+.editRequestBtn {
+  background-color: var(--secondary);
+  color: var(--white);
+  border: none;
+  padding: 8px 15px;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+  flex: 1;
+}
+
 /* Summary Card */
 .summaryCard {
   background-color: var(--white);
@@ -519,15 +781,14 @@
     width: 100%;
   }
 
-  .headerStats {
-    flex-direction: column;
-    gap: 10px;
-  }
-
   .tableFilters {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
+  }
+
+  .requestsContainer {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -540,6 +801,11 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
+  }
+
+  .dateNavigation {
+    flex-direction: column;
+    gap: 15px;
   }
 
   .formRow {
@@ -572,12 +838,16 @@
     display: none;
   }
 
-  .attendanceTable {
+  .scheduleTable {
     font-size: 0.8rem;
   }
 
-  .attendanceTable th,
-  .attendanceTable td {
+  .scheduleTable th,
+  .scheduleTable td {
     padding: 10px 8px;
+  }
+
+  .requestActions {
+    flex-direction: column;
   }
 }

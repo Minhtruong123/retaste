@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import styles from "./HomePage.module.css";
-import * as categoriesService from "../../../service/categories_service";
-import * as productsService from "../../../service/products_service";
+import { useCategoryService } from "../../../hooks/useCategoryService";
+import { useProductService } from "../../../hooks/useProductService";
+import { useCart } from "./CartContext";
 
 export default function HomePage() {
-  const [cartCount, setCartCount] = useState(3);
   const [categories, setCategories] = useState([]);
   const [recommendedProducts, setRecommendedProducts] = useState([]);
+
+  const { getListCategory } = useCategoryService();
+  const { getListProduct } = useProductService();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await productsService.getListProduct({
+        const res = await getListProduct({
           limit: "4",
           page: "1",
           keyWord: "",
@@ -27,7 +31,7 @@ export default function HomePage() {
 
     const fetchCategories = async () => {
       try {
-        const res = await categoriesService.getListCategory({
+        const res = await getListCategory({
           limit: "5",
           page: "1",
           keyWord: "",
@@ -43,17 +47,32 @@ export default function HomePage() {
     fetchCategories();
   }, []);
 
-  const handleAddToCart = (event) => {
+  const handleAddToCart = async (event) => {
     const button = event.target;
-    setCartCount((prevCount) => prevCount + 1);
+    button.textContent = "Đang thêm...";
+    button.disabled = true;
 
-    button.textContent = "Đã thêm";
-    button.style.backgroundColor = "#2a9d8f";
+    try {
+      await addToCart({
+        productId: product._id,
+        quantity: 1,
+      });
 
-    setTimeout(() => {
+      button.textContent = "Đã thêm!";
+      button.style.backgroundColor = "#2a9d8f";
+
+      window.dispatchEvent(new Event("cartBounce"));
+
+      setTimeout(() => {
+        button.textContent = "Thêm vào giỏ";
+        button.style.backgroundColor = "#ff6b35";
+        button.disabled = false;
+      }, 2000);
+    } catch (err) {
+      alert(err || "Không thể thêm vào giỏ hàng");
       button.textContent = "Thêm vào giỏ";
-      button.style.backgroundColor = "#ff6b35";
-    }, 2000);
+      button.disabled = false;
+    }
   };
 
   const handleFavoriteClick = (event) => {
@@ -149,35 +168,6 @@ export default function HomePage() {
               </a>
             </div>
             <div className={styles.productsContainer}>
-              {/* <div className={styles.productCard}>
-                <img
-                  src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47"
-                  alt="Classic Burger"
-                  className={styles.productImg}
-                />
-                <div className={styles.productInfo}>
-                  <h3 className={styles.productTitle}>Classic Burger</h3>
-                  <div className={styles.productCategory}>Burger</div>
-                  <div className={styles.productDetails}>
-                    <div className={styles.productPrice}>69.000 ₫</div>
-                    <div className={styles.productRating}>★★★★★</div>
-                  </div>
-                  <div className={styles.productActions}>
-                    <button
-                      className={styles.addToCart}
-                      onClick={handleAddToCart}
-                    >
-                      Thêm vào giỏ
-                    </button>
-                    <button
-                      className={styles.favoriteBtn}
-                      onClick={handleFavoriteClick}
-                    >
-                      ❤️
-                    </button>
-                  </div>
-                </div>
-              </div> */}
               {recommendedProducts.length === 0 ? (
                 <p>Đang tải...</p>
               ) : (
@@ -194,7 +184,9 @@ export default function HomePage() {
                         {p.category?.categoryName || "Không có danh mục"}
                       </div>
                       <div className={styles.productDetails}>
-                        <div className={styles.productPrice}>{p.price} ₫</div>
+                        <div className={styles.productPrice}>
+                          {p.basePrice} ₫
+                        </div>
                         <div className={styles.productRating}>★★★★★</div>
                       </div>
                       <div className={styles.productActions}>
@@ -253,7 +245,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Testimonials */}
         <section className={styles.testimonials}>
           <div className={styles.container}>
             <h2 className={styles.sectionTitle}>
