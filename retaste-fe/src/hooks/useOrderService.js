@@ -4,7 +4,7 @@ export const useOrderService = () => {
   const { api } = useAuth();
 
   const getOrderPreview = async ({ deliveryAddress, items }) => {
-    const { data } = await api.get("/orders/view-order", {
+    const { data } = await api.get("/order/view-order", {
       params: {
         deliveryAddress,
         items: items.join(","),
@@ -19,7 +19,7 @@ export const useOrderService = () => {
     paymentMethod,
     note = "",
   }) => {
-    const { data } = await api.post("/orders/create", {
+    const { data } = await api.post("/order/create", {
       deliveryAddress,
       items,
       paymentMethod,
@@ -29,12 +29,12 @@ export const useOrderService = () => {
   };
 
   const getUserOrders = async () => {
-    const { data } = await api.get("/orders/user/list");
+    const { data } = await api.get("/order/user/list");
     return data.metadata || data.data || [];
   };
 
   const getOrderDetail = async (orderId) => {
-    const { data } = await api.get(`/orders/user/detail/${orderId}`);
+    const { data } = await api.get(`/order/user/detail/${orderId}`);
     return data.metadata || data.data;
   };
 
