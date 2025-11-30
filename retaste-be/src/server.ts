@@ -13,7 +13,6 @@ import './cron-job';
 const API_V1 = '/api/v1';
 const app = express();
 
-// init middleware
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-store');
   next();

@@ -18,6 +18,9 @@ export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const refreshTokenPromise = useRef(null);
+  const logoutRef = useRef(null);
+
   const api = useRef(
     axios.create({
       baseURL: "http://localhost:8017/api/v1",
@@ -33,6 +36,7 @@ export const AuthProvider = ({ children }) => {
   ).current;
 
   const authDataRef = useRef({ accessToken: null, user: null });
+  // console.log("1230");
   useEffect(() => {
     authDataRef.current = { accessToken, user };
   }, [accessToken, user]);
@@ -55,57 +59,56 @@ export const AuthProvider = ({ children }) => {
       async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 410 && !originalRequest._retry) {
           originalRequest._retry = true;
-
+          console.log("3")
           const refreshToken = localStorage.getItem("refreshToken");
           const storedUser = JSON.parse(localStorage.getItem("user") || "null");
-
+          console.log("4")
           if (!refreshToken || !storedUser?._id) {
-            logout();
+            logoutRef.current?.();
             return Promise.reject(error);
           }
 
+          if (!refreshTokenPromise.current) {
+            console.log("5")
+            refreshTokenPromise.current = refreshAxios
+              .post(
+                "/access/refresh-token",
+                {},
+                {
+                  headers: {
+                    "x-rtoken-id": refreshToken,
+                    "x-client-id": storedUser._id,
+                  },
+                }
+              )
+              .finally(() => {
+                refreshTokenPromise.current = null;
+              });
+          }
+          console.log("6")
           try {
-            console.log("Đang refresh token...");
-
-            const { data } = await refreshAxios.post(
-              "/access/refresh-token",
-              {},
-              {
-                headers: {
-                  "x-rtoken-id": refreshToken,
-                  "x-client-id": storedUser._id,
-                },
-              }
-            );
-
-            console.log("Refresh thành công:", data);
-
-            const newAccessToken = data.accessToken;
-            const newRefreshToken = data.refreshToken;
-
+            
+            const { data } = await refreshTokenPromise.current;
+            const newAccessToken = data.metadata.accessToken;
+            const newRefreshToken = data.metadata.refreshToken;
+            console.log("7")
             if (!newAccessToken) {
-              throw new Error("Không nhận được accessToken mới");
+              throw new Error("Missing new access token");
             }
 
             localStorage.setItem("accessToken", newAccessToken);
             if (newRefreshToken) {
               localStorage.setItem("refreshToken", newRefreshToken);
-              console.log("Đã cập nhật refreshToken MỚI");
-            } else {
-              console.log(
-                "Backend không trả refreshToken mới → dùng lại cái cũ (bình thường)"
-              );
             }
-
+            authDataRef.current.accessToken = newAccessToken;
             setAccessToken(newAccessToken);
 
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
             return api(originalRequest);
           } catch (refreshError) {
-            console.error("Refresh token thất bại → đăng xuất");
-            logout();
+            logoutRef.current?.();
             return Promise.reject(refreshError);
           }
         }
@@ -118,7 +121,7 @@ export const AuthProvider = ({ children }) => {
       api.interceptors.request.eject(reqIntercept);
       api.interceptors.response.eject(resIntercept);
     };
-  }, []);
+  }, [api, refreshAxios]);
 
   useEffect(() => {
     const initAuth = () => {
@@ -132,7 +135,6 @@ export const AuthProvider = ({ children }) => {
           setAccessToken(token);
           setUser(parsedUser);
           if (savedRole) setRole(savedRole);
-          console.log("Đã load auth từ localStorage");
         }
       } catch (err) {
         console.warn("Lỗi load auth:", err);
@@ -144,6 +146,16 @@ export const AuthProvider = ({ children }) => {
 
     initAuth();
   }, []);
+
+  const logout = useCallback(() => {
+    localStorage.clear();
+    setAccessToken(null);
+    setUser(null);
+    setRole(null);
+    window.location.href = "/auth";
+  }, []);
+
+  logoutRef.current = logout;
 
   const login = async (values) => {
     const { data } = await api.post("/access/login", values);
@@ -173,14 +185,6 @@ export const AuthProvider = ({ children }) => {
 
     return data;
   };
-
-  const logout = useCallback(() => {
-    localStorage.clear();
-    setAccessToken(null);
-    setUser(null);
-    setRole(null);
-    window.location.href = "/auth";
-  }, []);
 
   const handleLogout = async () => {
     try {
