@@ -37,14 +37,15 @@ class CategoryService {
       },
       id
     );
-    if (!updated.matchedCount) throw new BAD_REQUEST("Cann't updaet category !");
+    if (!updated.matchedCount) throw new BAD_REQUEST("Cann't update category !");
     if (getCategory.isActive === false && isActive === true) {
-      //
+      const updatedProd = await productRepo.restoreByCategoryId(id);
+      if (!updatedProd.matchedCount) throw new BAD_REQUEST("Can't update category !");
     }
     if (getCategory.isActive === true && isActive === false) {
-      //
+      const updatedProd = await productRepo.deactivateByCategoryId(id);
+      if (!updatedProd.matchedCount) throw new BAD_REQUEST("Can't update category !");
     }
-
     return 'Update sucess !';
   };
   static getListCategory = async (query: {

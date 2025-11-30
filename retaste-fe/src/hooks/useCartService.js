@@ -23,14 +23,9 @@ export const useCartService = () => {
 
   const updateCartQuantity = async (productId, createdAt) => {
     try {
-      const isoString =
-        typeof createdAt === "string"
-          ? createdAt
-          : new Date(createdAt).toISOString();
-
       const { data } = await api.put("/cart/update-quantity", {
-        productId,
-        createdAt: isoString,
+        id: cartItemId,
+        action,
       });
       return data.metadata || data;
     } catch (error) {
@@ -40,13 +35,8 @@ export const useCartService = () => {
 
   const removeFromCart = async (productId, createdAt) => {
     try {
-      const isoString =
-        typeof createdAt === "string"
-          ? createdAt
-          : new Date(createdAt).toISOString();
-
       const { data } = await api.delete("/cart/remove-product", {
-        data: { productId, createdAt: isoString },
+        data: { id: cartItemId },
       });
       return data.metadata || data;
     } catch (error) {

@@ -20,6 +20,7 @@ export interface IProduct {
   isDeleted?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  isActive?: boolean;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -40,7 +41,8 @@ const productSchema = new Schema<IProduct>(
     ],
     bestSeller: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
-    isFeatured: { type: Boolean, default: false }
+    isFeatured: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true }
   },
   {
     collection: COLLECTION_NAME,

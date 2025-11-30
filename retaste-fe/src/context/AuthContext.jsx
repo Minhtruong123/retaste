@@ -36,7 +36,6 @@ export const AuthProvider = ({ children }) => {
   ).current;
 
   const authDataRef = useRef({ accessToken: null, user: null });
-  // console.log("1230");
   useEffect(() => {
     authDataRef.current = { accessToken, user };
   }, [accessToken, user]);
@@ -61,17 +60,14 @@ export const AuthProvider = ({ children }) => {
 
         if (error.response?.status === 410 && !originalRequest._retry) {
           originalRequest._retry = true;
-          console.log("3")
           const refreshToken = localStorage.getItem("refreshToken");
           const storedUser = JSON.parse(localStorage.getItem("user") || "null");
-          console.log("4")
           if (!refreshToken || !storedUser?._id) {
             logoutRef.current?.();
             return Promise.reject(error);
           }
 
           if (!refreshTokenPromise.current) {
-            console.log("5")
             refreshTokenPromise.current = refreshAxios
               .post(
                 "/access/refresh-token",
@@ -87,13 +83,12 @@ export const AuthProvider = ({ children }) => {
                 refreshTokenPromise.current = null;
               });
           }
-          console.log("6")
+
           try {
-            
             const { data } = await refreshTokenPromise.current;
             const newAccessToken = data.metadata.accessToken;
             const newRefreshToken = data.metadata.refreshToken;
-            console.log("7")
+
             if (!newAccessToken) {
               throw new Error("Missing new access token");
             }
@@ -102,6 +97,7 @@ export const AuthProvider = ({ children }) => {
             if (newRefreshToken) {
               localStorage.setItem("refreshToken", newRefreshToken);
             }
+
             authDataRef.current.accessToken = newAccessToken;
             setAccessToken(newAccessToken);
 

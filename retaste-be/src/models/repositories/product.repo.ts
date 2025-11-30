@@ -10,7 +10,8 @@ import { ObjectId } from 'mongoose';
 const findOneById = async (id: string) => {
   return await Product.findOne({
     _id: createObjectId(id),
-    isDeleted: false
+    isDeleted: false,
+    isActive: true
   });
 };
 
@@ -21,7 +22,8 @@ const update = async (data: Partial<IProduct>, id: string) => {
   return await Product.updateOne(
     {
       _id: createObjectId(id),
-      isDeleted: false
+      isDeleted: false,
+      isActive: true
     },
     {
       $set: data
@@ -63,7 +65,8 @@ const getListProduct = async (
       $match: {
         ...query,
         isDeleted: false,
-        ...choice
+        ...choice,
+        isActive: true
       }
     },
     {
@@ -96,33 +99,7 @@ const deleteProduct = async (id: string) => {
   return await Product.findOneAndUpdate(
     {
       _id: createObjectId(id),
-      isDeleted: false
-    },
-    {
-      $set: {
-        isDeleted: true
-      }
-    }
-  );
-};
-const deleteByCategoryId = async (categoryId: string) => {
-  return Product.updateMany(
-    {
-      categoryId: createObjectId(categoryId),
-      isDeleted: false
-    },
-    {
-      $set: {
-        isDeleted: true
-      }
-    }
-  );
-};
-const restoreByCategoryId = async (categoryId: string) => {
-  return Product.updateMany(
-    {
-      categoryId: createObjectId(categoryId),
-      isDeleted: true,
+      isDeleted: false,
       isActive: true
     },
     {
@@ -132,13 +109,57 @@ const restoreByCategoryId = async (categoryId: string) => {
     }
   );
 };
+const deleteByCategoryId = async (categoryId: string) => {
+  return await Product.updateMany(
+    {
+      categoryId: createObjectId(categoryId),
+      isDeleted: false
+    },
+    {
+      $set: {
+        isDeleted: true
+      }
+    }
+  );
+};
+
+const restoreByCategoryId = async (categoryId: string) => {
+  return await Product.updateMany(
+    {
+      categoryId: createObjectId(categoryId),
+      isDeleted: false,
+      isActive: false
+    },
+    {
+      $set: {
+        isActive: true
+      }
+    }
+  );
+};
+const deactivateByCategoryId = async (categoryId: string) => {
+  return await Product.updateMany(
+    {
+      categoryId: createObjectId(categoryId),
+      isDeleted: false,
+      isActive: true
+    },
+    {
+      $set: {
+        isActive: false
+      }
+    }
+  );
+};
+
 const getDetail = async (id: string, option: Partial<IProduct> = {}) => {
   const result = await Product.aggregate([
     {
       $match: {
         _id: createObjectId(id),
         isDeleted: false,
-        ...option
+        ...option,
+        isActive: true
       }
     },
     {
@@ -224,5 +245,6 @@ export const productRepo = {
   findOneById,
   getRelated,
   deleteByCategoryId,
-  restoreByCategoryId
+  restoreByCategoryId,
+  deactivateByCategoryId
 };
