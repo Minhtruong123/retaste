@@ -45,7 +45,7 @@ class AddressService {
     const result = await this.addressIsValid(streetAddress);
     const newAddres: IAddress = {
       userId: createObjectId(userId),
-      city: 'Da Nang',
+      city: 'Ho Chi Minh',
       detail: result.displayName,
       country: 'Viet Nam',
       streetAddressSlug: customSlug(streetAddress),
@@ -112,7 +112,7 @@ class AddressService {
     const result = await this.addressIsValid(streetAddress);
     const newAddres: IAddress = {
       userId: createObjectId(userId),
-      city: 'Da Nang',
+      city: 'Ho Chi Minh',
       detail: result.displayName,
       country: 'Viet Nam',
       streetAddressSlug: customSlug(streetAddress),
