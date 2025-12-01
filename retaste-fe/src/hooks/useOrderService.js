@@ -1,14 +1,13 @@
 import { useAuth } from "../context/AuthContext";
+import { useCallback } from "react";
 
 export const useOrderService = () => {
   const { api } = useAuth();
 
   const getOrderPreview = async ({ deliveryAddress, items }) => {
-    const { data } = await api.get("/order/view-order", {
-      params: {
-        deliveryAddress,
-        items: items.join(","),
-      },
+    const { data } = await api.post("/order/view-order", {
+      deliveryAddress,
+      items,
     });
     return data.metadata || data.data;
   };
@@ -38,10 +37,50 @@ export const useOrderService = () => {
     return data.metadata || data.data;
   };
 
+  const getList = useCallback(
+    async (params = {}) => {
+      const { data } = await api.get("/order/list", { params });
+      console.log(data);
+      return data.metadata || data.data || { orders: [], total: 0 };
+    },
+    [api]
+  );
+
+  const getDetail = useCallback(
+    async (orderId) => {
+      const { data } = await api.get(`/order/detail/${orderId}`);
+
+      return data.metadata || data.data;
+    },
+    [api]
+  );
+
+  const changeStatus = useCallback(
+    async (orderId, orderStatus) => {
+      const { data } = await api.put(`/order/change-status/${orderId}`, {
+        orderStatus,
+      });
+      return data.metadata || data.data;
+    },
+    [api]
+  );
+
+  const cancelOrder = useCallback(
+    async (orderId) => {
+      const { data } = await api.put(`/order/cancel/${orderId}`);
+      return data.metadata || data.data;
+    },
+    [api]
+  );
+
   return {
     getOrderPreview,
     createOrder,
     getUserOrders,
     getOrderDetail,
+    getList,
+    getDetail,
+    changeStatus,
+    cancelOrder,
   };
 };

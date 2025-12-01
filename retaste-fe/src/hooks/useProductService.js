@@ -8,7 +8,7 @@ export const useProductService = () => {
     try {
       const processedQuery = {
         ...query,
-        sortOrder: query.sortValue,
+        sortOrder: query.sortValue, 
         sortValue: undefined,
       };
 
@@ -20,7 +20,6 @@ export const useProductService = () => {
       const url = `/product/list-product${
         queryString ? `?${queryString}` : ""
       }`;
-
       const { data } = await api.get(url);
 
       return data.metadata || data;
@@ -31,7 +30,7 @@ export const useProductService = () => {
 
   const createProductAdmin = async (productData) => {
     try {
-      const { data } = await api.post("/create", productData);
+      const { data } = await api.post("/product/create", productData);
       return data.metadata || data;
     } catch (error) {
       throw error.response?.data?.message || "Tạo sản phẩm thất bại";
@@ -40,7 +39,7 @@ export const useProductService = () => {
 
   const updateProductAdmin = async (productId, productData) => {
     try {
-      const { data } = await api.patch(
+      const { data } = await api.put(
         `/product/update/${productId}`,
         productData
       );
@@ -52,7 +51,7 @@ export const useProductService = () => {
 
   const deleteProductAdmin = async (productId) => {
     try {
-      const { data } = await api.delete(`/delete/${productId}`);
+      const { data } = await api.delete(`/product/delete/${productId}`);
       return data.metadata || data;
     } catch (error) {
       throw error.response?.data?.message || "Xóa sản phẩm thất bại";
@@ -61,9 +60,8 @@ export const useProductService = () => {
 
   const getDetailProduct = async (productId) => {
     try {
-      const data = await api.get(`/product/detail/${productId}`);
-
-      return data.data.metadata;
+      const { data } = await api.get(`/product/detail/${productId}`);
+      return data.metadata || data.data?.metadata || data;
     } catch (error) {
       throw error.response?.data?.message || "Lấy chi tiết sản phẩm thất bại";
     }
@@ -71,7 +69,7 @@ export const useProductService = () => {
 
   const getRetasteProducts = async () => {
     try {
-      const { data } = await api.get("/retaste");
+      const { data } = await api.get("/product/retaste");
       const products = data.metadata ?? data;
 
       return Array.isArray(products) ? products : [];
