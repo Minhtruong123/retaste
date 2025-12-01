@@ -197,24 +197,7 @@ export default function CategoryManagement() {
       <Toaster position="top-right" />
       <div className={styles.mainContent}>
         <header className={styles.header}>
-          <div className={styles.headerTitle}>
-            <span className={styles.logo}>
-              <svg
-                viewBox="0 0 24 24"
-                width="24"
-                height="24"
-                stroke="currentColor"
-                strokeWidth="2"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-              </svg>
-            </span>
-            Quản lý danh mục
-          </div>
+          <div className={styles.headerTitle}>Bảng điều khiển</div>
           <div className={styles.headerActions}>
             <div className={styles.searchBox}>
               <span className={styles.searchIcon}>
@@ -231,9 +214,7 @@ export default function CategoryManagement() {
               <input
                 type="text"
                 className={styles.searchInput}
-                placeholder="Tìm kiếm danh mục..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Tìm kiếm..."
               />
             </div>
             <button className={styles.actionBtn}>
@@ -248,13 +229,32 @@ export default function CategoryManagement() {
               </svg>
               <span className={styles.notificationBadge}>3</span>
             </button>
-            <div className={styles.userProfile}>
-              <img
-                src="https://randomuser.me/api/portraits/men/54.jpg"
-                alt="User"
-                className={styles.userAvatar}
-              />
-            </div>
+            <button className={styles.actionBtn}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
+              </svg>
+            </button>
+            <button className={styles.actionBtn}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41m-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9" />
+                <path
+                  fillRule="evenodd"
+                  d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"
+                />
+              </svg>
+            </button>
           </div>
         </header>
 

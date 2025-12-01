@@ -16,11 +16,9 @@
 }
 
 .headerTitle {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--primary);
-  display: flex;
-  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text);
 }
 
 .headerActions {
@@ -34,27 +32,27 @@
 }
 
 .searchInput {
-  padding: 10px 15px;
-  padding-left: 38px;
-  border-radius: 30px;
+  padding: 8px 15px;
+  padding-left: 35px;
+  border-radius: 8px;
   border: 1px solid var(--border-color);
   outline: none;
   font-size: 0.9rem;
-  width: 220px;
+  width: 200px;
   transition: all 0.3s;
-  background-color: var(--light-gray);
+  background-color: #f5f7fa;
 }
 
 .searchInput:focus {
-  width: 280px;
+  width: 250px;
   border-color: var(--secondary);
-  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.15);
+  box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
   background-color: var(--white);
 }
 
 .searchIcon {
   position: absolute;
-  left: 14px;
+  left: 10px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-light);
@@ -65,22 +63,21 @@
 .actionBtn {
   background: none;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 8px;
   color: var(--text-light);
   cursor: pointer;
   transition: all 0.3s;
   position: relative;
-  background-color: var(--light-gray);
 }
 
 .actionBtn:hover {
   color: var(--primary);
-  background-color: rgba(255, 107, 53, 0.15);
+  background-color: rgba(255, 107, 53, 0.08);
 }
 
 .notificationBadge {
@@ -98,27 +95,6 @@
   justify-content: center;
   font-weight: 600;
   box-shadow: 0 2px 4px rgba(255, 107, 53, 0.3);
-}
-
-.userProfile {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid var(--secondary);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.3s;
-}
-
-.userProfile:hover {
-  transform: scale(1.05);
-}
-
-.userProfile img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .breadcrumbContainer {
@@ -179,7 +155,6 @@
   color: var(--primary);
 }
 
-/* Page Header */
 .pageHeader {
   display: flex;
   justify-content: space-between;

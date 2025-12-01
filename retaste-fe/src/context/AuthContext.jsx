@@ -192,6 +192,41 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const verifyAccount = async (verifyToken) => {
+    try {
+      const { data } = await api.put("/access/verify-account", { verifyToken });
+      return {
+        success: true,
+        message: data.message || "Xác thực tài khoản thành công!",
+        data: data.metadata || data,
+      };
+    } catch (error) {
+      const msg =
+        error.response?.data?.message ||
+        "Token xác thực không hợp lệ hoặc đã hết hạn";
+      throw new Error(msg);
+    }
+  };
+  const register = async (values) => {
+    try {
+      const { data } = await api.post("/access/register", values);
+      return {
+        success: true,
+        message:
+          data.message ||
+          "Đăng ký thành công! Vui lòng kiểm tra email để xác thực.",
+        data: data.metadata || data,
+      };
+    } catch (error) {
+      const msg =
+        error.response?.data?.message ||
+        error.message ||
+        "Đăng ký thất bại, vui lòng thử lại";
+
+      throw new Error(msg);
+    }
+  };
+
   const value = {
     user,
     role,
@@ -200,9 +235,8 @@ export const AuthProvider = ({ children }) => {
     api,
     login,
     logout: handleLogout,
-    register: (values) => api.post("/access/register", values),
-    verifyAccount: (token) =>
-      api.put("/access/verify-account", { verifyToken: token }),
+    register,
+    verifyAccount,
     isAuthenticated: !!user && !!accessToken,
   };
 

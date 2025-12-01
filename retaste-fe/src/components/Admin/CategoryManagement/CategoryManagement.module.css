@@ -11,27 +11,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
 
 .headerTitle {
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary);
 }
 
 .headerActions {
@@ -45,27 +32,27 @@
 }
 
 .searchInput {
-  padding: 10px 15px;
-  padding-left: 40px;
+  padding: 8px 15px;
+  padding-left: 35px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
   outline: none;
   font-size: 0.9rem;
-  width: 230px;
+  width: 200px;
   transition: all 0.3s;
   background-color: #f5f7fa;
 }
 
 .searchInput:focus {
-  width: 280px;
+  width: 250px;
   border-color: var(--secondary);
-  box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.15);
+  box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
   background-color: var(--white);
 }
 
 .searchIcon {
   position: absolute;
-  left: 12px;
+  left: 10px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-light);
@@ -76,22 +63,21 @@
 .actionBtn {
   background: none;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 8px;
   color: var(--text-light);
   cursor: pointer;
   transition: all 0.3s;
   position: relative;
-  background-color: #f5f7fa;
 }
 
 .actionBtn:hover {
   color: var(--primary);
-  background-color: rgba(255, 107, 53, 0.1);
+  background-color: rgba(255, 107, 53, 0.08);
 }
 
 .notificationBadge {
@@ -109,19 +95,6 @@
   justify-content: center;
   font-weight: 600;
   box-shadow: 0 2px 4px rgba(255, 107, 53, 0.3);
-}
-
-.userProfile {
-  cursor: pointer;
-}
-
-.userAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .breadcrumb {

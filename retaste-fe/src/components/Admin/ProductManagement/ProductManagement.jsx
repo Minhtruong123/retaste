@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useProductService } from "../../../hooks/useProductService";
+import { useCategoryService } from "../../../hooks/useCategoryService";
 import styles from "./ProductManagement.module.css";
 
 export default function ProductManagement() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const {
@@ -12,8 +14,9 @@ export default function ProductManagement() {
     updateProductAdmin,
     deleteProductAdmin,
     getDetailProduct,
-    getRetasteProducts,
   } = useProductService();
+  const { getListCategory, createCategory, updateCategory, deleteCategory } =
+    useCategoryService();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -30,6 +33,9 @@ export default function ProductManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
+
   const loadProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -43,13 +49,45 @@ export default function ProductManagement() {
     }
   }, []);
 
+  const loadCategories = useCallback(async () => {
+    try {
+      const data = await getListCategory();
+      setCategories(data || []);
+    } catch (err) {
+      console.error("Không thể tải danh mục:", err);
+    }
+  }, []);
+
   useEffect(() => {
-    loadProducts();
-  }, [loadProducts]);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([loadProducts(), loadCategories()]);
+      } catch (err) {
+        setError("Đã xảy ra lỗi khi tải dữ liệu");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [loadProducts, loadCategories]);
 
   const stats = [
-    { id: 1, title: "Tổng sản phẩm", value: 127, change: 8.5, icon: "🍽️" },
-    { id: 2, title: "Sản phẩm sắp hết", value: 12, change: -3.2, icon: "⚠️" },
+    {
+      id: 1,
+      title: "Tổng sản phẩm",
+      value: products.length,
+      change: 8.5,
+      icon: "🍽️",
+    },
+    {
+      id: 2,
+      title: "Danh mục",
+      value: categories.length,
+      change: 5.7,
+      icon: "📋",
+    },
     {
       id: 3,
       title: "Doanh thu hôm nay",
@@ -66,14 +104,18 @@ export default function ProductManagement() {
     },
   ];
 
-  const categories = [
-    { id: "all", name: "Tất cả" },
-    { id: "Đồ uống", name: "Đồ uống" },
-    { id: "Đồ ăn", name: "Đồ ăn" },
-    { id: "Bánh ngọt", name: "Bánh ngọt" },
-    { id: "Món chính", name: "Món chính" },
-    { id: "Tráng miệng", name: "Tráng miệng" },
-  ];
+  const categoryOptions = useMemo(() => {
+    const uniqueCategories = [
+      { id: "all", name: "Tất cả" },
+      ...categories.map((cat) => ({
+        id: cat._id,
+        name: cat.categoryName,
+        isActive: cat.isActive,
+      })),
+    ];
+
+    return uniqueCategories;
+  }, [categories]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -83,7 +125,15 @@ export default function ProductManagement() {
     });
   };
 
-  const handleSearchChange = (e) => setSearchTerm(e.target.value);
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategory(categoryId);
+    setCurrentPage(1);
+  };
 
   const handleAddProduct = () => {
     setFormData({
@@ -100,10 +150,13 @@ export default function ProductManagement() {
   };
 
   const handleEditProduct = (product) => {
+    const currentCategoryId =
+      product.category?._id || product.categoryId || product.category || "";
+
     setFormData({
       _id: product._id,
       productName: product.productName,
-      category: product.category?.[0]?.categoryName || "",
+      category: pcurrentCategoryId,
       basePrice: product.basePrice,
       imageUrl: product.imageUrl || "",
       bestSeller: product.bestSeller || false,
@@ -120,8 +173,15 @@ export default function ProductManagement() {
   const handleDeleteProduct = async () => {
     if (!deleteProductId) return;
     try {
-      awaitdeleteProductAdmin(deleteProductId);
+      await deleteProductAdmin(deleteProductId);
       setProducts((prev) => prev.filter((p) => p._id !== deleteProductId));
+
+      const remainingFilteredProducts = filteredProducts.filter(
+        (p) => p._id !== deleteProductId
+      );
+      if (remainingFilteredProducts.length === 0 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      }
     } catch (err) {
       alert("Xóa thất bại");
     } finally {
@@ -149,19 +209,89 @@ export default function ProductManagement() {
       setShowAddModal(false);
       loadProducts();
     } catch (err) {
-      alert(err);
+      alert(err.message || "Đã xảy ra lỗi");
     }
   };
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product._id?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "all" ||
-      product.category?.[0]?.categoryName === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesSearch =
+        product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product._id?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesCategory =
+        selectedCategory === "all" ||
+        product.category?._id === selectedCategory ||
+        product.category === selectedCategory ||
+        (Array.isArray(product.category) &&
+          product.category.some((cat) => cat._id === selectedCategory));
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, searchTerm, selectedCategory]);
+
+  const currentProducts = useMemo(() => {
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    return filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  }, [filteredProducts, currentPage]);
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const pageNumbers = useMemo(() => {
+    const pages = [];
+
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      if (currentPage <= 2) {
+        endPage = Math.min(totalPages - 1, 4);
+      }
+
+      if (currentPage >= totalPages - 1) {
+        startPage = Math.max(2, totalPages - 3);
+      }
+
+      if (startPage > 2) {
+        pages.push("...");
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      if (endPage < totalPages - 1) {
+        pages.push("...");
+      }
+
+      if (totalPages > 1) {
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  }, [currentPage, totalPages]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -174,14 +304,19 @@ export default function ProductManagement() {
     return new Date(dateString).toLocaleDateString("vi-VN");
   };
 
-  if (loading)
-    return <div className={styles.loading}>Đang tải sản phẩm...</div>;
+  const getCategoryNameById = (categoryId) => {
+    const category = categories.find((cat) => cat._id === categoryId);
+    return category ? category.categoryName : "Chưa phân loại";
+  };
+
+  if (loading) return <div className={styles.loading}>Đang tải dữ liệu...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
+
   return (
     <>
       <div className={styles.mainContent}>
         <header className={styles.header}>
-          <div className={styles.headerTitle}>Quản lý sản phẩm</div>
+          <div className={styles.headerTitle}>Bảng điều khiển</div>
           <div className={styles.headerActions}>
             <div className={styles.searchBox}>
               <span className={styles.searchIcon}>
@@ -196,9 +331,12 @@ export default function ProductManagement() {
                 </svg>
               </span>
               <input
+              
                 type="text"
                 className={styles.searchInput}
-                placeholder="Tìm kiếm..."
+                placeholder="Tìm kiếm sản phẩm..."
+                value={searchTerm}
+                onChange={handleSearchChange}
               />
             </div>
             <button className={styles.actionBtn}>
@@ -276,7 +414,7 @@ export default function ProductManagement() {
                 viewBox="0 0 16 16"
               >
                 <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
-                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
               </svg>
               <a href="#">Quản lý</a>
             </div>
@@ -299,7 +437,7 @@ export default function ProductManagement() {
                 fill="currentColor"
                 viewBox="0 0 16 16"
               >
-                <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
+                <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
               </svg>
               Danh sách sản phẩm
             </div>
@@ -319,7 +457,6 @@ export default function ProductManagement() {
         </div>
 
         <div className={styles.content}>
-          {/* Thống kê sản phẩm */}
           <div className={styles.statsGrid}>
             {stats.map((stat) => (
               <div className={styles.statCard} key={stat.id}>
@@ -348,49 +485,19 @@ export default function ProductManagement() {
             <div className={styles.filterSection}>
               <div className={styles.filterLabel}>Danh mục:</div>
               <div className={styles.categoryTabs}>
-                {categories.map((category) => (
+                {categoryOptions.map((category) => (
                   <button
                     key={category.id}
                     className={`${styles.categoryTab} ${
                       selectedCategory === category.id ? styles.active : ""
                     }`}
-                    onClick={() => setSelectedCategory(category.id)}
+                    onClick={() => handleCategoryChange(category.id)}
                   >
                     {category.name}
+                    {category.id !== "all" && !category.isActive && " (Ẩn)"}
                   </button>
                 ))}
               </div>
-            </div>
-            <div className={styles.filterActions}>
-              <button className={styles.filterButton}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
-                  <path
-                    fillRule="evenodd"
-                    d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
-                  />
-                </svg>
-                <span>Làm mới</span>
-              </button>
-              <button className={styles.exportButton}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
-                  <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z" />
-                </svg>
-                <span>Xuất Excel</span>
-              </button>
             </div>
           </div>
 
@@ -409,7 +516,7 @@ export default function ProductManagement() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredProducts.map((product) => (
+                  {currentProducts.map((product) => (
                     <tr key={product._id}>
                       <td className={styles.productId}>
                         {product._id.slice(-6)}
@@ -431,18 +538,29 @@ export default function ProductManagement() {
                         </div>
                       </td>
                       <td>
-                        <span className={styles.categoryBadge}>
-                          {product.category?.[0]?.categoryName || "Chưa có"}
-                        </span>
+                        {product.category && product.category.length > 0 ? (
+                          <span className={styles.categoryBadge}>
+                            {product.category[0].categoryName ||
+                              "Chưa phân loại"}
+                          </span>
+                        ) : (
+                          <span className={styles.categoryBadge}>
+                            Chưa phân loại
+                          </span>
+                        )}
                       </td>
                       <td className={styles.productPrice}>
                         {formatPrice(product.basePrice)}
                       </td>
                       <td>
                         <span
-                          className={`${styles.statusBadge} ${styles.statusActive}`}
+                          className={`${styles.statusBadge} ${
+                            product.isDeleted
+                              ? styles.statusInactive
+                              : styles.statusActive
+                          }`}
                         >
-                          Đang bán
+                          {product.isDeleted ? "Đã ẩn" : "Đang bán"}
                         </span>
                       </td>
                       <td>{formatDate(product.createdAt)}</td>
@@ -475,7 +593,7 @@ export default function ProductManagement() {
                             fill="currentColor"
                             viewBox="0 0 16 16"
                           >
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
                             <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
                           </svg>
                         </button>
@@ -488,19 +606,47 @@ export default function ProductManagement() {
 
             {filteredProducts.length === 0 && (
               <div className={styles.emptyState}>
+                <div className={styles.emptyIcon}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="64"
+                    height="64"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
+                  </svg>
+                </div>
                 <h3>Không tìm thấy sản phẩm</h3>
-                <p>Thử thay đổi bộ lọc</p>
+                <p>Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+                <button
+                  className={styles.emptyButton}
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategory("all");
+                  }}
+                >
+                  Làm mới tìm kiếm
+                </button>
               </div>
             )}
 
             {filteredProducts.length > 0 && (
               <div className={styles.pagination}>
                 <div className={styles.paginationInfo}>
-                  Hiển thị 1-{filteredProducts.length} của{" "}
-                  {filteredProducts.length} sản phẩm
+                  Hiển thị {(currentPage - 1) * productsPerPage + 1}-
+                  {Math.min(
+                    currentPage * productsPerPage,
+                    filteredProducts.length
+                  )}{" "}
+                  của {filteredProducts.length} sản phẩm
                 </div>
                 <div className={styles.paginationControls}>
-                  <button className={styles.paginationButton} disabled>
+                  <button
+                    className={styles.paginationButton}
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -512,17 +658,32 @@ export default function ProductManagement() {
                     </svg>
                   </button>
                   <div className={styles.pageNumbers}>
-                    <button
-                      className={`${styles.pageNumber} ${styles.activePage}`}
-                    >
-                      1
-                    </button>
-                    <button className={styles.pageNumber}>2</button>
-                    <button className={styles.pageNumber}>3</button>
-                    <span className={styles.pageEllipsis}>...</span>
-                    <button className={styles.pageNumber}>10</button>
+                    {pageNumbers.map((page, index) =>
+                      page === "..." ? (
+                        <span
+                          key={`ellipsis-${index}`}
+                          className={styles.pageEllipsis}
+                        >
+                          ...
+                        </span>
+                      ) : (
+                        <button
+                          key={page}
+                          className={`${styles.pageNumber} ${
+                            currentPage === page ? styles.activePage : ""
+                          }`}
+                          onClick={() => paginate(page)}
+                        >
+                          {page}
+                        </button>
+                      )
+                    )}
                   </div>
-                  <button className={styles.paginationButton}>
+                  <button
+                    className={styles.paginationButton}
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -539,9 +700,13 @@ export default function ProductManagement() {
           </div>
         </div>
 
+        {/* Modal thêm/sửa sản phẩm */}
         {showAddModal && (
-          <div className={styles.modalOverlay}>
-            <div className={styles.modal}>
+          <div
+            className={styles.modalOverlay}
+            onClick={() => setShowAddModal(false)}
+          >
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
               <div className={styles.modalHeader}>
                 <h2>{editMode ? "Sửa sản phẩm" : "Thêm sản phẩm mới"}</h2>
                 <button
@@ -552,56 +717,111 @@ export default function ProductManagement() {
                 </button>
               </div>
               <form onSubmit={handleSubmitForm} className={styles.productForm}>
+                <div className={styles.imageUpload}>
+                  <div className={styles.imagePreview}>
+                    <img
+                      src={
+                        formData.imageUrl || "https://via.placeholder.com/150"
+                      }
+                      alt="Preview"
+                    />
+                  </div>
+                  <div className={styles.uploadInfo}>
+                    <h4>Hình ảnh sản phẩm</h4>
+                    <p>
+                      Tải lên hình ảnh sản phẩm có kích thước tối đa 2MB. Định
+                      dạng hỗ trợ: JPG, PNG, WEBP.
+                    </p>
+                    <input
+                      type="text"
+                      name="imageUrl"
+                      value={formData.imageUrl}
+                      onChange={handleInputChange}
+                      placeholder="Nhập đường dẫn hình ảnh"
+                      className={styles.formInput}
+                      style={{ marginBottom: "10px" }}
+                    />
+                    <button type="button" className={styles.uploadButton}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
+                      </svg>
+                      Tải lên hình ảnh
+                    </button>
+                  </div>
+                </div>
+
                 <div className={styles.formGrid}>
                   <div className={styles.formGroup}>
                     <label>Tên sản phẩm</label>
                     <input
                       type="text"
                       name="productName"
+                      className={styles.formInput}
                       value={formData.productName}
                       onChange={handleInputChange}
+                      placeholder="Nhập tên sản phẩm"
                       required
                     />
                   </div>
                   <div className={styles.formGroup}>
                     <label>Danh mục</label>
-                    <input
-                      type="text"
+                    <select
                       name="category"
                       value={formData.category}
                       onChange={handleInputChange}
                       required
-                    />
+                      className={styles.formInput}
+                    >
+                      <option value="">-- Chọn danh mục --</option>
+                      {categoryOptions
+                        .filter((cat) => cat.id !== "all")
+                        .map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.name} {!category.isActive ? "(Ẩn)" : ""}
+                          </option>
+                        ))}
+                    </select>
                   </div>
                   <div className={styles.formGroup}>
-                    <label>Giá (VND)</label>
+                    <label>Giá (VNĐ)</label>
                     <input
                       type="number"
                       name="basePrice"
+                      className={styles.formInput}
                       value={formData.basePrice}
                       onChange={handleInputChange}
+                      placeholder="Nhập giá sản phẩm"
                       required
+                      min="0"
                     />
                   </div>
                   <div className={styles.formGroup}>
-                    <label>Hình ảnh URL</label>
-                    <input
-                      type="text"
-                      name="imageUrl"
-                      value={formData.imageUrl}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>
+                    <label className={styles.checkboxLabel}>
                       <input
                         type="checkbox"
                         name="bestSeller"
                         checked={formData.bestSeller}
                         onChange={handleInputChange}
                       />
-                      Bán chạy (Hot)
+                      <span>Đánh dấu là sản phẩm bán chạy</span>
                     </label>
+                    <p
+                      style={{
+                        fontSize: "0.85rem",
+                        color: "var(--text-light)",
+                        marginTop: "5px",
+                      }}
+                    >
+                      Sản phẩm sẽ được hiển thị trong mục "Bán chạy" trên trang
+                      chủ
+                    </p>
                   </div>
                 </div>
                 <div className={styles.formFooter}>
@@ -613,7 +833,7 @@ export default function ProductManagement() {
                     Hủy
                   </button>
                   <button type="submit" className={styles.submitButton}>
-                    {editMode ? "Cập nhật" : "Thêm sản phẩm"}
+                    {editMode ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
                   </button>
                 </div>
               </form>
@@ -621,9 +841,16 @@ export default function ProductManagement() {
           </div>
         )}
 
+        {/* Modal xác nhận xóa */}
         {showDeleteModal && (
-          <div className={styles.modalOverlay}>
-            <div className={`${styles.modal} ${styles.deleteModal}`}>
+          <div
+            className={styles.modalOverlay}
+            onClick={() => setShowDeleteModal(false)}
+          >
+            <div
+              className={`${styles.modal} ${styles.deleteModal}`}
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className={styles.deleteIconContainer}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -632,14 +859,14 @@ export default function ProductManagement() {
                   fill="currentColor"
                   viewBox="0 0 16 16"
                 >
-                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
                   <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
                 </svg>
               </div>
               <h2 className={styles.deleteTitle}>Xác nhận xóa</h2>
               <p className={styles.deleteMessage}>
                 Bạn có chắc chắn muốn xóa sản phẩm này? Hành động này không thể
-                hoàn tác.
+                hoàn tác và sẽ xóa tất cả dữ liệu liên quan.
               </p>
               <div className={styles.deleteActions}>
                 <button

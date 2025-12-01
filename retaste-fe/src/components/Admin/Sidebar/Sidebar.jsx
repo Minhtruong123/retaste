@@ -91,7 +91,6 @@ export default function Sidebar() {
           items={[
             { icon: "🍔", label: "Sản phẩm", to: "/admin/product_management" },
             { icon: "🏷️", label: "Danh mục", to: "/admin/category_management" },
-            { icon: "🧠", label: "Hệ thống gợi ý", to: "/admin/product" },
           ]}
         />
 
