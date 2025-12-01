@@ -18,6 +18,7 @@ class OrderService {
     userId: string
   ) => {
     const { items, deliveryAddress } = data;
+    console.log(items);
     const cartDetail: {
       product: {
         _id: Types.ObjectId;

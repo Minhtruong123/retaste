@@ -15,16 +15,22 @@ export const useCartService = () => {
   const getCartDetail = async () => {
     try {
       const { data } = await api.get("/cart/get-detail");
+      console.log(data.metadata);
+      
       return data.metadata || data;
     } catch (error) {
       throw error.response?.data?.message || "Lấy giỏ hàng thất bại";
     }
   };
 
-  const updateCartQuantity = async (productId, createdAt) => {
+  const updateCartQuantity = async (id, action) => {
     try {
-      const { data } = await api.put("/cart/update-quantity", {
-        id: cartItemId,
+      console.log(id);
+      console.log(action);
+      
+      
+      const { data } = await api.put(`/cart/update-quantity/${id}`, {
+        
         action,
       });
       return data.metadata || data;
@@ -33,11 +39,9 @@ export const useCartService = () => {
     }
   };
 
-  const removeFromCart = async (productId, createdAt) => {
+  const removeFromCart = async (id) => {
     try {
-      const { data } = await api.delete("/cart/remove-product", {
-        data: { id: cartItemId },
-      });
+      const { data } = await api.delete(`/cart/remove-product/${id}`);
       return data.metadata || data;
     } catch (error) {
       throw (

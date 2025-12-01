@@ -18,7 +18,7 @@ class AddressController {
     try {
       const validate = queryApiValidate(req.query);
       new OK({
-        metadata: await AddressService.getListAddress(validate)
+        metadata: await AddressService.getListAddress(validate, req.user.userId)
       }).send(res);
     } catch (error) {
       console.error('REGISTER ERROR:', error);
