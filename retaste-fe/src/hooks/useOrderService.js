@@ -4,11 +4,9 @@ export const useOrderService = () => {
   const { api } = useAuth();
 
   const getOrderPreview = async ({ deliveryAddress, items }) => {
-    const { data } = await api.get("/order/view-order", {
-      params: {
-        deliveryAddress,
-        items: items.join(","),
-      },
+    const { data } = await api.post("/order/view-order", {
+      deliveryAddress,
+      items
     });
     return data.metadata || data.data;
   };

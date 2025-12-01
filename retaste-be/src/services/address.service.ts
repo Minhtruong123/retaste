@@ -76,21 +76,27 @@ class AddressService {
       return created;
     }
   };
-  static getListAddress = async (query: {
-    limit: number;
-    page: number;
-    keyWord: string;
-    sortKey?: string | undefined;
-    sortValue?: 1 | -1 | undefined;
-  }) => {
+  static getListAddress = async (
+    query: {
+      limit: number;
+      page: number;
+      keyWord: string;
+      sortKey?: string | undefined;
+      sortValue?: 1 | -1 | undefined;
+    },
+    userId: string
+  ) => {
     const { limit, page, keyWord, sortKey, sortValue } = query;
-    return await addressRepo.getListAddress({
-      limit,
-      page,
-      keyWord,
-      sortKey,
-      sortValue
-    });
+    return await addressRepo.getListAddress(
+      {
+        limit,
+        page,
+        keyWord,
+        sortKey,
+        sortValue
+      },
+      userId
+    );
   };
   static deleteById = async (id: string, userId: string) => {
     const deleted = await addressRepo.deleteById(id, userId);
