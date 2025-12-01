@@ -4,7 +4,7 @@ import { authMiddleware } from '~/middlewares/auth.middleware';
 const { authentication } = authMiddleware;
 const router = Router();
 
-router.get('/view-order', authentication, orderController.viewOrder);
+router.post('/view-order', authentication, orderController.viewOrder);
 router.post('/create', authentication, orderController.create);
 router.put('/change-status/:orderId', authentication, orderController.changeStatus);
 router.put('/cancel/:orderId', authentication, orderController.cancel);

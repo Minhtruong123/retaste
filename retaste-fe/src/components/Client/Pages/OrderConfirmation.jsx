@@ -65,7 +65,7 @@ export default function OrderConfirmation() {
       }
     };
     loadData();
-  }, [user, getCartDetail, getAddresses]);
+  }, []);
 
   useEffect(() => {
     if (!selectedAddressId || cartItems.length === 0) {
@@ -90,7 +90,7 @@ export default function OrderConfirmation() {
     };
 
     preview();
-  }, [selectedAddressId, cartItems, getOrderPreview]);
+  }, [selectedAddressId, cartItems]);
 
   const handleAddAddress = async () => {
     if (!newAddress.streetAddress.trim()) {
@@ -219,20 +219,29 @@ export default function OrderConfirmation() {
                 ) : (
                   cartItems.map((item) => {
                     const product = item.productId;
+                    const size = item.sizeId;
                     const customs = item.customs || [];
+                    const basePrice = product?.basePrice || 0;
+                    const priceModifier = size?.priceModifier || 0;
+                    const itemTotalPrice = (basePrice + priceModifier) * item.quantity;
                     return (
                       <div key={item._id} className={styles.orderItem}>
                         <div className={styles.itemImage}>
                           <img
                             src={
-                              product?.images?.[0] ||
+                              product?.imageUrl ||
                               "https://via.placeholder.com/80"
                             }
-                            alt={product?.name || "Sản phẩm"}
+                            alt={product?.productName || "Sản phẩm"}
                           />
                         </div>
                         <div className={styles.itemDetails}>
-                          <h3>{product?.name || "Không có tên"}</h3>
+                          <h3>{product?.productName || "Không có tên"}</h3>
+                          {size && (
+                            <p className={styles.itemSize}>
+                              Kích thước: {size.sizeName}
+                            </p>
+                          )}
                           {customs.length > 0 && (
                             <p className={styles.itemOptions}>
                               {customs
@@ -247,41 +256,9 @@ export default function OrderConfirmation() {
                             </p>
                           )}
                           <div className={styles.itemPrice}>
-                            {(
-                              (product?.price || 0) * item.quantity
-                            ).toLocaleString()}
+                            {itemTotalPrice.toLocaleString()} ₫
                             ₫
                           </div>
-                        </div>
-                        <div className={styles.itemActions}>
-                          <div className={styles.quantityControl}>
-                            <button
-                              onClick={() =>
-                                handleQuantityChange(item._id.toString(), -1)
-                              }
-                              disabled={item.quantity <= 1 || isLoading}
-                            >
-                              -
-                            </button>
-                            <span>{item.quantity}</span>
-                            <button
-                              onClick={() =>
-                                handleQuantityChange(item._id.toString(), 1)
-                              }
-                              disabled={isLoading}
-                            >
-                              +
-                            </button>
-                          </div>
-                          <button
-                            className={styles.removeButton}
-                            onClick={() =>
-                              handleRemoveItem(item._id.toString())
-                            }
-                            disabled={isLoading}
-                          >
-                            <span>✕</span>
-                          </button>
                         </div>
                       </div>
                     );
@@ -457,31 +434,6 @@ export default function OrderConfirmation() {
                             ).toLocaleString()}₫`
                           : "15.000₫"}
                       </div>
-                    </div>
-                  </label>
-
-                  <label
-                    className={`${styles.optionCard} ${
-                      deliveryOption === "express" ? styles.selected : ""
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="delivery"
-                      value="express"
-                      checked={deliveryOption === "express"}
-                      onChange={() => setDeliveryOption("express")}
-                      disabled={true}
-                    />
-                    <div className={styles.optionContent}>
-                      <div className={styles.optionTitle}>
-                        <span className={styles.optionIcon}>⚡</span>
-                        <span>Giao hàng nhanh</span>
-                      </div>
-                      <div className={styles.optionDescription}>
-                        Nhận hàng trong 15-20 phút
-                      </div>
-                      <div className={styles.optionPrice}>30.000₫</div>
                     </div>
                   </label>
                 </div>

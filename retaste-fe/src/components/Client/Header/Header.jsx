@@ -20,6 +20,8 @@ export default function Header() {
   const userDropdownRef = useRef(null);
 
   useEffect(() => {
+    console.log(cartItems);
+    
     const handleClickOutside = (event) => {
       if (
         cartDropdownRef.current &&
@@ -71,36 +73,34 @@ export default function Header() {
       fetchCart?.();
     }
   };
-
   const handleLogout = async () => {
     try {
       await logout();
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      setUser(null);
+      // setUser(null);
       setCartItems([]);
       setShowDropdown(false);
     }
   };
 
   const handleUpdateQuantity = async (
-    productId,
-    createdAt,
+    id,
     currentQuantity,
     action
   ) => {
     try {
-      if (action === "decrease" && currentQuantity <= 1) {
+      if (action ==='remove'){
+        await removeFromCart(id)
+      } else if (action === "subtract" && currentQuantity <= 1) {
         if (window.confirm("Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?")) {
-          await removeFromCart(productId, createdAt);
+          await removeFromCart(id);
         }
         return;
-      }
+      } else {await updateCartQuantity(id, action);}
 
-      if (action === "increase") {
-        await updateCartQuantity(productId, createdAt);
-      }
+      
       await fetchCart();
     } catch (error) {
       console.error("Error updating quantity:", error);
@@ -251,10 +251,9 @@ export default function Header() {
                                       className={styles.quantityBtn}
                                       onClick={() =>
                                         handleUpdateQuantity(
-                                          item.productId._id,
-                                          item.createdAt,
+                                          item._id,
                                           item.quantity,
-                                          "decrease"
+                                          "subtract"
                                         )
                                       }
                                     >
@@ -267,10 +266,9 @@ export default function Header() {
                                       className={styles.quantityBtn}
                                       onClick={() =>
                                         handleUpdateQuantity(
-                                          item.productId._id,
-                                          item.createdAt,
+                                          item._id,
                                           item.quantity,
-                                          "increase"
+                                          "add"
                                         )
                                       }
                                     >
@@ -280,9 +278,9 @@ export default function Header() {
                                   <button
                                     className={styles.removeBtn}
                                     onClick={() =>
-                                      handleRemoveItem(
-                                        item.productId._id,
-                                        item.createdAt
+                                      handleUpdateQuantity(
+                                        item._id,
+                                        item.quantity,"remove"
                                       )
                                     }
                                   >

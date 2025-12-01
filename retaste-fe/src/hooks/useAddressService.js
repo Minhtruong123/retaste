@@ -9,7 +9,11 @@ export const useAddressService = () => {
   };
 
   const getAddressDetail = async (id) => {
+    console.log(id);
+    
     const { data } = await api.get(`/address/detail/${id}`);
+    console.log(data);
+    
     return data.metadata || data.data;
   };
 

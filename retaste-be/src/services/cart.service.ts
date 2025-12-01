@@ -165,6 +165,7 @@ class CartService {
     if (!getCart) throw new BAD_REQUEST('Request is not valid !');
     const { id, action } = data;
     const qty = action === 'add' ? 1 : -1;
+    console.log(qty);
     const idxProduct = getCart.products.findIndex((p) => p._id?.toString() === id);
     if (action === 'subtract' && getCart.products[idxProduct].quantity - qty === 0)
       throw new BAD_REQUEST("Can't delete product !");

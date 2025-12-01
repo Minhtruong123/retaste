@@ -184,7 +184,7 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogout = async () => {
     try {
-      await api.post("/auth/logout");
+      await api.post("/access/logout");
     } catch (err) {
       console.error("Gọi logout API lỗi:", err);
     } finally {

@@ -86,13 +86,13 @@ const getListProduct = async (
     },
     {
       $unwind: '$category'
-    },
-    {
-      $limit: limit
-    },
-    {
-      $skip: skip
     }
+    // {
+    //   $limit: limit
+    // },
+    // {
+    //   $skip: skip
+    // }
   ]);
 };
 const deleteProduct = async (id: string) => {

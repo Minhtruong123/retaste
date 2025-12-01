@@ -11,13 +11,16 @@ const findAddressByStreet = async (street: string, userId: string) => {
     isDeleted: false
   });
 };
-const getListAddress = async (option: {
-  limit: number;
-  page: number;
-  keyWord: string | undefined;
-  sortKey?: string;
-  sortValue?: 1 | -1 | undefined;
-}) => {
+const getListAddress = async (
+  option: {
+    limit: number;
+    page: number;
+    keyWord: string | undefined;
+    sortKey?: string;
+    sortValue?: 1 | -1 | undefined;
+  },
+  userId: string
+) => {
   const { limit, page, keyWord, sortKey, sortValue } = option;
   const query: Record<string, string | object> = {};
   if (keyWord) {
@@ -39,7 +42,8 @@ const getListAddress = async (option: {
   }
   return await Address.find({
     isDeleted: false,
-    ...query
+    ...query,
+    userId: createObjectId(userId)
   })
     .limit(limit)
     .skip((page - 1) * limit)
