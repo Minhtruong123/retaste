@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useProductService } from "../../../hooks/useProductService";
 import { useCategoryService } from "../../../hooks/useCategoryService";
+import { useUploadService } from "../../../hooks/useUploadService";
 import styles from "./ProductManagement.module.css";
 
 export default function ProductManagement() {
+  const { uploadImage } = useUploadService();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,10 +26,17 @@ export default function ProductManagement() {
   const [formData, setFormData] = useState({
     _id: "",
     productName: "",
+    productSlug: "",
     category: "",
     basePrice: "",
     imageUrl: "",
+    imageFile: null,
     bestSeller: false,
+    isFeatured: false,
+    isAvailable: true,
+    preparationTime: 10,
+    description: "",
+    special: [],
   });
   const [editMode, setEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,7 +56,7 @@ export default function ProductManagement() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getListProduct]);
 
   const loadCategories = useCallback(async () => {
     try {
@@ -56,7 +65,7 @@ export default function ProductManagement() {
     } catch (err) {
       console.error("Không thể tải danh mục:", err);
     }
-  }, []);
+  }, [getListCategory]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,7 +80,7 @@ export default function ProductManagement() {
     };
 
     fetchData();
-  }, [loadProducts, loadCategories]);
+  }, []);
 
   const stats = [
     {
@@ -137,32 +146,63 @@ export default function ProductManagement() {
 
   const handleAddProduct = () => {
     setFormData({
-      _id: "",
+      _id: null,
       productName: "",
+      productSlug: "",
       category: "",
       basePrice: "",
-      stock: 0,
-      imageUrl: "https://via.placeholder.com/300",
+      imageUrl: "",
+      imageFile: null,
       bestSeller: false,
+      isFeatured: false,
+      isAvailable: true,
+      preparationTime: 10,
+      description: "",
+      special: [],
+      sizes: [],
+      customizationGroups: [],
     });
     setEditMode(false);
     setShowAddModal(true);
   };
 
-  const handleEditProduct = (product) => {
-    const currentCategoryId =
-      product.category?._id || product.categoryId || product.category || "";
+  const handleEditProduct = async (product) => {
+    try {
+      let productDetails = product;
+      if (!product.description || editMode) {
+        const details = await getDetailProduct(product._id);
+        if (details) {
+          productDetails = details;
+        }
+      }
 
-    setFormData({
-      _id: product._id,
-      productName: product.productName,
-      category: pcurrentCategoryId,
-      basePrice: product.basePrice,
-      imageUrl: product.imageUrl || "",
-      bestSeller: product.bestSeller || false,
-    });
-    setEditMode(true);
-    setShowAddModal(true);
+      const currentCategoryId =
+        productDetails.category?._id ||
+        productDetails.categoryId ||
+        productDetails.category ||
+        "";
+
+      setFormData({
+        _id: productDetails._id,
+        productName: productDetails.productName || "",
+        productSlug: productDetails.productSlug || "",
+        category: currentCategoryId,
+        basePrice: productDetails.basePrice || 0,
+        imageUrl: productDetails.imageUrl || "",
+        imageFile: null,
+        bestSeller: productDetails.bestSeller || false,
+        isFeatured: productDetails.isFeatured || false,
+        isAvailable: productDetails.isAvailable !== false,
+        preparationTime: productDetails.preparationTime || 10,
+        description: productDetails.description || "",
+        special: productDetails.special || [],
+      });
+      setEditMode(true);
+      setShowAddModal(true);
+    } catch (err) {
+      console.error("Error fetching product details:", err);
+      alert("Không thể lấy thông tin sản phẩm. Vui lòng thử lại.");
+    }
   };
 
   const handleDeleteConfirmation = (id) => {
@@ -192,24 +232,53 @@ export default function ProductManagement() {
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
-    const payload = {
-      productName: formData.productName,
-      basePrice: Number(formData.basePrice),
-      imageUrl: formData.imageUrl || undefined,
-      bestSeller: formData.bestSeller,
-      category: formData.category,
-    };
+    let imageUrlToSave = formData.imageUrl;
 
     try {
+      if (formData.imageFile) {
+        imageUrlToSave = await uploadImage(formData.imageFile);
+      }
+
+      const generateSlug = (name) => {
+        return name
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/đ/g, "d")
+          .replace(/Đ/g, "d")
+          .trim()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-");
+      };
+
+      const payload = {
+        categoryId: formData.category,
+        productName: formData.productName.trim(),
+        productSlug: generateSlug(formData.productName.trim()),
+        basePrice: Number(formData.basePrice),
+        bestSeller: formData.bestSeller,
+        isFeatured: formData.isFeatured,
+        isAvailable: formData.isAvailable,
+        imageUrl: imageUrlToSave,
+        preparationTime: Number(formData.preparationTime) || 10,
+        description: formData.description,
+        special: formData.special,
+        sizes: [],
+        customizationGroups: [],
+      };
+
       if (editMode) {
         await updateProductAdmin(formData._id, payload);
       } else {
         await createProductAdmin(payload);
       }
+
+      alert(editMode ? "Cập nhật thành công!" : "Thêm sản phẩm thành công!");
       setShowAddModal(false);
       loadProducts();
     } catch (err) {
-      alert(err.message || "Đã xảy ra lỗi");
+      alert(err.message || "Có lỗi xảy ra");
     }
   };
 
@@ -217,11 +286,13 @@ export default function ProductManagement() {
     return products.filter((product) => {
       const matchesSearch =
         product.productName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product._id?.toLowerCase().includes(searchTerm.toLowerCase());
+        product._id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesCategory =
         selectedCategory === "all" ||
         product.category?._id === selectedCategory ||
+        product.categoryId === selectedCategory ||
         product.category === selectedCategory ||
         (Array.isArray(product.category) &&
           product.category.some((cat) => cat._id === selectedCategory));
@@ -331,7 +402,6 @@ export default function ProductManagement() {
                 </svg>
               </span>
               <input
-              
                 type="text"
                 className={styles.searchInput}
                 placeholder="Tìm kiếm sản phẩm..."
@@ -534,20 +604,21 @@ export default function ProductManagement() {
                           </div>
                           <span className={styles.productName}>
                             {product.productName}
+                            {product.bestSeller && (
+                              <span className={styles.bestSellerBadge}>
+                                {" "}
+                                🔥
+                              </span>
+                            )}
                           </span>
                         </div>
                       </td>
                       <td>
-                        {product.category && product.category.length > 0 ? (
-                          <span className={styles.categoryBadge}>
-                            {product.category[0].categoryName ||
-                              "Chưa phân loại"}
-                          </span>
-                        ) : (
-                          <span className={styles.categoryBadge}>
-                            Chưa phân loại
-                          </span>
-                        )}
+                        <span className={styles.categoryBadge}>
+                          {product.category?.categoryName ||
+                            getCategoryNameById(product.categoryId) ||
+                            "Chưa phân loại"}
+                        </span>
                       </td>
                       <td className={styles.productPrice}>
                         {formatPrice(product.basePrice)}
@@ -555,12 +626,16 @@ export default function ProductManagement() {
                       <td>
                         <span
                           className={`${styles.statusBadge} ${
-                            product.isDeleted
+                            product.isDeleted || !product.isAvailable
                               ? styles.statusInactive
                               : styles.statusActive
                           }`}
                         >
-                          {product.isDeleted ? "Đã ẩn" : "Đang bán"}
+                          {product.isDeleted
+                            ? "Đã ẩn"
+                            : !product.isAvailable
+                            ? "Ngừng bán"
+                            : "Đang bán"}
                         </span>
                       </td>
                       <td>{formatDate(product.createdAt)}</td>
@@ -733,27 +808,29 @@ export default function ProductManagement() {
                       dạng hỗ trợ: JPG, PNG, WEBP.
                     </p>
                     <input
-                      type="text"
-                      name="imageUrl"
-                      value={formData.imageUrl}
-                      onChange={handleInputChange}
-                      placeholder="Nhập đường dẫn hình ảnh"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+
+                        if (file.size > 2 * 1024 * 1024) {
+                          alert("Ảnh không được quá 2MB!");
+                          return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            imageUrl: reader.result,
+                            imageFile: file,
+                          }));
+                        };
+                        reader.readAsDataURL(file);
+                      }}
                       className={styles.formInput}
-                      style={{ marginBottom: "10px" }}
                     />
-                    <button type="button" className={styles.uploadButton}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
-                      </svg>
-                      Tải lên hình ảnh
-                    </button>
                   </div>
                 </div>
 
@@ -803,6 +880,37 @@ export default function ProductManagement() {
                     />
                   </div>
                   <div className={styles.formGroup}>
+                    <label>Thời gian chuẩn bị (phút)</label>
+                    <input
+                      type="number"
+                      name="preparationTime"
+                      className={styles.formInput}
+                      value={formData.preparationTime || ""}
+                      onChange={handleInputChange}
+                      placeholder="VD: 10"
+                      required
+                      min="1"
+                      max="120"
+                    />
+                    <small style={{ color: "var(--text-light)" }}>
+                      Thời gian trung bình để chuẩn bị món này
+                    </small>
+                  </div>
+                  <div
+                    className={styles.formGroup}
+                    style={{ gridColumn: "1 / span 2" }}
+                  >
+                    <label>Mô tả sản phẩm</label>
+                    <textarea
+                      name="description"
+                      className={styles.formInput}
+                      value={formData.description || ""}
+                      onChange={handleInputChange}
+                      placeholder="Nhập mô tả chi tiết về sản phẩm"
+                      rows="3"
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
                     <label className={styles.checkboxLabel}>
                       <input
                         type="checkbox"
@@ -821,6 +929,47 @@ export default function ProductManagement() {
                     >
                       Sản phẩm sẽ được hiển thị trong mục "Bán chạy" trên trang
                       chủ
+                    </p>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="isFeatured"
+                        checked={formData.isFeatured}
+                        onChange={handleInputChange}
+                      />
+                      <span>Đánh dấu là sản phẩm nổi bật</span>
+                    </label>
+                    <p
+                      style={{
+                        fontSize: "0.85rem",
+                        color: "var(--text-light)",
+                        marginTop: "5px",
+                      }}
+                    >
+                      Sản phẩm sẽ được hiển thị trong mục "Nổi bật" trên trang
+                      chủ
+                    </p>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="isAvailable"
+                        checked={formData.isAvailable}
+                        onChange={handleInputChange}
+                      />
+                      <span>Trạng thái có sẵn</span>
+                    </label>
+                    <p
+                      style={{
+                        fontSize: "0.85rem",
+                        color: "var(--text-light)",
+                        marginTop: "5px",
+                      }}
+                    >
+                      Nếu bỏ chọn, sản phẩm sẽ không thể đặt hàng
                     </p>
                   </div>
                 </div>

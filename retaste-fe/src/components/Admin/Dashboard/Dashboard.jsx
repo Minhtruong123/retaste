@@ -1,7 +1,95 @@
-import React from "react";
+import React, { useState } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  AreaChart,
+  Area,
+} from "recharts";
 import styles from "./Dashboard.module.css";
 
+const revenueData = [
+  { name: "T2", value: 25.5, previous: 22.3 },
+  { name: "T3", value: 28.2, previous: 24.1 },
+  { name: "T4", value: 32.1, previous: 28.5 },
+  { name: "T5", value: 35.8, previous: 31.2 },
+  { name: "T6", value: 42.3, previous: 38.7 },
+  { name: "T7", value: 38.9, previous: 35.4 },
+  { name: "CN", value: 35.2, previous: 32.8 },
+];
+
+const categoryData = [
+  { name: "Đồ ăn nhanh", value: 35, color: "#ff6b35" },
+  { name: "Đồ uống", value: 25, color: "#2a9d8f" },
+  { name: "Món chính", value: 20, color: "#f4a261" },
+  { name: "Tráng miệng", value: 15, color: "#e76f51" },
+  { name: "Khác", value: 5, color: "#264653" },
+];
+
+const hourlyOrderData = [
+  { time: "6h", orders: 12 },
+  { time: "8h", orders: 25 },
+  { time: "10h", orders: 35 },
+  { time: "12h", orders: 58 },
+  { time: "14h", orders: 45 },
+  { time: "16h", orders: 32 },
+  { time: "18h", orders: 62 },
+  { time: "20h", orders: 48 },
+  { time: "22h", orders: 28 },
+];
+
+const performanceData = [
+  { name: "Tháng 1", revenue: 28.5, orders: 1150, customers: 420 },
+  { name: "Tháng 2", revenue: 32.1, orders: 1285, customers: 465 },
+  { name: "Tháng 3", revenue: 35.2, orders: 1458, customers: 523 },
+];
+
 export default function Dashboard() {
+  const [activeChart, setActiveChart] = useState("week");
+  const [activeCategoryPeriod, setActiveCategoryPeriod] = useState("month");
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className={styles.customTooltip}>
+          <p className={styles.tooltipLabel}>{label}</p>
+          {payload.map((entry, index) => (
+            <p
+              key={index}
+              className={styles.tooltipValue}
+              style={{ color: entry.color }}
+            >
+              {entry.name}: {entry.value} triệu ₫
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const PieTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className={styles.customTooltip}>
+          <p className={styles.tooltipValue}>
+            {payload[0].name}: {payload[0].value}%
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <div className={styles.mainContent}>
@@ -139,39 +227,259 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Charts Row */}
+          {/* Enhanced Charts Row */}
           <div className={styles.chartsRow}>
             <div className={styles.chartCard}>
               <div className={styles.chartHeader}>
                 <h3 className={styles.chartTitle}>Doanh thu theo thời gian</h3>
                 <div className={styles.chartOptions}>
-                  <button className={styles.chartOption}>Ngày</button>
-                  <button className={`${styles.chartOption} ${styles.active}`}>
+                  <button
+                    className={`${styles.chartOption} ${
+                      activeChart === "day" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveChart("day")}
+                  >
+                    Ngày
+                  </button>
+                  <button
+                    className={`${styles.chartOption} ${
+                      activeChart === "week" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveChart("week")}
+                  >
                     Tuần
                   </button>
-                  <button className={styles.chartOption}>Tháng</button>
-                </div>
-              </div>
-              <div className={styles.chartContainer}>
-                <div className={styles.chartPlaceholder}>
-                  [Biểu đồ đường thể hiện doanh thu theo thời gian]
-                </div>
-              </div>
-            </div>
-            <div className={styles.chartCard}>
-              <div className={styles.chartHeader}>
-                <h3 className={styles.chartTitle}>Danh mục bán chạy</h3>
-                <div className={styles.chartOptions}>
-                  <button className={styles.chartOption}>Tuần</button>
-                  <button className={`${styles.chartOption} ${styles.active}`}>
+                  <button
+                    className={`${styles.chartOption} ${
+                      activeChart === "month" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveChart("month")}
+                  >
                     Tháng
                   </button>
                 </div>
               </div>
               <div className={styles.chartContainer}>
-                <div className={styles.chartPlaceholder}>
-                  [Biểu đồ tròn thể hiện các danh mục bán chạy]
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={revenueData}>
+                    <defs>
+                      <linearGradient
+                        id="colorRevenue"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#ff6b35"
+                          stopOpacity={0.3}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#ff6b35"
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+                      <linearGradient
+                        id="colorPrevious"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#2a9d8f"
+                          stopOpacity={0.3}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#2a9d8f"
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 12, fill: "#666" }}
+                      tickLine={{ stroke: "#f0f0f0" }}
+                      axisLine={{ stroke: "#f0f0f0" }}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 12, fill: "#666" }}
+                      tickLine={{ stroke: "#f0f0f0" }}
+                      axisLine={{ stroke: "#f0f0f0" }}
+                      tickFormatter={(value) => `${value}M`}
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area
+                      type="monotone"
+                      dataKey="previous"
+                      stroke="#2a9d8f"
+                      strokeWidth={2}
+                      fill="url(#colorPrevious)"
+                      name="Tuần trước"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#ff6b35"
+                      strokeWidth={3}
+                      fill="url(#colorRevenue)"
+                      name="Tuần này"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className={styles.chartCard}>
+              <div className={styles.chartHeader}>
+                <h3 className={styles.chartTitle}>Danh mục bán chạy</h3>
+                <div className={styles.chartOptions}>
+                  <button
+                    className={`${styles.chartOption} ${
+                      activeCategoryPeriod === "week" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveCategoryPeriod("week")}
+                  >
+                    Tuần
+                  </button>
+                  <button
+                    className={`${styles.chartOption} ${
+                      activeCategoryPeriod === "month" ? styles.active : ""
+                    }`}
+                    onClick={() => setActiveCategoryPeriod("month")}
+                  >
+                    Tháng
+                  </button>
                 </div>
+              </div>
+              <div className={styles.chartContainer}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={2}
+                      dataKey="value"
+                    >
+                      {categoryData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<PieTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+                {/* <div className={styles.pieChartLegend}>
+                  {categoryData.map((item, index) => (
+                    <div key={index} className={styles.legendItem}>
+                      <div
+                        className={styles.legendColor}
+                        style={{ backgroundColor: item.color }}
+                      ></div>
+                      <span className={styles.legendText}>{item.name}</span>
+                      <span className={styles.legendPercent}>
+                        {item.value}%
+                      </span>
+                    </div>
+                  ))}
+                </div> */}
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Charts Row */}
+          <div className={styles.chartsRow}>
+            <div className={styles.chartCard}>
+              <div className={styles.chartHeader}>
+                <h3 className={styles.chartTitle}>Đơn hàng theo giờ</h3>
+              </div>
+              <div className={styles.chartContainer}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={hourlyOrderData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis
+                      dataKey="time"
+                      tick={{ fontSize: 12, fill: "#666" }}
+                      tickLine={{ stroke: "#f0f0f0" }}
+                      axisLine={{ stroke: "#f0f0f0" }}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 12, fill: "#666" }}
+                      tickLine={{ stroke: "#f0f0f0" }}
+                      axisLine={{ stroke: "#f0f0f0" }}
+                    />
+                    <Tooltip
+                      formatter={(value) => [value, "Đơn hàng"]}
+                      labelStyle={{ color: "#333" }}
+                      contentStyle={{
+                        backgroundColor: "#fff",
+                        border: "1px solid #ddd",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                      }}
+                    />
+                    <Bar
+                      dataKey="orders"
+                      fill="#2a9d8f"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className={styles.chartCard}>
+              <div className={styles.chartHeader}>
+                <h3 className={styles.chartTitle}>Hiệu suất 3 tháng</h3>
+              </div>
+              <div className={styles.chartContainer}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={performanceData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 12, fill: "#666" }}
+                      tickLine={{ stroke: "#f0f0f0" }}
+                      axisLine={{ stroke: "#f0f0f0" }}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 12, fill: "#666" }}
+                      tickLine={{ stroke: "#f0f0f0" }}
+                      axisLine={{ stroke: "#f0f0f0" }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#fff",
+                        border: "1px solid #ddd",
+                        borderRadius: "8px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                      }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#ff6b35"
+                      strokeWidth={3}
+                      dot={{ fill: "#ff6b35", strokeWidth: 2, r: 4 }}
+                      name="Doanh thu (triệu)"
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="orders"
+                      stroke="#2a9d8f"
+                      strokeWidth={3}
+                      dot={{ fill: "#2a9d8f", strokeWidth: 2, r: 4 }}
+                      name="Đơn hàng"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>

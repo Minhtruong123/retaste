@@ -8,7 +8,7 @@ export const useProductService = () => {
     try {
       const processedQuery = {
         ...query,
-        sortOrder: query.sortValue, 
+        sortOrder: query.sortValue,
         sortValue: undefined,
       };
 
@@ -21,6 +21,7 @@ export const useProductService = () => {
         queryString ? `?${queryString}` : ""
       }`;
       const { data } = await api.get(url);
+      console.log(data.metadata);
 
       return data.metadata || data;
     } catch (error) {
@@ -43,6 +44,7 @@ export const useProductService = () => {
         `/product/update/${productId}`,
         productData
       );
+
       return data.metadata || data;
     } catch (error) {
       throw error.response?.data?.message || "Cập nhật sản phẩm thất bại";

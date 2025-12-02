@@ -56,11 +56,26 @@ export const useOrderService = () => {
   );
 
   const changeStatus = useCallback(
-    async (orderId, orderStatus) => {
+    async (orderId, statusKey) => {
+      const statusMap = {
+        pending: "pending",
+        processing: "confirmed",
+        shipping: "out_for_delivery",
+        completed: "success",
+        cancelled: "cancelled",
+      };
+
+      const realStatus = statusMap[statusKey] || [statusKey];
+
+      if (!realStatus) {
+        throw new Error("Trạng thái không hợp lệ");
+      }
+
       const { data } = await api.put(`/order/change-status/${orderId}`, {
-        orderStatus,
+        orderStatus: realStatus,
       });
-      return data.metadata || data.data;
+
+      return data.metadata || data.data || data;
     },
     [api]
   );
@@ -68,7 +83,7 @@ export const useOrderService = () => {
   const cancelOrder = useCallback(
     async (orderId) => {
       const { data } = await api.put(`/order/cancel/${orderId}`);
-      return data.metadata || data.data;
+      return data.metadata || data.data || data;
     },
     [api]
   );
