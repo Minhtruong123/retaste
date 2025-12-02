@@ -66,6 +66,7 @@ class OrderService {
       }[];
       size: {
         _id: Types.ObjectId;
+        priceModifier: number;
       };
       quantity: number;
       itemId: Types.ObjectId;
@@ -125,7 +126,7 @@ class OrderService {
           basePrice: c.product.basePrice,
           totalPrice: c.product.basePrice * c.quantity
         };
-        totalCostOrder += item.totalPrice;
+        totalCostOrder += item.totalPrice + c.size.priceModifier;
         return item;
       }),
       subtotal: totalCostOrder,
@@ -184,7 +185,18 @@ class OrderService {
                     `<input type="hidden" name="${field}" value="${checkoutFormfields[field]}" />`
                 )
                 .join('\n')}
-              <button type="submit">Pay now</button>
+              <button type="submit" style="
+                background:#ff4d6d;
+                color:#fff;
+                padding:12px 28px;
+                border:none;
+                border-radius:10px;
+                font-size:16px;
+                font-weight:600;
+                cursor:pointer;
+                transition:0.25s ease;
+                box-shadow:0 4px 12px rgba(255,77,109,0.4);
+              ">Pay now</button>
             </form>
           `,
         order: created
