@@ -1128,3 +1128,22 @@
     flex-direction: column;
   }
 }
+.bestSellerBadge {
+  display: inline-flex;
+  margin-left: 5px;
+  font-size: 0.85rem;
+  color: var(--primary);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

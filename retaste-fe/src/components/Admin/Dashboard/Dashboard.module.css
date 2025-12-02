@@ -236,7 +236,7 @@
   margin-right: 5px;
 }
 
-/* Charts Section */
+/* Enhanced Charts Section */
 .chartsRow {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -244,64 +244,147 @@
   margin-bottom: 30px;
 }
 
+.chartsRow:nth-child(6) {
+  grid-template-columns: 1fr 1fr;
+}
+
 .chartCard {
   background-color: var(--white);
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: var(--shadow);
-  padding: 20px;
+  padding: 24px;
+  transition: var(--transition);
+  border: 1px solid var(--border-color);
+}
+
+.chartCard:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
 }
 
 .chartHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--light-gray);
 }
 
 .chartTitle {
   font-weight: 600;
   font-size: 1.1rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+}
+
+.chartTitle::before {
+  content: "";
+  width: 4px;
+  height: 20px;
+  background-color: var(--primary);
+  border-radius: 2px;
+  margin-right: 10px;
 }
 
 .chartOptions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  background-color: var(--background);
+  padding: 4px;
+  border-radius: var(--border-radius);
 }
 
 .chartOption {
   background: none;
-  border: 1px solid var(--gray);
-  border-radius: 5px;
-  padding: 5px 10px;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: 6px 12px;
   font-size: 0.8rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: var(--transition);
+  color: var(--text-light);
+}
+
+.chartOption:hover {
+  background-color: var(--white);
+  color: var(--text);
 }
 
 .chartOption.active {
-  background-color: var(--secondary);
+  background-color: var(--primary);
   color: var(--white);
-  border-color: var(--secondary);
+  box-shadow: 0 2px 4px rgba(255, 107, 53, 0.3);
 }
 
 .chartContainer {
-  height: 300px;
+  height: 320px;
   position: relative;
 }
 
-/* For demo purpose only - replace with actual charts */
-.chartPlaceholder {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+/* Custom Tooltip Styles */
+.customTooltip {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 12px 16px;
+  box-shadow: var(--shadow);
+  font-size: 0.9rem;
+}
+
+.tooltipLabel {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.tooltipValue {
+  font-weight: 500;
+  margin: 2px 0;
+}
+
+/* Pie Chart Legend */
+.pieChartLegend {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--light-gray);
+}
+
+.legendItem {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--dark-gray);
+  justify-content: space-between;
+  padding: 6px 0;
   font-size: 0.9rem;
-  border: 1px dashed var(--gray);
-  border-radius: 5px;
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 8px;
+}
+
+.legendText {
+  flex: 1;
+  color: var(--text);
+}
+
+.legendPercent {
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+/* Chart Enhancement Variables */
+:root {
+  --success: #28a745;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --dark-gray: #6c757d;
 }
 
 /* Recent Orders Table */
@@ -631,6 +714,14 @@
   .dateRange {
     display: none;
   }
+
+  .chartContainer {
+    height: 250px;
+  }
+
+  .pieChartLegend {
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 576px) {
@@ -640,5 +731,9 @@
 
   .content {
     padding: 15px;
+  }
+
+  .chartCard {
+    padding: 16px;
   }
 }
