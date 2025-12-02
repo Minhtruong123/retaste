@@ -5,7 +5,7 @@ const generatePairToken = (payload: object, privateKey: string) => {
   try {
     const accessToken = jwt.sign(payload, privateKey, {
       algorithm: 'RS256',
-      expiresIn: '3m'
+      expiresIn: '2h'
     });
     const refreshToken = jwt.sign(payload, privateKey, {
       algorithm: 'RS256',
