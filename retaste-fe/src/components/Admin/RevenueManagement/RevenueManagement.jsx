@@ -1,7 +1,81 @@
-import React from "react";
+import React, { useState } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+} from "recharts";
 import styles from "./RevenueManagement.module.css";
 
 export default function RevenueManagement() {
+  const [activePeriod, setActivePeriod] = useState("week");
+  const [activeCategoryPeriod, setActiveCategoryPeriod] = useState("month");
+
+  const revenueTimeData = [
+    { name: "T2", value: 28.5, previous: 25.3 },
+    { name: "T3", value: 32.1, previous: 28.7 },
+    { name: "T4", value: 35.8, previous: 31.2 },
+    { name: "T5", value: 38.2, previous: 34.5 },
+    { name: "T6", value: 42.3, previous: 38.9 },
+    { name: "T7", value: 39.1, previous: 35.4 },
+    { name: "CN", value: 35.2, previous: 32.8 },
+  ];
+
+  const categoryData = [
+    { name: "Món chính", value: 36, color: "#ff6b35" },
+    { name: "Đồ uống", value: 25, color: "#2a9d8f" },
+    { name: "Món khai vị", value: 16, color: "#f4a261" },
+    { name: "Tráng miệng", value: 12, color: "#e76f51" },
+    { name: "Combo", value: 11, color: "#264653" },
+  ];
+
+  const branchData = [
+    { name: "Quận 1", value: 14.46 },
+    { name: "Quận 3", value: 11.25 },
+    { name: "Quận 7", value: 5.95 },
+    { name: "Thủ Đức", value: 3.59 },
+  ];
+
+  const COLORS = ["#ff6b35", "#2a9d8f", "#f4a261", "#e76f51", "#264653"];
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className={styles.customTooltip}>
+          <p className={styles.tooltipLabel}>{label}</p>
+          {payload.map((entry, index) => (
+            <p key={index} style={{ color: entry.color }}>
+              {entry.name || "Doanh thu"}: {entry.value.toLocaleString()} triệu
+              ₫
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const PieCustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className={styles.customTooltip}>
+          <p>
+            {payload[0].name}: {payload[0].value}% (
+            {payload[0].payload.value.toFixed(1)} triệu ₫)
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
   return (
     <>
       <div className={styles.mainContent}>
@@ -120,48 +194,47 @@ export default function RevenueManagement() {
             <button className={`${styles.filterBtn} ${styles.resetBtn}`}>
               <i>↻</i> Đặt lại
             </button>
-            <button className={`${styles.filterBtn} ${styles.exportBtn}`}>
+            {/* <button className={`${styles.filterBtn} ${styles.exportBtn}`}>
               <i>📥</i> Xuất báo cáo
-            </button>
+            </button> */}
           </div>
 
-          {/* Summary Cards */}
           <div className={styles.summaryCards}>
             <div className={`${styles.summaryCard} ${styles.primary}`}>
               <h3>Tổng doanh thu</h3>
               <div className={styles.summaryValue}>35.2 triệu ₫</div>
               <div className={styles.summaryCompare}>
-                <span className={styles.percentageUp}>↗ 12.5%</span>
-                <span>so với tháng trước</span>
+                <span className={styles.percentageUp}>Up 12.5%</span> so với
+                tháng trước
               </div>
             </div>
             <div className={`${styles.summaryCard} ${styles.success}`}>
               <h3>Lợi nhuận ròng</h3>
               <div className={styles.summaryValue}>12.8 triệu ₫</div>
               <div className={styles.summaryCompare}>
-                <span className={styles.percentageUp}>↗ 8.2%</span>
-                <span>so với tháng trước</span>
+                <span className={styles.percentageUp}>Up 8.2%</span> so với
+                tháng trước
               </div>
             </div>
             <div className={`${styles.summaryCard} ${styles.info}`}>
               <h3>Số đơn hàng</h3>
               <div className={styles.summaryValue}>1,258</div>
               <div className={styles.summaryCompare}>
-                <span className={styles.percentageUp}>↗ 15.7%</span>
-                <span>so với tháng trước</span>
+                <span className={styles.percentageUp}>Up 15.7%</span> so với
+                tháng trước
               </div>
             </div>
             <div className={`${styles.summaryCard} ${styles.warning}`}>
               <h3>Giá trị trung bình</h3>
               <div className={styles.summaryValue}>279.800 ₫</div>
               <div className={styles.summaryCompare}>
-                <span className={styles.percentageDown}>↘ 2.1%</span>
-                <span>so với tháng trước</span>
+                <span className={styles.percentageDown}>Down 2.1%</span> so với
+                tháng trước
               </div>
             </div>
           </div>
 
-          {/* Main Revenue Chart */}
+          {/* 1. Biểu đồ chính - Doanh thu theo thời gian */}
           <div className={styles.chartContainer}>
             <div className={styles.chartHeader}>
               <h3 className={styles.chartTitle}>Biểu đồ doanh thu</h3>
@@ -174,14 +247,36 @@ export default function RevenueManagement() {
                 <button className={styles.chartOption}>Quý</button>
               </div>
             </div>
-            <div className={styles.chartPlaceholder}>
-              [Biểu đồ đường thể hiện doanh thu theo thời gian]
+            <div style={{ height: 350 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueTimeData}>
+                  <CartesianGrid strokeDasharray="4 4" stroke="#f0f0f0" />
+                  <XAxis dataKey="name" tick={{ fontSize: 13 }} />
+                  <YAxis tickFormatter={(v) => `${v}M`} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line
+                    type="monotone"
+                    dataKey="previous"
+                    stroke="#94a3b8"
+                    strokeWidth={2}
+                    name="Tuần trước"
+                    dot={false}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#ff6b35"
+                    strokeWidth={3}
+                    name="Tuần này"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Two Charts in a Row */}
+          {/* 2. Hai biểu đồ ngang */}
           <div className={styles.chartsRow}>
-            {/* Left Chart */}
+            {/* Biểu đồ tròn - Danh mục */}
             <div className={styles.chartContainer}>
               <div className={styles.chartHeader}>
                 <h3 className={styles.chartTitle}>Doanh thu theo danh mục</h3>
@@ -192,11 +287,57 @@ export default function RevenueManagement() {
                   </button>
                 </div>
               </div>
-              <div className={styles.chartPlaceholder}>
-                [Biểu đồ tròn thể hiện phân bổ doanh thu theo danh mục sản phẩm]
+              <div style={{ height: 320 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={70}
+                      outerRadius={110}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {categoryData.map((entry, i) => (
+                        <Cell key={`cell-${i}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<PieCustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div
+                  style={{
+                    marginTop: 20,
+                    display: "flex",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
+                    gap: 15,
+                  }}
+                >
+                  {categoryData.map((item) => (
+                    <div
+                      key={item.name}
+                      style={{ display: "flex", alignItems: "center", gap: 8 }}
+                    >
+                      <div
+                        style={{
+                          width: 12,
+                          height: 12,
+                          backgroundColor: item.color,
+                          borderRadius: "50%",
+                        }}
+                      ></div>
+                      <span style={{ fontSize: 14 }}>
+                        {item.name} ({item.value}%)
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-            {/* Right Chart */}
+
+            {/* Biểu đồ cột - Chi nhánh */}
             <div className={styles.chartContainer}>
               <div className={styles.chartHeader}>
                 <h3 className={styles.chartTitle}>Doanh thu theo chi nhánh</h3>
@@ -207,8 +348,16 @@ export default function RevenueManagement() {
                   </button>
                 </div>
               </div>
-              <div className={styles.chartPlaceholder}>
-                [Biểu đồ cột thể hiện doanh thu của từng chi nhánh]
+              <div style={{ height: 350 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={branchData}>
+                    <CartesianGrid strokeDasharray="4 4" stroke="#f0f0f0" />
+                    <XAxis dataKey="name" tick={{ fontSize: 13 }} />
+                    <YAxis tickFormatter={(v) => `${v}M`} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="value" fill="#2a9d8f" radius={[8, 8, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
