@@ -769,7 +769,7 @@ export default function OrderManagement() {
                                 onClick={() => {
                                   openDetail(order._id);
                                   setTimeout(() => {
-                                    handleStatusChange("processing");
+                                    handleStatusChange("shipping");
                                   }, 500);
                                 }}
                               >
@@ -1131,9 +1131,37 @@ export default function OrderManagement() {
                       <li className={styles.detailItem}>
                         <span className={styles.detailLabel}>Địa chỉ:</span>
                         <span className={styles.detailValue}>
-                          {selectedOrder.address?.streetAddress ||
-                            selectedOrder.deliveryAddress ||
-                            "Không có địa chỉ"}
+                          {(() => {
+                            if (selectedOrder.address) {
+                              return (
+                                selectedOrder.address.streetAddress ||
+                                selectedOrder.address.fullAddress ||
+                                "Không có địa chỉ"
+                              );
+                            }
+                            if (
+                              selectedOrder.deliveryAddress &&
+                              typeof selectedOrder.deliveryAddress === "object"
+                            ) {
+                              return (
+                                selectedOrder.deliveryAddress.streetAddress ||
+                                selectedOrder.deliveryAddress.fullAddress ||
+                                "Không có địa chỉ chi tiết"
+                              );
+                            }
+                            if (
+                              selectedOrder.deliveryAddress &&
+                              typeof selectedOrder.deliveryAddress === "string"
+                            ) {
+                              return (
+                                "Địa chỉ đã lưu trong hệ thống (ID: " +
+                                selectedOrder.deliveryAddress.slice(-6) +
+                                ")"
+                              );
+                            }
+
+                            return "Không có địa chỉ";
+                          })()}
                         </span>
                       </li>
                       <li className={styles.detailItem}>

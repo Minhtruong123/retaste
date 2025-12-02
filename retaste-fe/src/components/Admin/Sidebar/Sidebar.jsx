@@ -97,8 +97,8 @@ export default function Sidebar() {
         <MenuSection
           title="Hệ thống"
           items={[
-            { icon: "⚙️", label: "Cài đặt", to: "/admin/settings" },
-            { icon: "🔒", label: "Quyền truy cập", to: "/admin/roles" },
+            // { icon: "⚙️", label: "Cài đặt", to: "/admin/settings" },
+            // { icon: "🔒", label: "Quyền truy cập", to: "/admin/roles" },
             {
               icon: "📤",
               label: "Đăng xuất",

@@ -59,13 +59,13 @@ export const useOrderService = () => {
     async (orderId, statusKey) => {
       const statusMap = {
         pending: "pending",
-        processing: "confirmed",
+        processing: "out_for_delivery",
         shipping: "out_for_delivery",
         completed: "success",
         cancelled: "cancelled",
       };
 
-      const realStatus = statusMap[statusKey] || [statusKey];
+      const realStatus = statusMap[statusKey] || statusKey;
 
       if (!realStatus) {
         throw new Error("Trạng thái không hợp lệ");
