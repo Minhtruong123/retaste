@@ -33,7 +33,28 @@ const authentication = async (req: Request, res: Response, next: NextFunction) =
     next(new UNAUTHORIZED());
   }
 };
-
+// authorize.js
+const authorize = (allowedRoles: string[] = []) => {
+  console.log('okokokok 1234567485697');
+  return (req: Request, res: Response, next: NextFunction) => {
+    console.log('case 1');
+    try {
+      const user = req.user; // req.user được gán sau khi verify JWT
+      if (!user) {
+        return next(new UNAUTHORIZED());
+      }
+      if (!allowedRoles.includes(user.role)) {
+        console.log('case 2');
+        return next(new UNAUTHORIZED());
+      }
+      console.log("okokokokokkokokok");
+      return next();
+    } catch (error) {
+      next(error);
+    }
+  };
+};
 export const authMiddleware = {
-  authentication
+  authentication,
+  authorize
 };
