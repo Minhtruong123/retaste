@@ -72,9 +72,8 @@ export const useProductService = () => {
   const getRetasteProducts = async () => {
     try {
       const { data } = await api.get("/product/retaste");
-      const products = data.metadata ?? data;
-
-      return Array.isArray(products) ? products : [];
+      const products = data.metadata;
+      return products;
     } catch (error) {
       console.warn(
         "Không lấy được món Retaste:",

@@ -8,6 +8,8 @@ export const useCategoryService = () => {
       const { data } = await api.get("/category/list-category", {
         params: query,
       });
+      console.log(data.metadata);
+
       return data.metadata || [];
     } catch (error) {
       throw error.response?.data?.message || "Lấy danh mục thất bại";
@@ -36,6 +38,7 @@ export const useCategoryService = () => {
 
   const deleteCategory = async (id) => {
     try {
+      console.log(id);
       const { data } = await api.delete(`/category/delete/${id}`);
       return data;
     } catch (error) {

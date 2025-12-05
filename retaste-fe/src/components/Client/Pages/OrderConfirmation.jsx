@@ -13,7 +13,6 @@ export default function OrderConfirmation() {
   const [cartItems, setCartItems] = useState([]);
   const { user } = useAuth();
 
-  //hooks
   const { getCartDetail, updateCartQuantity, removeFromCart } =
     useCartService();
   const { getAddresses, addAddress } = useAddressService();
