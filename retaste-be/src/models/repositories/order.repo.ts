@@ -34,7 +34,8 @@ const getOrderDetail = async (orderId: string) => {
     {
       $match: {
         _id: createObjectId(orderId),
-        isDeleted: false
+        isDeleted: false,
+        paymentStatus: { $ne: 'unpaid' }
       }
     },
     {
@@ -182,7 +183,8 @@ const getDetail = async (orderId: string, option: Partial<IOrder> = {}) => {
 const getLatestOrder = async (userId: string) => {
   return await Order.findOne({
     userId: createObjectId(userId),
-    isDeleted: false
+    isDeleted: false,
+    paymentStatus: { $ne: 'unpaid' }
   })
     .sort({
       createdAt: -1
@@ -203,7 +205,8 @@ const getTotalAmount = async (): Promise<{
       {
         $match: {
           orderStatus: 'success',
-          isDeleted: false
+          isDeleted: false,
+          paymentStatus: { $ne: 'unpaid' }
         }
       },
       {

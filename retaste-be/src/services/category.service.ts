@@ -67,8 +67,8 @@ class CategoryService {
   static delete = async (id: string) => {
     const deleted = await categoryRepo.deleteById(id);
     if (!deleted.matchedCount) throw new BAD_REQUEST("Cann't delete category !");
-    const deletedProd = await productRepo.deleteByCategoryId(id);
-    if (!deletedProd.matchedCount) throw new BAD_REQUEST("Cann't delete category !");
+    await productRepo.deleteByCategoryId(id);
+    // if (!deletedProd.matchedCount) throw new BAD_REQUEST("Cann't delete category !");
     return deleted;
   };
   static getDetail = async (id: string) => {
