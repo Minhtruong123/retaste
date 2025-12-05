@@ -156,7 +156,6 @@ export default function OrderConfirmation() {
         deliveryAddress: selectedAddressId,
         items: itemIds,
         paymentMethod: paymentMethod === "cash" ? "cash" : "bank_transfer",
-        note,
       });
 
       const newCart = await getCartDetail();
@@ -166,6 +165,8 @@ export default function OrderConfirmation() {
         alert("Đặt hàng thành công! Cảm ơn bạn đã mua sắm tại RETASTE");
         navigate("/orders");
       } else {
+        console.log("okokokoko");
+        console.log(result);
         document.body.insertAdjacentHTML("beforeend", result.form);
         document.querySelector(".form-payment")?.submit();
       }
@@ -211,6 +212,19 @@ export default function OrderConfirmation() {
                     <button
                       onClick={() => navigate("/menu")}
                       className={styles.continueShopping}
+                        style={{
+                          background: "#ff4d6d",
+                          color: "#fff",
+                          padding: "8px 16px",
+                          borderRadius: "8px",
+                          fontSize: "16px",
+                          fontWeight: "600",
+                          border: "none",
+                          cursor: "pointer",
+                          boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                          transition: "0.3s",
+                          marginLeft: '10px'
+                        }}
                     >
                       Tiếp tục mua sắm
                     </button>

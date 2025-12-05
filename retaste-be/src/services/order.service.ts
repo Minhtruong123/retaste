@@ -18,7 +18,6 @@ class OrderService {
     userId: string
   ) => {
     const { items, deliveryAddress } = data;
-    console.log(items);
     const cartDetail: {
       product: {
         _id: Types.ObjectId;
@@ -166,6 +165,7 @@ class OrderService {
     await cartRepo.deleteMulty(items, userId);
     if (paymentMethod === 'bank_transfer') {
       newOrder.paymentStatus = 'unpaid';
+      console.log(newOrder);
       const created = await orderRepo.createNew(newOrder);
       const checkoutURL = clientSepay.checkout.initCheckoutUrl();
       const checkoutFormfields = clientSepay.checkout.initOneTimePaymentFields({
@@ -239,7 +239,6 @@ class OrderService {
       if (!getRecipientAddress) throw new BAD_REQUEST('Address is not exist !');
       const getSenderAddress = await addressRepo.getAddressAdmin();
       if (!getSenderAddress) throw new BAD_REQUEST('Sender address is not exist !');
-
       const quotation = await lalaMoveProvider.quotationDetail(
         {
           address: getSenderAddress.streetAddress,
@@ -256,6 +255,7 @@ class OrderService {
           }
         }
       );
+
       const sender = await userRepo.getAdminUser();
       if (!sender) throw new BAD_REQUEST('Sender is not exist !');
       const recipient = await userRepo.findOneById(getOrder.userId.toString());
@@ -268,7 +268,7 @@ class OrderService {
         },
         {
           name: recipient.fullName,
-          phone: recipient.phoneNumber?.replace(/^0/, '+84') || ''
+          phone: '+84378943763'
         },
         getOrder._id.toString()
       );

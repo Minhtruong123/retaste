@@ -1,5 +1,6 @@
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import { any } from 'zod/v4';
 const REGION = 'VN';
 const LANGUAGE = 'vi_VN';
 
@@ -124,7 +125,6 @@ const createOrder = async (
 ) => {
   const body = JSON.stringify({
     data: {
-      serviceType: 'MOTORCYCLE',
       quotationId: quotation.quotationId,
       sender: {
         stopId: quotation.stops[0].stopId,
@@ -159,7 +159,7 @@ const createOrder = async (
 };
 const cancelOrder = async (orderId: string) => {
   const { signature, time } = createSignature('', PATH_ORDER);
-  const response = await axios.delete(`${PATH_ORDER}/${orderId}`, {
+  const response = await axios.delete<{ data: Order }>(`${PATH_ORDER}/${orderId}`, {
     headers: {
       'Content-type': 'application/json; charset=utf-8',
       Authorization: `hmac ${API_KEY}:${time}:${signature}`,
