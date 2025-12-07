@@ -75,6 +75,8 @@ class CategoryService {
     const getCategory = await categoryRepo.findOneById(id);
     if (!getCategory) throw new BAD_REQUEST('Category is not exist !');
     return getCategory;
+
+    
   };
 }
 export default CategoryService;

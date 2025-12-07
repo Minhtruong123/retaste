@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./HomePage.module.css";
 import { useCategoryService } from "../../../hooks/useCategoryService";
 import { useProductService } from "../../../hooks/useProductService";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "./CartContext";
 
 export default function HomePage() {
@@ -11,6 +12,8 @@ export default function HomePage() {
   const { getListCategory } = useCategoryService();
   const { getListProduct } = useProductService();
   const { addToCart } = useCart();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -163,7 +166,7 @@ export default function HomePage() {
           <div className={styles.container}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Gợi ý cho bạn</h2>
-              <a href="#" className={styles.viewAll}>
+              <a onClick={() => navigate("/menu")} className={styles.viewAll}>
                 Xem tất cả
               </a>
             </div>
@@ -171,7 +174,7 @@ export default function HomePage() {
               {recommendedProducts.length === 0 ? (
                 <p>Đang tải...</p>
               ) : (
-                recommendedProducts.map((p) => (
+                recommendedProducts.slice(0, 4).map((p) => (
                   <div key={p._id} className={styles.productCard}>
                     <img
                       src={p.imageUrl}

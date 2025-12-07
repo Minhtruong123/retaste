@@ -2,7 +2,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../src/context/AuthContext";
 
-export default function ProtectedRoute({ children, requiredRole }) {
+export default function ProtectedRoute({ children, allowedRoles }) {
   const { isAuthenticated, role, loading } = useAuth();
 
   if (loading) return <div>Đang tải...</div>;
@@ -17,7 +17,7 @@ export default function ProtectedRoute({ children, requiredRole }) {
     );
   }
 
-  if (requiredRole && role !== requiredRole) {
+  if (allowedRoles && !allowedRoles.includes(role)) {
     return <Navigate to="/403" replace />;
   }
 

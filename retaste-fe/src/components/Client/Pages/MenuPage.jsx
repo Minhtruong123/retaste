@@ -14,7 +14,7 @@ export default function MenuPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
-  const limit = 8;
+  const limit = 9;
 
   const [filters, setFilters] = useState({
     priceMin: "",

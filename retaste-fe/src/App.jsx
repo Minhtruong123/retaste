@@ -28,6 +28,7 @@ import ScheduleManagement from "./components/Admin/ScheduleManagement/ScheduleMa
 import SalaryManagement from "./components/Admin/SalaryManagement/SalaryManagement";
 import ProductManagement from "./components/Admin/ProductManagement/ProductManagement";
 import CategoryManagement from "./components/Admin/CategoryManagement/CategoryManagement";
+import ScrollToTop from "./components/Client/Pages/ScrollToTop";
 
 const getRole = () => localStorage.getItem("role");
 
@@ -53,6 +54,7 @@ function App() {
   return (
     <>
       <Router>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<RootRedirect />} />
 

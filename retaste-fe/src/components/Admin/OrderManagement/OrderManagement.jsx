@@ -219,6 +219,16 @@ export default function OrderManagement() {
     return statusFlow[currentStatus] || [];
   };
 
+  const formatOrderNumber = (orderNumber) => {
+    if (!orderNumber) return "#...";
+    const str = orderNumber.toString().trim();
+
+    const first3 = str.slice(0, 3);
+    const last4 = str.slice(-4);
+
+    return `#${first3}${last4}`;
+  };
+
   return (
     <>
       <div className={styles.mainContent}>
@@ -665,7 +675,14 @@ export default function OrderManagement() {
                             </label>
                           </td>
                           <td className={styles.orderId}>
-                            #{order.orderNumber}
+                            <span className={styles.orderNumberWrapper}>
+                              <span className={styles.orderNumberShort}>
+                                {formatOrderNumber(order.orderNumber)}
+                              </span>
+                              <span className={styles.orderNumberFull}>
+                                #{order.orderNumber}
+                              </span>
+                            </span>
                           </td>
                           <td>
                             <div className={styles.customerCell}>

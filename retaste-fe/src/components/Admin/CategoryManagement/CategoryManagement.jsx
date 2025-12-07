@@ -27,7 +27,7 @@ export default function CategoryManagement() {
     try {
       setLoading(true);
       const data = await getListCategory({
-        limit: "21",
+        limit: "24",
         page: "1",
         keyWord: "",
         sortKey: "",
