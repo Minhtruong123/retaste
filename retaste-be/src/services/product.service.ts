@@ -153,15 +153,11 @@ class CategoryService {
     const deletedProduct = await productRepo.deleteProduct(id);
     if (!deletedProduct) throw new BAD_REQUEST('Product is not exist !');
     const productId = deletedProduct._id.toString();
-    if (!productId) throw new BAD_REQUEST("Cann't delete product !");
-    const deletedSize = await sizeRepo.deleteByProductId(productId);
-    if (!deletedSize.matchedCount) throw new BAD_REQUEST("Cann't delete product !");
-    const deletedCustom = await customRepo.deleteByProductId(productId);
-    if (!deletedCustom.matchedCount) throw new BAD_REQUEST("Cann't delete product !");
+    await sizeRepo.deleteByProductId(productId);
+    await customRepo.deleteByProductId(productId);
     const getCustom = await customRepo.findByProductId(productId);
     if (!getCustom) throw new BAD_REQUEST("Cann't delete product !");
-    const deleteOption = await optionRepo.deleteByCustomId(getCustom._id.toString());
-    if (!deleteOption.matchedCount) throw new BAD_REQUEST("Cann't delete product !");
+    await optionRepo.deleteByCustomId(getCustom._id.toString());
     return 'Delete product successfully';
   };
   static retaste = async (userId: string) => {
