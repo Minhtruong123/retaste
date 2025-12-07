@@ -68,5 +68,27 @@ class ProductController {
       next(error);
     }
   };
+  getListProductUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const validate = queryApiValidate(req.query);
+      new OK({
+        metadata: await ProductService.getListProductUser(validate)
+      }).send(res);
+    } catch (error) {
+      next(error);
+    }
+  };
+  getDetailUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.params.id) {
+        throw new BAD_REQUEST('Invalid request !');
+      }
+      new OK({
+        metadata: await ProductService.getDetailUser(req.params.id)
+      }).send(res);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 export default new ProductController();
