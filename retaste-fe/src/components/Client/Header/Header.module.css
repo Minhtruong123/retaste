@@ -392,7 +392,8 @@
   background-color: var(--white);
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  width: 240px;
+  width: 280px;
+  max-width: 90vw;
   z-index: 101;
   overflow: hidden;
   animation: dropdownFadeIn 0.2s ease;
@@ -415,6 +416,7 @@
   padding: 15px;
   background-color: var(--light-gray);
   gap: 10px;
+  overflow: hidden;
 }
 
 .userAvatarLarge {
@@ -431,16 +433,41 @@
 
 .userInfo {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .userFullName {
   font-weight: 600;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .userEmail {
   font-size: 0.8rem;
   color: var(--text-light);
+  max-width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+.userEmail:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 102;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  margin-top: 5px;
 }
 
 .dropdownDivider {

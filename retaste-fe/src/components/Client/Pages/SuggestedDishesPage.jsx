@@ -26,6 +26,7 @@ export default function SuggestedDishesPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isFavoriteMap, setIsFavoriteMap] = useState({});
+  const [visiblePageRange, setVisiblePageRange] = useState([]);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -118,9 +119,55 @@ export default function SuggestedDishesPage() {
     }
 
     setFilteredProducts(result);
-    setTotalPages(Math.ceil(result.length / itemsPerPage));
+    const newTotalPages = Math.ceil(result.length / itemsPerPage);
+    setTotalPages(newTotalPages);
     setActivePage(1);
+
+    // Update visible page range
+    updateVisiblePageRange(1, newTotalPages);
   }, [activeFilter, searchQuery, sortOption, products]);
+
+  const updateVisiblePageRange = useCallback((current, total) => {
+    let range = [];
+    const maxVisiblePages = 5;
+
+    if (total <= maxVisiblePages) {
+      // Show all pages if total is small
+      range = Array.from({ length: total }, (_, i) => i + 1);
+    } else {
+      // Always include first and last page
+      range = [1];
+
+      // Calculate middle range
+      let start = Math.max(2, current - Math.floor(maxVisiblePages / 2));
+      let end = Math.min(total - 1, start + maxVisiblePages - 3);
+
+      // Adjust start if end is at its maximum
+      if (end === total - 1) {
+        start = Math.max(2, end - (maxVisiblePages - 3));
+      }
+
+      // Add ellipsis after first page if needed
+      if (start > 2) {
+        range.push("...");
+      }
+
+      // Add middle range
+      for (let i = start; i <= end; i++) {
+        range.push(i);
+      }
+
+      // Add ellipsis before last page if needed
+      if (end < total - 1) {
+        range.push("...");
+      }
+
+      // Add last page
+      range.push(total);
+    }
+
+    setVisiblePageRange(range);
+  }, []);
 
   const getPaginatedData = () => {
     const startIndex = (activePage - 1) * itemsPerPage;
@@ -131,7 +178,8 @@ export default function SuggestedDishesPage() {
   const handleAddToCart = async (product, event) => {
     const button = event.currentTarget;
     button.disabled = true;
-    button.textContent = "Đang thêm...";
+    button.innerHTML =
+      '<span class="loading-dots"><span></span><span></span><span></span></span>';
 
     try {
       await addToCart({
@@ -139,19 +187,19 @@ export default function SuggestedDishesPage() {
         quantity: 1,
       });
 
-      button.textContent = "Đã thêm!";
-      button.style.backgroundColor = "#2a9d8f";
+      button.innerHTML = '<span class="success-icon">✓</span> Đã thêm';
+      button.classList.add(styles.addSuccess);
 
       window.dispatchEvent(new Event("cartBounce"));
 
       setTimeout(() => {
-        button.textContent = "Thêm vào giỏ";
-        button.style.backgroundColor = "#ff6b35";
+        button.innerHTML = "Thêm vào giỏ";
+        button.classList.remove(styles.addSuccess);
         button.disabled = false;
       }, 2000);
     } catch (err) {
       alert("Không thể thêm vào giỏ hàng");
-      button.textContent = "Thêm vào giỏ";
+      button.innerHTML = "Thêm vào giỏ";
       button.disabled = false;
     }
   };
@@ -174,20 +222,42 @@ export default function SuggestedDishesPage() {
 
   const renderStars = (rating) => {
     const normalizedRating = Math.min(5, Math.max(0, Math.round(rating)));
-    return "★".repeat(normalizedRating) + "☆".repeat(5 - normalizedRating);
+    return (
+      <div className={styles.starsContainer}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={`${styles.star} ${
+              star <= normalizedRating ? styles.filled : styles.empty
+            }`}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
   };
 
   const handlePageChange = (page) => {
     setActivePage(page);
-    window.scrollTo(
-      0,
-      document.querySelector(`.${styles.recommendedSection}`).offsetTop - 100
-    );
+    updateVisiblePageRange(page, totalPages);
+
+    window.scrollTo({
+      top:
+        document.querySelector(`.${styles.recommendedSection}`).offsetTop - 100,
+      behavior: "smooth",
+    });
   };
 
   const nextPage = () => {
     if (activePage < totalPages) {
       handlePageChange(activePage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (activePage > 1) {
+      handlePageChange(activePage - 1);
     }
   };
 
@@ -203,7 +273,13 @@ export default function SuggestedDishesPage() {
     return (
       <div className={styles.pageContainer}>
         <div className={styles.loadingContainer}>
-          <div className={styles.spinner}></div>
+          <div className={styles.loadingAnimation}>
+            <div className={styles.spinner}></div>
+            <div className={styles.plate}>
+              <div className={styles.fork}></div>
+              <div className={styles.knife}></div>
+            </div>
+          </div>
           <p className={styles.loadingText}>
             Đang tải gợi ý dành riêng cho bạn...
           </p>
@@ -239,35 +315,43 @@ export default function SuggestedDishesPage() {
             món ăn sau đây
           </p>
         </div>
+        <div className={styles.wavyBackground}></div>
       </section>
 
       <div className={styles.container}>
         <div className={styles.preferenceProfile}>
           <div className={styles.preferenceHeader}>
-            <h3 className={styles.preferenceTitle}>Hồ sơ khẩu vị của bạn</h3>
+            <div className={styles.preferenceHeaderLeft}>
+              <h3 className={styles.preferenceTitle}>Hồ sơ khẩu vị của bạn</h3>
+              <span className={styles.profileComplete}>75% hoàn thành</span>
+            </div>
             <a href="#" className={styles.editPreferences}>
-              ✏️ Chỉnh sửa sở thích
+              <span className={styles.editIcon}>✏️</span> Chỉnh sửa sở thích
             </a>
+          </div>
+          <div className={styles.progressBar}>
+            <div className={styles.progressFill} style={{ width: "75%" }}></div>
           </div>
           <div className={styles.preferenceTags}>
             <div className={`${styles.preferenceTag} ${styles.like}`}>
-              <span>Món Á</span> ✓
+              <span>Món Á</span> <span className={styles.tagIcon}>✓</span>
             </div>
             <div className={`${styles.preferenceTag} ${styles.like}`}>
-              <span>Cay vừa</span> ✓
+              <span>Cay vừa</span> <span className={styles.tagIcon}>✓</span>
             </div>
             <div className={`${styles.preferenceTag} ${styles.like}`}>
-              <span>Hải sản</span> ✓
+              <span>Hải sản</span> <span className={styles.tagIcon}>✓</span>
             </div>
             <div className={`${styles.preferenceTag} ${styles.like}`}>
-              <span>Gà</span> ✓
+              <span>Gà</span> <span className={styles.tagIcon}>✓</span>
             </div>
             <div className={`${styles.preferenceTag} ${styles.dislike}`}>
-              <span>Rau mùi</span> ✕
+              <span>Rau mùi</span> <span className={styles.tagIcon}>✕</span>
             </div>
             <div className={`${styles.preferenceTag} ${styles.dislike}`}>
-              <span>Nấm</span> ✕
+              <span>Nấm</span> <span className={styles.tagIcon}>✕</span>
             </div>
+            <div className={styles.addNewPreference}>+</div>
           </div>
           <p className={styles.preferenceNote}>
             Các gợi ý sẽ được điều chỉnh dựa trên sở thích của bạn. Hãy thường
@@ -286,12 +370,14 @@ export default function SuggestedDishesPage() {
               onChange={handleSearchChange}
               className={styles.searchInput}
             />
-            <button className={styles.searchButton}>🔍</button>
+            <button className={styles.searchButton}>
+              <span className={styles.searchIcon}>🔍</span>
+            </button>
           </div>
 
           <div className={styles.filtersContainer}>
             <div className={styles.filterGroup}>
-              <div className={styles.filterLabel}>Bộ lọc:</div>
+              <div className={styles.filterLabel}>Danh mục:</div>
               <div className={styles.filterOptions}>
                 {filterOptions.map((option) => (
                   <button
@@ -317,7 +403,7 @@ export default function SuggestedDishesPage() {
                 <option value="popularity">Phổ biến</option>
                 <option value="priceAsc">Giá: Thấp đến cao</option>
                 <option value="priceDesc">Giá: Cao đến thấp</option>
-                <option value="rating">Đánh giá</option>
+                <option value="rating">Đánh giá cao nhất</option>
               </select>
             </div>
           </div>
@@ -342,18 +428,18 @@ export default function SuggestedDishesPage() {
                   viewMode === "grid" ? styles.active : ""
                 }`}
                 onClick={() => toggleView("grid")}
-                title="Xem dạng lưới"
+                aria-label="Xem dạng lưới"
               >
-                📱
+                <span className={styles.gridIcon}></span>
               </button>
               <button
                 className={`${styles.viewButton} ${
                   viewMode === "list" ? styles.active : ""
                 }`}
                 onClick={() => toggleView("list")}
-                title="Xem dạng danh sách"
+                aria-label="Xem dạng danh sách"
               >
-                📄
+                <span className={styles.listIcon}></span>
               </button>
             </div>
           </div>
@@ -376,73 +462,96 @@ export default function SuggestedDishesPage() {
             </div>
           ) : (
             <>
+              <div className={styles.paginationInfo}>
+                Hiển thị {(activePage - 1) * itemsPerPage + 1} -{" "}
+                {Math.min(activePage * itemsPerPage, filteredProducts.length)}{" "}
+                trên {filteredProducts.length} kết quả
+              </div>
+
               {viewMode === "grid" && (
                 <div className={styles.productsGrid}>
                   {getPaginatedData().map((product, index) => (
                     <div
                       className={`${styles.productCard} ${
                         !product.isAvailable ? styles.unavailable : ""
-                      }`}
+                      } ${isFavoriteMap[product._id] ? styles.favorited : ""}`}
                       key={product._id}
                     >
-                      <span className={styles.productPosition}>
-                        {(activePage - 1) * itemsPerPage + index + 1}
-                      </span>
-                      {product.bestSeller && (
-                        <span
-                          className={`${styles.badge} ${styles.badgeTrending}`}
-                        >
-                          Bán chạy
+                      <div className={styles.cardInner}>
+                        <span className={styles.productPosition}>
+                          {(activePage - 1) * itemsPerPage + index + 1}
                         </span>
-                      )}
-                      <div className={styles.productImgContainer}>
-                        <img
-                          src={product.imageUrl}
-                          alt={product.productName}
-                          className={styles.productImg}
-                          onClick={() => navigate(`/product/${product._id}`)}
-                        />
-                        {!product.isAvailable && (
-                          <div className={styles.soldOutOverlay}>Hết hàng</div>
-                        )}
-                      </div>
-                      <div className={styles.productInfo}>
-                        <h3
-                          className={styles.productTitle}
-                          onClick={() => navigate(`/product/${product._id}`)}
-                        >
-                          {product.productName}
-                        </h3>
-                        <div className={styles.productCategory}>
-                          {product.categoryName}
-                        </div>
-                        <div className={styles.productDetails}>
-                          <div className={styles.productPrice}>
-                            {formatPrice(product.basePrice)}
-                          </div>
-                          <div className={styles.productRating}>
-                            {renderStars(product.rating)}
-                            <span className={styles.ratingCount}>
-                              {product.ratingCount || 0}
-                            </span>
-                          </div>
-                        </div>
-                        <div className={styles.productActions}>
-                          <button
-                            className={styles.addToCart}
-                            onClick={(e) => handleAddToCart(product, e)}
-                            disabled={!product.isAvailable}
+                        {product.bestSeller && (
+                          <span
+                            className={`${styles.badge} ${styles.badgeTrending}`}
                           >
-                            {product.isAvailable ? "Thêm vào giỏ" : "Hết hàng"}
-                          </button>
+                            Bán chạy
+                          </span>
+                        )}
+                        <div className={styles.productImgContainer}>
+                          <img
+                            src={product.imageUrl}
+                            alt={product.productName}
+                            className={styles.productImg}
+                            onClick={() => navigate(`/product/${product._id}`)}
+                            loading="lazy"
+                          />
+                          {!product.isAvailable && (
+                            <div className={styles.soldOutOverlay}>
+                              <span>Hết hàng</span>
+                            </div>
+                          )}
                           <button
                             className={`${styles.favoriteBtn} ${
                               isFavoriteMap[product._id] ? styles.active : ""
                             }`}
                             onClick={() => handleFavorite(product._id)}
+                            aria-label={
+                              isFavoriteMap[product._id]
+                                ? "Bỏ yêu thích"
+                                : "Yêu thích"
+                            }
                           >
-                            {isFavoriteMap[product._id] ? "❤️" : "🤍"}
+                            <span className={styles.heartIcon}></span>
                           </button>
+                        </div>
+                        <div className={styles.productInfo}>
+                          <div className={styles.productMeta}>
+                            <div className={styles.productCategory}>
+                              {product.categoryName}
+                            </div>
+                            <div className={styles.productRating}>
+                              {renderStars(product.rating)}
+                              <span className={styles.ratingCount}>
+                                ({product.ratingCount || 0})
+                              </span>
+                            </div>
+                          </div>
+                          <h3
+                            className={styles.productTitle}
+                            onClick={() => navigate(`/product/${product._id}`)}
+                            title={product.productName}
+                          >
+                            {product.productName}
+                          </h3>
+                          <p className={styles.productDescription}>
+                            {product.description.substring(0, 60)}
+                            {product.description.length > 60 ? "..." : ""}
+                          </p>
+                          <div className={styles.productDetails}>
+                            <div className={styles.productPrice}>
+                              {formatPrice(product.basePrice)}
+                            </div>
+                            <button
+                              className={styles.addToCart}
+                              onClick={(e) => handleAddToCart(product, e)}
+                              disabled={!product.isAvailable}
+                            >
+                              {product.isAvailable
+                                ? "Thêm vào giỏ"
+                                : "Hết hàng"}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -456,18 +565,24 @@ export default function SuggestedDishesPage() {
                     <div
                       className={`${styles.productListItem} ${
                         !product.isAvailable ? styles.unavailable : ""
-                      }`}
+                      } ${isFavoriteMap[product._id] ? styles.favorited : ""}`}
                       key={product._id}
                     >
                       <div className={styles.productListImgContainer}>
+                        <div className={styles.productPosition}>
+                          {(activePage - 1) * itemsPerPage + index + 1}
+                        </div>
                         <img
                           src={product.imageUrl}
                           alt={product.productName}
                           className={styles.productListImg}
                           onClick={() => navigate(`/product/${product._id}`)}
+                          loading="lazy"
                         />
                         {!product.isAvailable && (
-                          <div className={styles.soldOutOverlay}>Hết hàng</div>
+                          <div className={styles.soldOutOverlay}>
+                            <span>Hết hàng</span>
+                          </div>
                         )}
                         {product.bestSeller && (
                           <span
@@ -480,23 +595,42 @@ export default function SuggestedDishesPage() {
                       <div className={styles.productListInfo}>
                         <div className={styles.productListTop}>
                           <div>
-                            <h3
-                              className={styles.productListTitle}
-                              onClick={() =>
-                                navigate(`/product/${product._id}`)
-                              }
-                            >
-                              {product.productName}
-                            </h3>
-                            <div className={styles.productListCategory}>
-                              {product.categoryName}
+                            <div className={styles.titleContainer}>
+                              <h3
+                                className={styles.productListTitle}
+                                onClick={() =>
+                                  navigate(`/product/${product._id}`)
+                                }
+                              >
+                                {product.productName}
+                              </h3>
+                              <button
+                                className={`${styles.favoriteBtn} ${
+                                  isFavoriteMap[product._id]
+                                    ? styles.active
+                                    : ""
+                                }`}
+                                onClick={() => handleFavorite(product._id)}
+                                aria-label={
+                                  isFavoriteMap[product._id]
+                                    ? "Bỏ yêu thích"
+                                    : "Yêu thích"
+                                }
+                              >
+                                <span className={styles.heartIcon}></span>
+                              </button>
                             </div>
-                          </div>
-                          <div className={styles.productRating}>
-                            {renderStars(product.rating)}
-                            <span className={styles.ratingCount}>
-                              {product.ratingCount || 0}
-                            </span>
+                            <div className={styles.metadataRow}>
+                              <div className={styles.productListCategory}>
+                                {product.categoryName}
+                              </div>
+                              <div className={styles.productRating}>
+                                {renderStars(product.rating)}
+                                <span className={styles.ratingCount}>
+                                  ({product.ratingCount || 0})
+                                </span>
+                              </div>
+                            </div>
                           </div>
                         </div>
                         <p className={styles.productListDescription}>
@@ -517,12 +651,12 @@ export default function SuggestedDishesPage() {
                                 : "Hết hàng"}
                             </button>
                             <button
-                              className={`${styles.favoriteBtn} ${
-                                isFavoriteMap[product._id] ? styles.active : ""
-                              }`}
-                              onClick={() => handleFavorite(product._id)}
+                              className={styles.viewDetails}
+                              onClick={() =>
+                                navigate(`/product/${product._id}`)
+                              }
                             >
-                              {isFavoriteMap[product._id] ? "❤️" : "🤍"}
+                              Xem chi tiết
                             </button>
                           </div>
                         </div>
@@ -533,47 +667,43 @@ export default function SuggestedDishesPage() {
               )}
 
               {totalPages > 1 && (
-                <div className={styles.pagination}>
-                  {activePage > 1 && (
+                <div className={styles.paginationContainer}>
+                  <div className={styles.pagination}>
                     <button
-                      className={styles.paginationButton}
-                      onClick={() => handlePageChange(activePage - 1)}
+                      className={`${styles.paginationButton} ${styles.navButton}`}
+                      onClick={prevPage}
+                      disabled={activePage === 1}
+                      aria-label="Trang trước"
                     >
-                      «
+                      <span className={styles.arrowLeft}></span>
                     </button>
-                  )}
 
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(
-                      (page) =>
-                        page === 1 ||
-                        page === totalPages ||
-                        (page >= activePage - 1 && page <= activePage + 1)
-                    )
-                    .map((page, index, array) => (
-                      <React.Fragment key={page}>
-                        {index > 0 && array[index - 1] !== page - 1 && (
+                    {visiblePageRange.map((page, index) => (
+                      <React.Fragment key={index}>
+                        {page === "..." ? (
                           <span className={styles.paginationEllipsis}>...</span>
+                        ) : (
+                          <button
+                            className={`${styles.paginationButton} ${
+                              activePage === page ? styles.active : ""
+                            }`}
+                            onClick={() => handlePageChange(page)}
+                          >
+                            {page}
+                          </button>
                         )}
-                        <button
-                          className={`${styles.paginationButton} ${
-                            activePage === page ? styles.active : ""
-                          }`}
-                          onClick={() => handlePageChange(page)}
-                        >
-                          {page}
-                        </button>
                       </React.Fragment>
                     ))}
 
-                  {activePage < totalPages && (
                     <button
-                      className={styles.paginationButton}
+                      className={`${styles.paginationButton} ${styles.navButton}`}
                       onClick={nextPage}
+                      disabled={activePage === totalPages}
+                      aria-label="Trang sau"
                     >
-                      »
+                      <span className={styles.arrowRight}></span>
                     </button>
-                  )}
+                  </div>
                 </div>
               )}
             </>
@@ -583,18 +713,21 @@ export default function SuggestedDishesPage() {
 
       <div className={styles.recommendationSummary}>
         <div className={styles.container}>
-          <h3>Đánh giá các gợi ý</h3>
+          <h3>Đánh giá gợi ý món ăn</h3>
           <p>Các món ăn được gợi ý có phù hợp với sở thích của bạn không?</p>
           <div className={styles.feedbackButtons}>
             <button className={`${styles.feedbackButton} ${styles.likeButton}`}>
-              👍 Phù hợp
+              <span className={styles.thumbsIcon}>👍</span> Phù hợp
             </button>
             <button
               className={`${styles.feedbackButton} ${styles.dislikeButton}`}
             >
-              👎 Chưa phù hợp
+              <span className={styles.thumbsIcon}>👎</span> Chưa phù hợp
             </button>
           </div>
+          <p className={styles.feedbackNote}>
+            Phản hồi của bạn sẽ giúp chúng tôi cải thiện thuật toán gợi ý
+          </p>
         </div>
       </div>
     </div>
