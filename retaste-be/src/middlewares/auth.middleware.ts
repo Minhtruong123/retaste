@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { REFRESH_TOKEN, UNAUTHORIZED } from '~/core/errors.response';
+import { FORBIDDEN, REFRESH_TOKEN, UNAUTHORIZED } from '~/core/errors.response';
 import { keyStoreRepo } from '~/models/repositories/keyStore.repo';
 import { JwtProvider } from '~/providers/jwt.provider';
 import { HEADERS } from '~/utils/constant';
@@ -36,16 +36,12 @@ const authentication = async (req: Request, res: Response, next: NextFunction) =
 const authorize = (allowedRoles: string[] = []) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log('Authorize middleware chạy');
-      console.log('allowedRoles:', allowedRoles);
-      console.log('req.user:', req.user);
-
       const user = req.user;
       if (!user) {
         return next(new UNAUTHORIZED('User not found in req.user'));
       }
       if (!allowedRoles.includes(user.role)) {
-        return next(new UNAUTHORIZED('Not allowed'));
+        return next(new FORBIDDEN('Not allowed'));
       }
       return next();
     } catch (error) {
