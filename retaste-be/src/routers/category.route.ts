@@ -7,7 +7,7 @@ const { authentication, authorize } = authMiddleware;
 const router = Router();
 
 router.get('/detail/:id', authorize(['admin', 'user']), categoryController.getDetail);
-router.get('/list-category', authorize(['admin', 'user']), categoryController.getListCategory);
+router.get('/list-category', categoryController.getListCategory);
 
 router.post(
   '/create',
