@@ -17,8 +17,7 @@ export default function ProductManagement() {
     deleteProductAdmin,
     getDetailProduct,
   } = useProductService();
-  const { getListCategory, createCategory, updateCategory, deleteCategory } =
-    useCategoryService();
+  const { getListCategory } = useCategoryService();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -37,6 +36,16 @@ export default function ProductManagement() {
     preparationTime: 10,
     description: "",
     special: [],
+    sizes: [
+      {
+        sizeName: "Mặc định",
+        sizeValue: "",
+        priceModifier: 0,
+        isDefault: true,
+        displayOrder: 0,
+      },
+    ],
+    customizationGroups: [],
   });
   const [editMode, setEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,6 +53,8 @@ export default function ProductManagement() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10;
+
+  const [activeTab, setActiveTab] = useState("basic");
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
@@ -72,7 +83,7 @@ export default function ProductManagement() {
       setLoading(true);
       try {
         await Promise.all([loadProducts(), loadCategories()]);
-      } catch (err) {
+      } catch (e) {
         setError("Đã xảy ra lỗi khi tải dữ liệu");
       } finally {
         setLoading(false);
@@ -134,6 +145,93 @@ export default function ProductManagement() {
     });
   };
 
+  const handleSizeChange = (index, field, value) => {
+    const newSizes = [...formData.sizes];
+    newSizes[index][field] = value;
+    setFormData({ ...formData, sizes: newSizes });
+  };
+
+  const addSize = () => {
+    setFormData({
+      ...formData,
+      sizes: [
+        ...formData.sizes,
+        {
+          sizeName: "",
+          sizeValue: "",
+          priceModifier: 0,
+          isDefault: false,
+          displayOrder: formData.sizes.length,
+        },
+      ],
+    });
+  };
+
+  const removeSize = (index) => {
+    const newSizes = [...formData.sizes];
+    newSizes.splice(index, 1);
+    setFormData({ ...formData, sizes: newSizes });
+  };
+
+  const handleCustomizationGroupChange = (index, field, value) => {
+    const newGroups = [...formData.customizationGroups];
+    newGroups[index][field] = value;
+    setFormData({ ...formData, customizationGroups: newGroups });
+  };
+
+  const addCustomizationGroup = () => {
+    setFormData({
+      ...formData,
+      customizationGroups: [
+        ...formData.customizationGroups,
+        {
+          groupName: "",
+          groupType: "single_select",
+          isRequired: false,
+          minSelections: 0,
+          maxSelections: 1,
+          displayOrder: formData.customizationGroups.length,
+          options: [],
+        },
+      ],
+    });
+  };
+
+  const removeCustomizationGroup = (index) => {
+    const newGroups = [...formData.customizationGroups];
+    newGroups.splice(index, 1);
+    setFormData({ ...formData, customizationGroups: newGroups });
+  };
+
+  const handleOptionChange = (groupIndex, optionIndex, field, value) => {
+    const newGroups = [...formData.customizationGroups];
+    newGroups[groupIndex].options[optionIndex][field] = value;
+    setFormData({ ...formData, customizationGroups: newGroups });
+  };
+
+  const addOption = (groupIndex) => {
+    const newGroups = [...formData.customizationGroups];
+    newGroups[groupIndex].options.push({
+      optionName: "",
+      basePrice: 0,
+      unitType: "item",
+      minQuantity: 0,
+      maxQuantity: 1,
+      defaultQuantity: 1,
+      pricePerUnit: 0,
+      caloriesPerUnit: 0,
+      isAvailable: true,
+      displayOrder: newGroups[groupIndex].options.length,
+    });
+    setFormData({ ...formData, customizationGroups: newGroups });
+  };
+
+  const removeOption = (groupIndex, optionIndex) => {
+    const newGroups = [...formData.customizationGroups];
+    newGroups[groupIndex].options.splice(optionIndex, 1);
+    setFormData({ ...formData, customizationGroups: newGroups });
+  };
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
@@ -159,10 +257,19 @@ export default function ProductManagement() {
       preparationTime: 10,
       description: "",
       special: [],
-      sizes: [],
+      sizes: [
+        {
+          sizeName: "Mặc định",
+          sizeValue: "",
+          priceModifier: 0,
+          isDefault: true,
+          displayOrder: 0,
+        },
+      ],
       customizationGroups: [],
     });
     setEditMode(false);
+    setActiveTab("basic");
     setShowAddModal(true);
   };
 
@@ -196,8 +303,22 @@ export default function ProductManagement() {
         preparationTime: productDetails.preparationTime || 10,
         description: productDetails.description || "",
         special: productDetails.special || [],
+        sizes:
+          productDetails.sizes && productDetails.sizes.length
+            ? productDetails.sizes
+            : [
+                {
+                  sizeName: "Mặc định",
+                  sizeValue: "",
+                  priceModifier: 0,
+                  isDefault: true,
+                  displayOrder: 0,
+                },
+              ],
+        customizationGroups: productDetails.customizationGroups || [],
       });
       setEditMode(true);
+      setActiveTab("basic");
       setShowAddModal(true);
     } catch (err) {
       console.error("Error fetching product details:", err);
@@ -252,6 +373,31 @@ export default function ProductManagement() {
           .replace(/-+/g, "-");
       };
 
+      const preparedSizes = formData.sizes.map((size) => ({
+        ...size,
+        priceModifier: Number(size.priceModifier),
+        displayOrder: Number(size.displayOrder || 0),
+      }));
+
+      const preparedCustomizationGroups = formData.customizationGroups.map(
+        (group) => ({
+          ...group,
+          minSelections: Number(group.minSelections || 0),
+          maxSelections: Number(group.maxSelections || 0),
+          displayOrder: Number(group.displayOrder || 0),
+          options: group.options.map((option) => ({
+            ...option,
+            basePrice: Number(option.basePrice || 0),
+            minQuantity: Number(option.minQuantity || 0),
+            maxQuantity: Number(option.maxQuantity || 0),
+            defaultQuantity: Number(option.defaultQuantity || 0),
+            pricePerUnit: Number(option.pricePerUnit || 0),
+            caloriesPerUnit: Number(option.caloriesPerUnit || 0),
+            displayOrder: Number(option.displayOrder || 0),
+          })),
+        })
+      );
+
       const payload = {
         categoryId: formData.category,
         productName: formData.productName.trim(),
@@ -264,8 +410,8 @@ export default function ProductManagement() {
         preparationTime: Number(formData.preparationTime) || 10,
         description: formData.description,
         special: formData.special,
-        sizes: [],
-        customizationGroups: [],
+        sizes: preparedSizes,
+        customizationGroups: preparedCustomizationGroups,
       };
 
       if (editMode) {
@@ -791,188 +937,776 @@ export default function ProductManagement() {
                   ×
                 </button>
               </div>
+
+              {/* Tab Navigation */}
+              <div className={styles.formTabs}>
+                <button
+                  className={`${styles.formTab} ${
+                    activeTab === "basic" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("basic")}
+                >
+                  Thông tin cơ bản
+                </button>
+                <button
+                  className={`${styles.formTab} ${
+                    activeTab === "sizes" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("sizes")}
+                >
+                  Kích thước
+                </button>
+                <button
+                  className={`${styles.formTab} ${
+                    activeTab === "customizations" ? styles.activeTab : ""
+                  }`}
+                  onClick={() => setActiveTab("customizations")}
+                >
+                  Tùy chỉnh
+                </button>
+              </div>
+
               <form onSubmit={handleSubmitForm} className={styles.productForm}>
-                <div className={styles.imageUpload}>
-                  <div className={styles.imagePreview}>
-                    <img
-                      src={
-                        formData.imageUrl || "https://via.placeholder.com/150"
-                      }
-                      alt="Preview"
-                    />
-                  </div>
-                  <div className={styles.uploadInfo}>
-                    <h4>Hình ảnh sản phẩm</h4>
-                    <p>
-                      Tải lên hình ảnh sản phẩm có kích thước tối đa 2MB. Định
-                      dạng hỗ trợ: JPG, PNG, WEBP.
-                    </p>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
+                {/* Tab 1: Thông tin cơ bản */}
+                {activeTab === "basic" && (
+                  <>
+                    <div className={styles.imageUpload}>
+                      <div className={styles.imagePreview}>
+                        <img
+                          src={
+                            formData.imageUrl ||
+                            "https://via.placeholder.com/150"
+                          }
+                          alt="Preview"
+                        />
+                      </div>
+                      <div className={styles.uploadInfo}>
+                        <h4>Hình ảnh sản phẩm</h4>
+                        <p>
+                          Tải lên hình ảnh sản phẩm có kích thước tối đa 2MB.
+                          Định dạng hỗ trợ: JPG, PNG, WEBP.
+                        </p>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
 
-                        if (file.size > 2 * 1024 * 1024) {
-                          alert("Ảnh không được quá 2MB!");
-                          return;
-                        }
+                            if (file.size > 2 * 1024 * 1024) {
+                              alert("Ảnh không được quá 2MB!");
+                              return;
+                            }
 
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            imageUrl: reader.result,
-                            imageFile: file,
-                          }));
-                        };
-                        reader.readAsDataURL(file);
-                      }}
-                      className={styles.formInput}
-                    />
-                  </div>
-                </div>
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                imageUrl: reader.result,
+                                imageFile: file,
+                              }));
+                            };
+                            reader.readAsDataURL(file);
+                          }}
+                          className={styles.formInput}
+                        />
+                      </div>
+                    </div>
 
-                <div className={styles.formGrid}>
-                  <div className={styles.formGroup}>
-                    <label>Tên sản phẩm</label>
-                    <input
-                      type="text"
-                      name="productName"
-                      className={styles.formInput}
-                      value={formData.productName}
-                      onChange={handleInputChange}
-                      placeholder="Nhập tên sản phẩm"
-                      required
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Danh mục</label>
-                    <select
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      required
-                      className={styles.formInput}
+                    <div className={styles.formGrid}>
+                      <div className={styles.formGroup}>
+                        <label>Tên sản phẩm</label>
+                        <input
+                          type="text"
+                          name="productName"
+                          className={styles.formInput}
+                          value={formData.productName}
+                          onChange={handleInputChange}
+                          placeholder="Nhập tên sản phẩm"
+                          required
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Danh mục</label>
+                        <select
+                          name="category"
+                          value={formData.category}
+                          onChange={handleInputChange}
+                          required
+                          className={styles.formInput}
+                        >
+                          <option value="">-- Chọn danh mục --</option>
+                          {categoryOptions
+                            .filter((cat) => cat.id !== "all")
+                            .map((category) => (
+                              <option key={category.id} value={category.id}>
+                                {category.name}{" "}
+                                {!category.isActive ? "(Ẩn)" : ""}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Giá (VNĐ)</label>
+                        <input
+                          type="number"
+                          name="basePrice"
+                          className={styles.formInput}
+                          value={formData.basePrice}
+                          onChange={handleInputChange}
+                          placeholder="Nhập giá sản phẩm"
+                          required
+                          min="0"
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label>Thời gian chuẩn bị (phút)</label>
+                        <input
+                          type="number"
+                          name="preparationTime"
+                          className={styles.formInput}
+                          value={formData.preparationTime || ""}
+                          onChange={handleInputChange}
+                          placeholder="VD: 10"
+                          required
+                          min="1"
+                          max="120"
+                        />
+                        <small style={{ color: "var(--text-light)" }}>
+                          Thời gian trung bình để chuẩn bị món này
+                        </small>
+                      </div>
+                      <div
+                        className={styles.formGroup}
+                        style={{ gridColumn: "1 / span 2" }}
+                      >
+                        <label>Mô tả sản phẩm</label>
+                        <textarea
+                          name="description"
+                          className={styles.formInput}
+                          value={formData.description || ""}
+                          onChange={handleInputChange}
+                          placeholder="Nhập mô tả chi tiết về sản phẩm"
+                          rows="3"
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label className={styles.checkboxLabel}>
+                          <input
+                            type="checkbox"
+                            name="bestSeller"
+                            checked={formData.bestSeller}
+                            onChange={handleInputChange}
+                          />
+                          <span>Đánh dấu là sản phẩm bán chạy</span>
+                        </label>
+                        <p
+                          style={{
+                            fontSize: "0.85rem",
+                            color: "var(--text-light)",
+                            marginTop: "5px",
+                          }}
+                        >
+                          Sản phẩm sẽ được hiển thị trong mục "Bán chạy" trên
+                          trang chủ
+                        </p>
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label className={styles.checkboxLabel}>
+                          <input
+                            type="checkbox"
+                            name="isFeatured"
+                            checked={formData.isFeatured}
+                            onChange={handleInputChange}
+                          />
+                          <span>Đánh dấu là sản phẩm nổi bật</span>
+                        </label>
+                        <p
+                          style={{
+                            fontSize: "0.85rem",
+                            color: "var(--text-light)",
+                            marginTop: "5px",
+                          }}
+                        >
+                          Sản phẩm sẽ được hiển thị trong mục "Nổi bật" trên
+                          trang chủ
+                        </p>
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label className={styles.checkboxLabel}>
+                          <input
+                            type="checkbox"
+                            name="isAvailable"
+                            checked={formData.isAvailable}
+                            onChange={handleInputChange}
+                          />
+                          <span>Trạng thái có sẵn</span>
+                        </label>
+                        <p
+                          style={{
+                            fontSize: "0.85rem",
+                            color: "var(--text-light)",
+                            marginTop: "5px",
+                          }}
+                        >
+                          Nếu bỏ chọn, sản phẩm sẽ không thể đặt hàng
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Tab 2: Kích thước */}
+                {activeTab === "sizes" && (
+                  <div className={styles.sizesSection}>
+                    <div className={styles.sectionHeader}>
+                      <h3>Quản lý kích thước</h3>
+                      <p>
+                        Thiết lập các kích thước khác nhau cho sản phẩm (ví dụ:
+                        nhỏ, vừa, lớn)
+                      </p>
+                    </div>
+
+                    {formData.sizes.map((size, index) => (
+                      <div className={styles.sizeItem} key={index}>
+                        <div className={styles.sizeHeader}>
+                          <h4>Kích thước {index + 1}</h4>
+                          {formData.sizes.length > 1 && (
+                            <button
+                              type="button"
+                              className={styles.removeButton}
+                              onClick={() => removeSize(index)}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="currentColor"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1z" />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                        <div className={styles.sizeGrid}>
+                          <div className={styles.formGroup}>
+                            <label>Tên kích thước</label>
+                            <input
+                              type="text"
+                              value={size.sizeName}
+                              onChange={(e) =>
+                                handleSizeChange(
+                                  index,
+                                  "sizeName",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Ví dụ: Nhỏ, Vừa, Lớn"
+                              className={styles.formInput}
+                              required
+                            />
+                          </div>
+                          <div className={styles.formGroup}>
+                            <label>Giá trị kích thước</label>
+                            <input
+                              type="text"
+                              value={size.sizeValue || ""}
+                              onChange={(e) =>
+                                handleSizeChange(
+                                  index,
+                                  "sizeValue",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Ví dụ: 250ml, S, M, L"
+                              className={styles.formInput}
+                            />
+                            <small style={{ color: "var(--text-light)" }}>
+                              Tùy chọn: Nhập đơn vị hoặc giá trị hiển thị
+                            </small>
+                          </div>
+                          <div className={styles.formGroup}>
+                            <label>Điều chỉnh giá (VNĐ)</label>
+                            <input
+                              type="number"
+                              value={size.priceModifier || 0}
+                              onChange={(e) =>
+                                handleSizeChange(
+                                  index,
+                                  "priceModifier",
+                                  parseFloat(e.target.value)
+                                )
+                              }
+                              placeholder="Ví dụ: 10000"
+                              className={styles.formInput}
+                            />
+                            <small style={{ color: "var(--text-light)" }}>
+                              Giá thêm/giảm so với giá cơ bản
+                            </small>
+                          </div>
+                          <div className={styles.formGroup}>
+                            <label>Thứ tự hiển thị</label>
+                            <input
+                              type="number"
+                              value={size.displayOrder || 0}
+                              onChange={(e) =>
+                                handleSizeChange(
+                                  index,
+                                  "displayOrder",
+                                  parseInt(e.target.value)
+                                )
+                              }
+                              placeholder="0"
+                              className={styles.formInput}
+                              min="0"
+                            />
+                          </div>
+                          <div
+                            className={styles.formGroup}
+                            style={{ gridColumn: "1 / span 2" }}
+                          >
+                            <label className={styles.checkboxLabel}>
+                              <input
+                                type="checkbox"
+                                checked={size.isDefault || false}
+                                onChange={(e) => {
+                                  // Bỏ chọn tất cả các kích thước khác
+                                  if (e.target.checked) {
+                                    formData.sizes.forEach((s, i) => {
+                                      if (i !== index) {
+                                        handleSizeChange(i, "isDefault", false);
+                                      }
+                                    });
+                                  }
+                                  handleSizeChange(
+                                    index,
+                                    "isDefault",
+                                    e.target.checked
+                                  );
+                                }}
+                              />
+                              <span>Đặt làm kích thước mặc định</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div className={styles.divider}></div>
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      className={styles.addItemButton}
+                      onClick={addSize}
                     >
-                      <option value="">-- Chọn danh mục --</option>
-                      {categoryOptions
-                        .filter((cat) => cat.id !== "all")
-                        .map((category) => (
-                          <option key={category.id} value={category.id}>
-                            {category.name} {!category.isActive ? "(Ẩn)" : ""}
-                          </option>
-                        ))}
-                    </select>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                      </svg>
+                      Thêm kích thước
+                    </button>
                   </div>
-                  <div className={styles.formGroup}>
-                    <label>Giá (VNĐ)</label>
-                    <input
-                      type="number"
-                      name="basePrice"
-                      className={styles.formInput}
-                      value={formData.basePrice}
-                      onChange={handleInputChange}
-                      placeholder="Nhập giá sản phẩm"
-                      required
-                      min="0"
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label>Thời gian chuẩn bị (phút)</label>
-                    <input
-                      type="number"
-                      name="preparationTime"
-                      className={styles.formInput}
-                      value={formData.preparationTime || ""}
-                      onChange={handleInputChange}
-                      placeholder="VD: 10"
-                      required
-                      min="1"
-                      max="120"
-                    />
-                    <small style={{ color: "var(--text-light)" }}>
-                      Thời gian trung bình để chuẩn bị món này
-                    </small>
-                  </div>
-                  <div
-                    className={styles.formGroup}
-                    style={{ gridColumn: "1 / span 2" }}
-                  >
-                    <label>Mô tả sản phẩm</label>
-                    <textarea
-                      name="description"
-                      className={styles.formInput}
-                      value={formData.description || ""}
-                      onChange={handleInputChange}
-                      placeholder="Nhập mô tả chi tiết về sản phẩm"
-                      rows="3"
-                    />
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label className={styles.checkboxLabel}>
-                      <input
-                        type="checkbox"
-                        name="bestSeller"
-                        checked={formData.bestSeller}
-                        onChange={handleInputChange}
-                      />
-                      <span>Đánh dấu là sản phẩm bán chạy</span>
-                    </label>
-                    <p
-                      style={{
-                        fontSize: "0.85rem",
-                        color: "var(--text-light)",
-                        marginTop: "5px",
-                      }}
+                )}
+
+                {/* Tab 3: Tùy chỉnh */}
+                {activeTab === "customizations" && (
+                  <div className={styles.customizationsSection}>
+                    <div className={styles.sectionHeader}>
+                      <h3>Quản lý tùy chỉnh</h3>
+                      <p>
+                        Thiết lập các nhóm tùy chỉnh cho sản phẩm (topping, đá,
+                        đường, ...)
+                      </p>
+                    </div>
+
+                    {formData.customizationGroups.map((group, groupIndex) => (
+                      <div
+                        className={styles.customizationGroup}
+                        key={groupIndex}
+                      >
+                        <div className={styles.groupHeader}>
+                          <h4>Nhóm tùy chỉnh {groupIndex + 1}</h4>
+                          <button
+                            type="button"
+                            className={styles.removeButton}
+                            onClick={() => removeCustomizationGroup(groupIndex)}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1z" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        <div className={styles.groupGrid}>
+                          <div className={styles.formGroup}>
+                            <label>Tên nhóm</label>
+                            <input
+                              type="text"
+                              value={group.groupName}
+                              onChange={(e) =>
+                                handleCustomizationGroupChange(
+                                  groupIndex,
+                                  "groupName",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Ví dụ: Topping, Đá, Đường"
+                              className={styles.formInput}
+                              required
+                            />
+                          </div>
+                          <div className={styles.formGroup}>
+                            <label>Loại lựa chọn</label>
+                            <select
+                              value={group.groupType}
+                              onChange={(e) =>
+                                handleCustomizationGroupChange(
+                                  groupIndex,
+                                  "groupType",
+                                  e.target.value
+                                )
+                              }
+                              className={styles.formInput}
+                              required
+                            >
+                              <option value="single_select">Chọn một</option>
+                              <option value="multi_select">Chọn nhiều</option>
+                              <option value="quantity_based">
+                                Điều chỉnh số lượng
+                              </option>
+                            </select>
+                          </div>
+
+                          <div className={styles.formGroup}>
+                            <label>Số lượng tối thiểu</label>
+                            <input
+                              type="number"
+                              value={group.minSelections || 0}
+                              onChange={(e) =>
+                                handleCustomizationGroupChange(
+                                  groupIndex,
+                                  "minSelections",
+                                  parseInt(e.target.value)
+                                )
+                              }
+                              min="0"
+                              className={styles.formInput}
+                            />
+                          </div>
+                          <div className={styles.formGroup}>
+                            <label>Số lượng tối đa</label>
+                            <input
+                              type="number"
+                              value={group.maxSelections || 0}
+                              onChange={(e) =>
+                                handleCustomizationGroupChange(
+                                  groupIndex,
+                                  "maxSelections",
+                                  parseInt(e.target.value)
+                                )
+                              }
+                              min="0"
+                              className={styles.formInput}
+                            />
+                          </div>
+
+                          <div className={styles.formGroup}>
+                            <label>Thứ tự hiển thị</label>
+                            <input
+                              type="number"
+                              value={group.displayOrder || 0}
+                              onChange={(e) =>
+                                handleCustomizationGroupChange(
+                                  groupIndex,
+                                  "displayOrder",
+                                  parseInt(e.target.value)
+                                )
+                              }
+                              min="0"
+                              className={styles.formInput}
+                            />
+                          </div>
+
+                          <div className={styles.formGroup}>
+                            <label className={styles.checkboxLabel}>
+                              <input
+                                type="checkbox"
+                                checked={group.isRequired || false}
+                                onChange={(e) =>
+                                  handleCustomizationGroupChange(
+                                    groupIndex,
+                                    "isRequired",
+                                    e.target.checked
+                                  )
+                                }
+                              />
+                              <span>Bắt buộc phải chọn</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        {/* Danh sách tùy chọn */}
+                        <div className={styles.optionsSection}>
+                          <h5>Danh sách tùy chọn</h5>
+
+                          {group.options &&
+                            group.options.map((option, optionIndex) => (
+                              <div
+                                className={styles.optionItem}
+                                key={optionIndex}
+                              >
+                                <div className={styles.optionHeader}>
+                                  <h6>Tùy chọn {optionIndex + 1}</h6>
+                                  <button
+                                    type="button"
+                                    className={styles.removeButton}
+                                    onClick={() =>
+                                      removeOption(groupIndex, optionIndex)
+                                    }
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="14"
+                                      height="14"
+                                      fill="currentColor"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1z" />
+                                    </svg>
+                                  </button>
+                                </div>
+
+                                <div className={styles.optionGrid}>
+                                  <div className={styles.formGroup}>
+                                    <label>Tên tùy chọn</label>
+                                    <input
+                                      type="text"
+                                      value={option.optionName}
+                                      onChange={(e) =>
+                                        handleOptionChange(
+                                          groupIndex,
+                                          optionIndex,
+                                          "optionName",
+                                          e.target.value
+                                        )
+                                      }
+                                      placeholder="Ví dụ: Ít đá, Trân châu đen"
+                                      className={styles.formInput}
+                                      required
+                                    />
+                                  </div>
+
+                                  <div className={styles.formGroup}>
+                                    <label>Giá thêm (VNĐ)</label>
+                                    <input
+                                      type="number"
+                                      value={option.basePrice || 0}
+                                      onChange={(e) =>
+                                        handleOptionChange(
+                                          groupIndex,
+                                          optionIndex,
+                                          "basePrice",
+                                          parseFloat(e.target.value)
+                                        )
+                                      }
+                                      min="0"
+                                      className={styles.formInput}
+                                    />
+                                  </div>
+
+                                  {group.groupType === "quantity_based" && (
+                                    <>
+                                      <div className={styles.formGroup}>
+                                        <label>Loại đơn vị</label>
+                                        <select
+                                          value={option.unitType || "item"}
+                                          onChange={(e) =>
+                                            handleOptionChange(
+                                              groupIndex,
+                                              optionIndex,
+                                              "unitType",
+                                              e.target.value
+                                            )
+                                          }
+                                          className={styles.formInput}
+                                        >
+                                          <option value="item">Món</option>
+                                          <option value="ml">ml</option>
+                                          <option value="gram">gram</option>
+                                          <option value="oz">oz</option>
+                                          <option value="custom">
+                                            Tùy chỉnh
+                                          </option>
+                                        </select>
+                                      </div>
+
+                                      <div className={styles.formGroup}>
+                                        <label>Giá theo đơn vị (VNĐ)</label>
+                                        <input
+                                          type="number"
+                                          value={option.pricePerUnit || 0}
+                                          onChange={(e) =>
+                                            handleOptionChange(
+                                              groupIndex,
+                                              optionIndex,
+                                              "pricePerUnit",
+                                              parseFloat(e.target.value)
+                                            )
+                                          }
+                                          min="0"
+                                          className={styles.formInput}
+                                        />
+                                      </div>
+
+                                      <div className={styles.formGroup}>
+                                        <label>Số lượng tối thiểu</label>
+                                        <input
+                                          type="number"
+                                          value={option.minQuantity || 0}
+                                          onChange={(e) =>
+                                            handleOptionChange(
+                                              groupIndex,
+                                              optionIndex,
+                                              "minQuantity",
+                                              parseInt(e.target.value)
+                                            )
+                                          }
+                                          min="0"
+                                          className={styles.formInput}
+                                        />
+                                      </div>
+
+                                      <div className={styles.formGroup}>
+                                        <label>Số lượng tối đa</label>
+                                        <input
+                                          type="number"
+                                          value={option.maxQuantity || 0}
+                                          onChange={(e) =>
+                                            handleOptionChange(
+                                              groupIndex,
+                                              optionIndex,
+                                              "maxQuantity",
+                                              parseInt(e.target.value)
+                                            )
+                                          }
+                                          min="0"
+                                          className={styles.formInput}
+                                        />
+                                      </div>
+
+                                      <div className={styles.formGroup}>
+                                        <label>Số lượng mặc định</label>
+                                        <input
+                                          type="number"
+                                          value={option.defaultQuantity || 0}
+                                          onChange={(e) =>
+                                            handleOptionChange(
+                                              groupIndex,
+                                              optionIndex,
+                                              "defaultQuantity",
+                                              parseInt(e.target.value)
+                                            )
+                                          }
+                                          min="0"
+                                          className={styles.formInput}
+                                        />
+                                      </div>
+                                    </>
+                                  )}
+
+                                  <div className={styles.formGroup}>
+                                    <label>Thứ tự hiển thị</label>
+                                    <input
+                                      type="number"
+                                      value={option.displayOrder || 0}
+                                      onChange={(e) =>
+                                        handleOptionChange(
+                                          groupIndex,
+                                          optionIndex,
+                                          "displayOrder",
+                                          parseInt(e.target.value)
+                                        )
+                                      }
+                                      min="0"
+                                      className={styles.formInput}
+                                    />
+                                  </div>
+
+                                  <div className={styles.formGroup}>
+                                    <label className={styles.checkboxLabel}>
+                                      <input
+                                        type="checkbox"
+                                        checked={option.isAvailable !== false}
+                                        onChange={(e) =>
+                                          handleOptionChange(
+                                            groupIndex,
+                                            optionIndex,
+                                            "isAvailable",
+                                            e.target.checked
+                                          )
+                                        }
+                                      />
+                                      <span>Đang có sẵn</span>
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+
+                          <button
+                            type="button"
+                            className={styles.addSmallButton}
+                            onClick={() => addOption(groupIndex)}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              fill="currentColor"
+                              viewBox="0 0 16 16"
+                            >
+                              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                            </svg>
+                            Thêm tùy chọn
+                          </button>
+                        </div>
+                        <div className={styles.divider}></div>
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      className={styles.addItemButton}
+                      onClick={addCustomizationGroup}
                     >
-                      Sản phẩm sẽ được hiển thị trong mục "Bán chạy" trên trang
-                      chủ
-                    </p>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                      </svg>
+                      Thêm nhóm tùy chỉnh
+                    </button>
                   </div>
-                  <div className={styles.formGroup}>
-                    <label className={styles.checkboxLabel}>
-                      <input
-                        type="checkbox"
-                        name="isFeatured"
-                        checked={formData.isFeatured}
-                        onChange={handleInputChange}
-                      />
-                      <span>Đánh dấu là sản phẩm nổi bật</span>
-                    </label>
-                    <p
-                      style={{
-                        fontSize: "0.85rem",
-                        color: "var(--text-light)",
-                        marginTop: "5px",
-                      }}
-                    >
-                      Sản phẩm sẽ được hiển thị trong mục "Nổi bật" trên trang
-                      chủ
-                    </p>
-                  </div>
-                  <div className={styles.formGroup}>
-                    <label className={styles.checkboxLabel}>
-                      <input
-                        type="checkbox"
-                        name="isAvailable"
-                        checked={formData.isAvailable}
-                        onChange={handleInputChange}
-                      />
-                      <span>Trạng thái có sẵn</span>
-                    </label>
-                    <p
-                      style={{
-                        fontSize: "0.85rem",
-                        color: "var(--text-light)",
-                        marginTop: "5px",
-                      }}
-                    >
-                      Nếu bỏ chọn, sản phẩm sẽ không thể đặt hàng
-                    </p>
-                  </div>
-                </div>
+                )}
+
                 <div className={styles.formFooter}>
                   <button
                     type="button"
